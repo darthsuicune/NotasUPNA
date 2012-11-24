@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="preference_language_list">
+        <item>@string/spanish</item>
+        <item>@string/english</item>
+        <item>@string/basque</item>
+        <item>@string/default_language</item>
+    </string-array>
+    <string-array name="preference_language_list_values">
+        <item>es</item>
+        <item>en</item>
+        <item>eu</item>
+        <item>default</item>
+    </string-array>
+    <string-array name="preference_sort_order">
+        <item>@string/sort_order_time_asc</item>
+        <item>@string/sort_order_time_desc</item>
+        <item>@string/sort_order_alpha_asc</item>
+        <item>@string/sort_order_alpha_desc</item>
+    </string-array>
+    <string-array name="preference_sort_order_values">
+        <item>sort_order_time_asc</item>
+        <item>sort_order_time_desc</item>
+        <item>sort_order_alpha_asc</item>
+        <item>sort_order_alpha_desc</item>
+    </string-array>
+    <string-array name="preference_update_time">
+        <item>@string/update_5_minutes</item>
+        <item>@string/update_10_minutes</item>
+        <item>@string/update_15_minutes</item>
+	    <item>@string/update_half_hour</item>
+	    <item>@string/update_1_hour</item>
+	    <item>@string/update_2_hour</item>
+	    <item>@string/update_6_hour</item>
+	    <item>@string/update_12_hour</item>
+	    <item>@string/update_24_hour</item>
+	    <item>@string/update_1_week</item>
+	    <item>@string/update_no</item>
+    </string-array>
+    <string-array name="preference_update_time_values">
+        <item>300000</item>
+        <item>600000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>21600000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+        <item>604800000</item>
+        <item>0</item>
+    </string-array>
+</resources>
