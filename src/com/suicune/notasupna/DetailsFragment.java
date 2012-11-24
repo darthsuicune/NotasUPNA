@@ -18,20 +18,19 @@ public class DetailsFragment extends Fragment {
 	public static final String EXTRA_SUBJECT = "subject";
 	private static final int LOADER_DETAILS = 1;
 	
-	public static DetailsFragment newInstance(int index){
+	public static DetailsFragment newInstance(String subject){
 		DetailsFragment fragment = new DetailsFragment();
 		
 		Bundle args = new Bundle();
-		args.putInt("index", index);
+		args.putString(EXTRA_SUBJECT, subject);
 		fragment.setArguments(args);
 		return fragment;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Bundle extras = getActivity().getIntent().getExtras();
 		Bundle args = new Bundle();
-		args.putString(GradesParser.nSubjectName, extras.getString(EXTRA_SUBJECT));
+		args.putString(GradesParser.nSubjectName, this.getArguments().getString(EXTRA_SUBJECT));
 		getActivity().getSupportLoaderManager().initLoader(LOADER_DETAILS, args, new CursorLoaderHelper());
 		super.onCreate(savedInstanceState);
 	}

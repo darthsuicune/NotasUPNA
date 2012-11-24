@@ -21,7 +21,6 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
@@ -145,7 +144,7 @@ public class RecordFragment extends ListFragment {
 
 			DetailsFragment details = (DetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.record_details);
 			if(details == null || details.getShownIndex() != position){
-				details = DetailsFragment.newInstance(position);
+				details = DetailsFragment.newInstance(getSubject(position));
 				
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
 				ft.replace(R.id.record_details, details);
@@ -158,6 +157,11 @@ public class RecordFragment extends ListFragment {
 			intent.putExtra("index", position);
 			startActivity(intent);
 		}
+	}
+	
+	public String getSubject(int position){
+		String subject = "";
+		return subject;
 	}
 	
 	public void failedDownload(){
@@ -203,7 +207,7 @@ public class RecordFragment extends ListFragment {
 				int[] to = {
 						android.R.id.text1
 				};
-				ListAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, from, to, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, from, to, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				setListAdapter(adapter);
 				break;
 			default:
