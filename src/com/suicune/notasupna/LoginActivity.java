@@ -135,10 +135,8 @@ public class LoginActivity extends ActionBarActivity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			Bundle args = new Bundle();
-			args.putString(PreferencesActivity.PREFERENCE_USER_NAME, mUserName);
-			args.putString(PreferencesActivity.PREFERENCE_PASS_WORD, mPassWord);
-			getSupportLoaderManager().initLoader(LOADER_CONNECTION, args, new ConnectionHelper());
+			PreferencesActivity.saveLoginData(getApplicationContext(), mUserName, mPassWord);
+			getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionHelper());
 		}
 	}
 

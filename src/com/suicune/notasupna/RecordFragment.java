@@ -37,30 +37,14 @@ public class RecordFragment extends ListFragment {
 	private static final int LOADER_SPINNER = 1;
 	private static final int LOADER_SUBJECTS = 2;
 	private static final int LOADER_CONNECTION = 3;
+	
+	private static final int ACTIVITY_PREFERENCES = 1;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
-		Uri uri = GradesContract.CONTENT_NAME_SUBJECTS;
-		String[] projection = {
-				GradesContract.SubjectsTable._ID,
-				GradesContract.SubjectsTable.COL_SU_NAME
-		};
-		String selection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=?";
-		String[] selectionArgs = {
-				"es"
-		};
-		CursorLoader courseLoader = new CursorLoader(getActivity(), uri, projection, selection, selectionArgs, null);
-		String[] from = {
-				GradesContract.SubjectsTable.COL_SU_NAME
-		};
-		int[] to = {
-				android.R.id.text1
-		};
-		ListAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, courseLoader.loadInBackground(), from, to, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		
-		setListAdapter(adapter);
+		getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
 		
 		View detailsView = getActivity().findViewById(R.id.record_details);
 		
@@ -113,7 +97,20 @@ public class RecordFragment extends ListFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
+		switch(item.getItemId()){
+		case R.id.action_record_refresh:
+			getActivity().getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionLoaderHelper());
+			break;
+		case R.id.action_record_preferences:
+			Intent intent = new Intent();
+			intent.setAction(PreferencesActivity.class.getName());
+			startActivityForResult(intent, ACTIVITY_PREFERENCES);
+			break;
+		case R.id.action_record_close_session:
+			break;
+		default:
+			break;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -146,7 +143,7 @@ public class RecordFragment extends ListFragment {
 		
 		if(landscape){
 
-			DetailsFragment details = (DetailsFragment) getFragmentManager().findFragmentById(R.id.record_details);
+			DetailsFragment details = (DetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.record_details);
 			if(details == null || details.getShownIndex() != position){
 				details = DetailsFragment.newInstance(position);
 				
@@ -170,14 +167,48 @@ public class RecordFragment extends ListFragment {
 
 		@Override
 		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			// TODO Auto-generated method stub
-			return null;
+			CursorLoader loader = null;
+			switch(id){
+			case LOADER_SPINNER:
+				break;
+			case LOADER_SUBJECTS:
+				Uri uri = GradesContract.CONTENT_NAME_SUBJECTS;
+				String[] projection = {
+						GradesContract.SubjectsTable._ID,
+						GradesContract.SubjectsTable.COL_SU_NAME
+				};
+				String selection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=?";
+				String[] selectionArgs = {
+						"es"
+				};
+				loader = new CursorLoader(getActivity(), uri, projection, selection, selectionArgs, null);
+
+				break;
+			default:
+				break;
+			}
+			return loader;
 		}
 
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-			// TODO Auto-generated method stub
-			
+			switch (loader.getId()){
+			case LOADER_SPINNER:
+				
+				break;
+			case LOADER_SUBJECTS:
+				String[] from = {
+						GradesContract.SubjectsTable.COL_SU_NAME
+				};
+				int[] to = {
+						android.R.id.text1
+				};
+				ListAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, from, to, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				setListAdapter(adapter);
+				break;
+			default:
+				break;
+			}
 		}
 
 		@Override

@@ -34,30 +34,14 @@ public class ConnectLoader extends AsyncTaskLoader<String>{
 	public ConnectLoader(Context context, Bundle args) {
 		super(context);
 		this.context = context;
-		this.userName = args.getString(PreferencesActivity.PREFERENCE_USER_NAME);
-		this.passWord = args.getString(PreferencesActivity.PREFERENCE_PASS_WORD);
-
+		this.userName = PreferencesActivity.getUserName(context);
+		this.passWord = PreferencesActivity.getPassWord(context);
 	}
 	
 	public static boolean isConnected(Context context){
 		ConnectivityManager connection = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		return (connection.getActiveNetworkInfo().isAvailable() && connection.getActiveNetworkInfo().isConnectedOrConnecting());
 	}
-
-//			try{
-//				JSONObject object = new JSONObject(response);
-//				int error = object.getInt(GradesParser.nError);
-//				if(error == 0){
-//					callBack.responseOkFromServer(response);
-//				}else{
-//					callBack.responseBadFromServer(response);
-//				}
-//			}catch(JSONException e){
-//				Log.d(logging, "Error in response from server: " + response);
-//				callBack.responseBadFromServer(response);
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
 
 	@Override
 	public String loadInBackground() {
@@ -101,6 +85,6 @@ public class ConnectLoader extends AsyncTaskLoader<String>{
 			response = null;
 			e.printStackTrace();
 		}
-	        return response;
+	    return response;
 	}
 }
