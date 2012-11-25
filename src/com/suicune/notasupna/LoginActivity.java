@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.GradesParser;
@@ -91,8 +92,8 @@ public class LoginActivity extends ActionBarActivity {
 	}
 
 	/**
-	 * Attempts to sign in or register the account specified by the login form.
-	 * If there are form errors (invalid email, missing fields, etc.), the
+	 * Attempts to sign in the account specified by the login form.
+	 * If there are form errors (invalid id, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
 	public void attemptLogin() {
@@ -193,8 +194,16 @@ public class LoginActivity extends ActionBarActivity {
 		showProgress(false);
 		switch(errorCode){
 		case ERROR_OBJECT:
+			Toast.makeText(getApplicationContext(), R.string.error_grades, Toast.LENGTH_LONG).show();
 			break;
 		case ERROR_NO_JSON:
+			if(response.contains("403")){
+				
+			}else if(response.contains("404")){
+				
+			}else{
+				Toast.makeText(getApplicationContext(), R.string.error_connecting, Toast.LENGTH_LONG).show();
+			}
 			break;
 		default:
 			break;
