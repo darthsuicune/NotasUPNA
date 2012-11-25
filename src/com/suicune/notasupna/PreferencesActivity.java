@@ -1,6 +1,6 @@
 package com.suicune.notasupna;
 
-import com.suicune.notasupna.Helpers.CryptoBlock;
+import com.suicune.notasupna.helpers.CryptoBlock;
 
 import android.app.Activity;
 import android.content.Context;

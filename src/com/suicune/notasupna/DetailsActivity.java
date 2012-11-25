@@ -25,7 +25,7 @@ public class DetailsActivity extends ActionBarActivity {
 	    	getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 	        DetailsFragment details = new DetailsFragment();
 	        details.setArguments(getIntent().getExtras());
-	        getFragmentManager().beginTransaction().add(android.R.id.content, details).commit();
+	        getSupportFragmentManager().beginTransaction().add(android.R.id.content, details).commit();
 	    }
 		super.onCreate(savedInstanceState);
 	}

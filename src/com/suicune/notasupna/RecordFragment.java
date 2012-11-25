@@ -25,9 +25,9 @@ import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
-import com.suicune.notasupna.Database.GradesContract;
-import com.suicune.notasupna.Helpers.ConnectLoader;
-import com.suicune.notasupna.Helpers.GradesParser;
+import com.suicune.notasupna.database.GradesContract;
+import com.suicune.notasupna.helpers.ConnectLoader;
+import com.suicune.notasupna.helpers.GradesParser;
 
 public class RecordFragment extends ListFragment {
 	private boolean landscape;
@@ -167,48 +167,79 @@ public class RecordFragment extends ListFragment {
 	public void failedDownload(){
 		Toast.makeText(getActivity(), R.string.error_downloading, Toast.LENGTH_LONG).show();
 	}
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void setSpinnerAdapter(SpinnerAdapter mSpinnerAdapter){
+		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
+			@Override
+			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+				
+				return false;
+			}
+		});
+	}
+	
 	public class CursorLoaderHelper implements LoaderCallbacks<Cursor>{
 
 		@Override
 		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			CursorLoader loader = null;
+			CursorLoader mLoader = null;
+			Uri mUri;
+			String language = PreferencesActivity.getRecordLanguage(getActivity());
 			switch(id){
 			case LOADER_SPINNER:
+				mUri = GradesContract.CONTENT_NAME_COURSES;
+				String[] spinnerProjection = {
+						GradesContract.CoursesTable._ID,
+						GradesContract.CoursesTable.COL_CO_NAME
+				};
+				String spinnerSelection = GradesContract.CoursesTable.COL_CO_LANGUAGE + "=?";
+				String[] spinnerSelectionArgs = {
+						language
+				};
+				mLoader = new CursorLoader(getActivity(), mUri, spinnerProjection, spinnerSelection, spinnerSelectionArgs, null);
 				break;
 			case LOADER_SUBJECTS:
-				Uri uri = GradesContract.CONTENT_NAME_SUBJECTS;
-				String[] projection = {
+				mUri = GradesContract.CONTENT_NAME_SUBJECTS;
+				String[] subjectsProjection = {
 						GradesContract.SubjectsTable._ID,
 						GradesContract.SubjectsTable.COL_SU_NAME
 				};
-				String selection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=?";
-				String[] selectionArgs = {
-						"es"
+				String subjectsSelection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=?";
+				String[] subjectsSelectionArgs = {
+						language
 				};
-				loader = new CursorLoader(getActivity(), uri, projection, selection, selectionArgs, null);
+				mLoader = new CursorLoader(getActivity(), mUri, subjectsProjection, subjectsSelection, subjectsSelectionArgs, null);
 
 				break;
 			default:
 				break;
 			}
-			return loader;
+			return mLoader;
 		}
 
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 			switch (loader.getId()){
 			case LOADER_SPINNER:
-				
+				String[] spinnerFrom = {
+						GradesContract.CoursesTable.COL_CO_NAME
+				};
+				int[] spinnerTo = {
+					android.R.id.text1	
+				};
+				SpinnerAdapter mSpinnerAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, cursor, spinnerFrom, spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				setSpinnerAdapter(mSpinnerAdapter);
 				break;
 			case LOADER_SUBJECTS:
-				String[] from = {
+				String[] subjectsFrom = {
 						GradesContract.SubjectsTable.COL_SU_NAME
 				};
-				int[] to = {
+				int[] subjectsTo = {
 						android.R.id.text1
 				};
-				SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, from, to, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-				setListAdapter(adapter);
+				SimpleCursorAdapter mSimpleCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				setListAdapter(mSimpleCursorAdapter);
 				break;
 			default:
 				break;
@@ -226,7 +257,15 @@ public class RecordFragment extends ListFragment {
 
 		@Override
 		public Loader<String> onCreateLoader(int id, Bundle args) {
-			return new ConnectLoader(getActivity(), args);
+			Loader<String> loader = null;
+			switch (id){
+			case LOADER_CONNECTION:
+				loader = new ConnectLoader(getActivity(), args);
+				break;
+			default:
+				break;
+			}
+			return loader;
 		}
 
 		@Override

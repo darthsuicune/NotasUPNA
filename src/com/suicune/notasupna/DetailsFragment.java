@@ -11,8 +11,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.suicune.notasupna.Database.GradesContract;
-import com.suicune.notasupna.Helpers.GradesParser;
+import com.suicune.notasupna.database.GradesContract;
+import com.suicune.notasupna.helpers.GradesParser;
 
 public class DetailsFragment extends Fragment {
 	public static final String EXTRA_SUBJECT = "subject";

@@ -20,8 +20,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.suicune.notasupna.Helpers.ConnectLoader;
-import com.suicune.notasupna.Helpers.GradesParser;
+import com.suicune.notasupna.helpers.ConnectLoader;
+import com.suicune.notasupna.helpers.GradesParser;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -190,6 +190,7 @@ public class LoginActivity extends ActionBarActivity {
 	}
 	
 	public void failedLogin(String response, int errorCode){
+		showProgress(false);
 		switch(errorCode){
 		case ERROR_OBJECT:
 			break;
