@@ -45,7 +45,7 @@ public class LoginActivity extends ActionBarActivity {
 	
 	private static final int ACTIVITY_RECORD = 1;
 	
-	private static final int ERROR_OBJECT = 1;
+	private static final int ERROR_JSON = 1;
 	private static final int ERROR_NO_JSON = 2;
 
 	@Override
@@ -136,7 +136,6 @@ public class LoginActivity extends ActionBarActivity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			PreferencesActivity.saveLoginData(getApplicationContext(), mUserName, mPassWord);
 			getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionHelper());
 		}
 	}
@@ -183,6 +182,7 @@ public class LoginActivity extends ActionBarActivity {
 	}
 	
 	public void doLogin(String response){
+		PreferencesActivity.saveLoginData(getApplicationContext(), mUserName, mPassWord);
 		Intent intent = new Intent();
 		intent.setAction(RecordActivity.class.getName());
 		intent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
@@ -193,13 +193,15 @@ public class LoginActivity extends ActionBarActivity {
 	public void failedLogin(String response, int errorCode){
 		showProgress(false);
 		switch(errorCode){
-		case ERROR_OBJECT:
-			Toast.makeText(getApplicationContext(), R.string.error_grades, Toast.LENGTH_LONG).show();
+		case ERROR_JSON:
+			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
 			break;
 		case ERROR_NO_JSON:
-			if(response.contains("403")){
+			if(response.contains("HTTP Status 403")){
 				
-			}else if(response.contains("404")){
+			}else if(response.contains("HTTP Status 404")){
+				
+			}else if(response.contains("HTTP Status 401")){
 				
 			}else{
 				Toast.makeText(getApplicationContext(), R.string.error_connecting, Toast.LENGTH_LONG).show();
@@ -225,7 +227,8 @@ public class LoginActivity extends ActionBarActivity {
 				if(error == 0){
 					doLogin(response);
 				}else{
-					failedLogin(response, ERROR_OBJECT);
+					String errorMsg = object.getString(GradesParser.nErrorMsg);
+					failedLogin(errorMsg, ERROR_JSON);
 				}
 			}catch(JSONException e){
 				Log.d(ConnectLoader.logging, "Error in response from server: " + response);
@@ -237,7 +240,6 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		public void onLoaderReset(Loader<String> loader) {
-			// TODO Auto-generated method stub
 			
 		}
 	}
