@@ -1,14 +1,15 @@
 package com.suicune.notasupna;
 
-import com.suicune.notasupna.helpers.CryptoBlock;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-public class PreferencesActivity extends Activity {
+import com.suicune.notasupna.helpers.CryptoBlock;
+
+public class PreferencesActivity extends PreferenceActivity {
 	public static final String LANGUAGE_SPANISH = "es";
 	public static final String LANGUAGE_BASQUE = "eu";
 	public static final String LANGUAGE_ENGLISH = "en";
@@ -27,7 +28,14 @@ public class PreferencesActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		/**
+		 * As the preferences for the new API are not in the support library, we need to act in different ways depending on the version of the device
+		 */
+		if(Build.VERSION.SDK_INT >= 11){
+			
+		}else{
+			
+		}
 		super.onCreate(savedInstanceState);
 	}
 
