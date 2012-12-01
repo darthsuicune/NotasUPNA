@@ -34,8 +34,13 @@ public class ConnectLoader extends AsyncTaskLoader<String>{
 	public ConnectLoader(Context context, Bundle args) {
 		super(context);
 		this.context = context;
-		this.userName = PreferencesActivity.getUserName(context);
-		this.passWord = PreferencesActivity.getPassWord(context);
+		if(args.isEmpty()){
+			this.userName = PreferencesActivity.getUserName(context);
+			this.passWord = PreferencesActivity.getPassWord(context);	
+		}else{
+			this.userName = args.getString(PreferencesActivity.PREFERENCE_USER_NAME);
+			this.passWord = args.getString(PreferencesActivity.PREFERENCE_PASS_WORD);
+		}
 	}
 	
 	public static boolean isConnected(Context context){

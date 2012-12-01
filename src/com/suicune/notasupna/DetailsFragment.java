@@ -18,11 +18,11 @@ public class DetailsFragment extends Fragment {
 	public static final String EXTRA_SUBJECT = "subject";
 	private static final int LOADER_DETAILS = 1;
 	
-	public static DetailsFragment newInstance(String subject){
+	public static DetailsFragment newInstance(long subjectId){
 		DetailsFragment fragment = new DetailsFragment();
 		
 		Bundle args = new Bundle();
-		args.putString(EXTRA_SUBJECT, subject);
+		args.putLong(EXTRA_SUBJECT, subjectId);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -30,7 +30,7 @@ public class DetailsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Bundle args = new Bundle();
-		args.putString(GradesParser.nSubjectName, this.getArguments().getString(EXTRA_SUBJECT));
+		args.putLong(GradesParser.nSubjectName, this.getArguments().getLong(EXTRA_SUBJECT));
 		getActivity().getSupportLoaderManager().initLoader(LOADER_DETAILS, args, new CursorLoaderHelper());
 		super.onCreate(savedInstanceState);
 	}
@@ -65,7 +65,7 @@ public class DetailsFragment extends Fragment {
 			CursorLoader loader = null;
 			switch(id){
 			case LOADER_DETAILS:
-				String name = args.getString(GradesParser.nSubjectName);
+				Long subjectId = args.getLong(GradesParser.nSubjectName);
 				Uri uri = GradesContract.CONTENT_NAME_ALL;
 				String[] projection = {
 						GradesContract.SubjectsTable.TABLE_NAME + "." + GradesContract.SubjectsTable._ID,
@@ -74,10 +74,9 @@ public class DetailsFragment extends Fragment {
 						GradesContract.GradesTable.COL_GR_SU_CODE,
 						GradesContract.GradesTable.COL_GR_GRADE_NAME
 				};
-				String selection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=? AND " + GradesContract.SubjectsTable.COL_SU_NAME + "=?";
+				String selection = GradesContract.SubjectsTable._ID + "=?";
 				String[] selectionArgs = {
-						PreferencesActivity.getRecordLanguage(getActivity()),
-						name
+						Long.toString(subjectId)
 				};
 				loader = new CursorLoader(getActivity(), uri, projection, selection, selectionArgs, null);
 				break;

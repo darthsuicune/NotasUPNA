@@ -38,6 +38,8 @@ public class RecordFragment extends ListFragment {
 	private static final int LOADER_CONNECTION = 3;
 	
 	private static final int ACTIVITY_PREFERENCES = 1;
+	
+	private static final String COURSE_ID = "course_id";
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public class RecordFragment extends ListFragment {
 		ActionBar actionBar = activity.getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		actionBar.setListNavigationCallbacks(getSpinnerAdapter(), getOnNavigationListenerCallback());
+		getActivity().getSupportLoaderManager().initLoader(LOADER_SPINNER, null, new CursorLoaderHelper());
 
 		super.onAttach(activity);
 	}
@@ -98,7 +100,7 @@ public class RecordFragment extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case R.id.action_record_refresh:
-			getActivity().getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionLoaderHelper());
+			getActivity().getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionHelper());
 			break;
 		case R.id.action_record_preferences:
 			Intent intent = new Intent();
@@ -112,28 +114,6 @@ public class RecordFragment extends ListFragment {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	private SpinnerAdapter getSpinnerAdapter(){
-		Uri uri = GradesContract.CONTENT_NAME_COURSES;
-		String[] projection = {
-				GradesContract.CoursesTable._ID,
-				GradesContract.CoursesTable.COL_CO_NAME
-		};
-		String selection = GradesContract.CoursesTable.COL_CO_LANGUAGE + "=?";
-		String[] selectionArgs = {
-				"es"
-		};
-		CursorLoader courseLoader = new CursorLoader(getActivity(), uri, projection, selection, selectionArgs, null);
-		String[] from = {
-				GradesContract.CoursesTable.COL_CO_NAME
-		};
-		int[] to = {
-				android.R.id.text1
-		};
-		
-		SpinnerAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, courseLoader.loadInBackground(), from, to, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		return adapter;
-	}
 	
 	private void showDetails(int position){
 		cursorPosition = position;
@@ -144,7 +124,7 @@ public class RecordFragment extends ListFragment {
 
 			DetailsFragment details = (DetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.record_details);
 			if(details == null || details.getShownIndex() != position){
-				details = DetailsFragment.newInstance(getSubject(position));
+				details = DetailsFragment.newInstance(getSelectedItemId());
 				
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
 				ft.replace(R.id.record_details, details);
@@ -159,11 +139,6 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 	
-	public String getSubject(int position){
-		String subject = "";
-		return subject;
-	}
-	
 	public void failedDownload(){
 		Toast.makeText(getActivity(), R.string.error_downloading, Toast.LENGTH_LONG).show();
 	}
@@ -173,7 +148,9 @@ public class RecordFragment extends ListFragment {
 		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
 			@Override
 			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-				
+				Bundle args = new Bundle();
+				args.putLong(COURSE_ID, itemId);
+				getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
 				return false;
 			}
 		});
@@ -200,14 +177,16 @@ public class RecordFragment extends ListFragment {
 				mLoader = new CursorLoader(getActivity(), mUri, spinnerProjection, spinnerSelection, spinnerSelectionArgs, null);
 				break;
 			case LOADER_SUBJECTS:
+				
 				mUri = GradesContract.CONTENT_NAME_SUBJECTS;
 				String[] subjectsProjection = {
 						GradesContract.SubjectsTable._ID,
 						GradesContract.SubjectsTable.COL_SU_NAME
 				};
-				String subjectsSelection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=?";
+				String subjectsSelection = GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=? AND " + GradesContract.SubjectsTable.COL_SU_CO_CODE + " =?";
 				String[] subjectsSelectionArgs = {
-						language
+						language,
+						Long.toString(args.getLong(COURSE_ID))
 				};
 				mLoader = new CursorLoader(getActivity(), mUri, subjectsProjection, subjectsSelection, subjectsSelectionArgs, null);
 
@@ -253,7 +232,7 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 	
-	public class ConnectionLoaderHelper implements LoaderCallbacks<String>{
+	public class ConnectionHelper implements LoaderCallbacks<String>{
 
 		@Override
 		public Loader<String> onCreateLoader(int id, Bundle args) {

@@ -7,9 +7,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +24,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.GradesParser;
 
@@ -42,6 +46,7 @@ public class LoginActivity extends ActionBarActivity {
 	private TextView mLoginStatusMessageView;
 	
 	private static final int LOADER_CONNECTION = 1;
+	private static final int LOADER_CHECK_DATA = 2;
 	
 	private static final int ACTIVITY_RECORD = 1;
 	
@@ -52,6 +57,17 @@ public class LoginActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null, new CursorLoaderHelper());
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		getMenuInflater().inflate(R.menu.activity_login, menu);
+		return true;
+	}
+	
+	public void showLoginScreen(){
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
@@ -82,13 +98,6 @@ public class LoginActivity extends ActionBarActivity {
 						attemptLogin();
 					}
 				});
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		getMenuInflater().inflate(R.menu.activity_login, menu);
-		return true;
 	}
 
 	/**
@@ -136,7 +145,13 @@ public class LoginActivity extends ActionBarActivity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionHelper());
+			
+			Bundle args = new Bundle();
+			args.putString(PreferencesActivity.PREFERENCE_USER_NAME, mUserName);
+			args.putString(PreferencesActivity.PREFERENCE_PASS_WORD, mPassWord);
+			
+			
+			getSupportLoaderManager().restartLoader(LOADER_CONNECTION, args, new ConnectionHelper());
 		}
 	}
 
@@ -185,7 +200,9 @@ public class LoginActivity extends ActionBarActivity {
 		PreferencesActivity.saveLoginData(getApplicationContext(), mUserName, mPassWord);
 		Intent intent = new Intent();
 		intent.setAction(RecordActivity.class.getName());
-		intent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
+		if(response != null){
+			intent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
+		}
 		startActivityForResult(intent, ACTIVITY_RECORD);
 		this.finish();
 	}
@@ -197,12 +214,8 @@ public class LoginActivity extends ActionBarActivity {
 			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
 			break;
 		case ERROR_NO_JSON:
-			if(response.contains("HTTP Status 403")){
-				
-			}else if(response.contains("HTTP Status 404")){
-				
-			}else if(response.contains("HTTP Status 401")){
-				
+			if(response.contains("HTTP Status 403") || response.contains("HTTP Status 401")){
+				Toast.makeText(getApplicationContext(), R.string.error_login, Toast.LENGTH_LONG).show();
 			}else{
 				Toast.makeText(getApplicationContext(), R.string.error_connecting, Toast.LENGTH_LONG).show();
 			}
@@ -221,26 +234,72 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
-			try{
-				JSONObject object = new JSONObject(response);
-				int error = object.getInt(GradesParser.nError);
-				if(error == 0){
-					doLogin(response);
-				}else{
-					String errorMsg = object.getString(GradesParser.nErrorMsg);
-					failedLogin(errorMsg, ERROR_JSON);
+			if(response == null){
+				Toast.makeText(getApplicationContext(), R.string.error_connection, Toast.LENGTH_LONG).show();
+			}else{
+				try{
+					JSONObject object = new JSONObject(response);
+					int error = object.getInt(GradesParser.nError);
+					if(error == 0){
+						doLogin(response);
+					}else{
+						String errorMsg = object.getString(GradesParser.nErrorMsg);
+						failedLogin(errorMsg, ERROR_JSON);
+					}
+				}catch(JSONException e){
+					Log.d(ConnectLoader.logging, "Error in response from server: " + response);
+					failedLogin(response, ERROR_NO_JSON);
+				}catch(Exception e){
+					e.printStackTrace();
 				}
-			}catch(JSONException e){
-				Log.d(ConnectLoader.logging, "Error in response from server: " + response);
-				failedLogin(response, ERROR_NO_JSON);
-			}catch(Exception e){
-				e.printStackTrace();
 			}
 		}
 
 		@Override
 		public void onLoaderReset(Loader<String> loader) {
+			loader.reset();
+		}
+	}
+	
+	public class CursorLoaderHelper implements LoaderCallbacks<Cursor>{
+
+		@Override
+		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			CursorLoader loader = null;
+			switch(id){
+			case LOADER_CHECK_DATA:
+				Uri uri = GradesContract.CONTENT_NAME_STUDENTS;
+				String[] projection = {
+						GradesContract.StudentsTable._ID
+				};
+				loader = new CursorLoader(getApplicationContext(), uri, projection, null, null, null);
+				break;
+			default:
+				break;
+			}
+			return loader;
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+			switch(loader.getId()){
+			case LOADER_CHECK_DATA:
+				if(cursor.getCount() == 0){
+					showLoginScreen();
+				}else{
+					doLogin(null);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Cursor> cursor) {
+			// TODO Auto-generated method stub
 			
 		}
+		
 	}
 }
