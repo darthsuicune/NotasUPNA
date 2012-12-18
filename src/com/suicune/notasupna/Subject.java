@@ -9,7 +9,7 @@ import android.database.Cursor;
 public class Subject {
 	public List<Grade> mGradesList;
 	
-	public int mSubjectCode;
+	public int mSubjectId;
 	public String mSubjectName;
 	public String mSubjectType;
 	public String mSubjectLanguage;
@@ -17,22 +17,14 @@ public class Subject {
 	public int mSubjectCredits;
 	
 	
-	public Subject(Cursor cursor){
-		loadData(cursor);
-	}
-	
-	public void swapCursor(Cursor newCursor){
-		loadData(newCursor);
-	}
-	
-	private void loadData(Cursor cursor){
-		if(cursor.moveToFirst()){
-			mSubjectCode = cursor.getInt(cursor.getColumnIndex(GradesContract.SubjectsTable._ID));
-			mSubjectName = cursor.getString(cursor.getColumnIndex(GradesContract.SubjectsTable.COL_SU_NAME));
-			mSubjectType = cursor.getString(cursor.getColumnIndex(GradesContract.SubjectsTable.COL_SU_TYPE));
-			mSubjectLanguage = cursor.getString(cursor.getColumnIndex(GradesContract.SubjectsTable.COL_SU_LANGUAGE));
-			mSubjectCourseCode = cursor.getInt(cursor.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE));
-			mSubjectCredits = cursor.getInt(cursor.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS));
+	public Subject(Cursor c){
+		if(c != null && c.moveToFirst()){
+			mSubjectId = c.getInt(c.getColumnIndex(GradesContract.SubjectsTable._ID));
+			mSubjectName = c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_NAME));
+			mSubjectType = c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_TYPE));
+			mSubjectLanguage = c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_LANGUAGE));
+			mSubjectCourseCode = c.getInt(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE));
+			mSubjectCredits = c.getInt(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS));
 		}
 	}
 }

@@ -40,6 +40,8 @@ public class RecordFragment extends ListFragment {
 	private static final int ACTIVITY_PREFERENCES = 1;
 	
 	private static final String COURSE_ID = "course_id";
+	
+	private Record mRecord = null;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

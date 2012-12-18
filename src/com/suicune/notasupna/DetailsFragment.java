@@ -18,6 +18,8 @@ public class DetailsFragment extends Fragment {
 	public static final String EXTRA_SUBJECT = "subject";
 	private static final int LOADER_DETAILS = 1;
 	
+	private Grade mGrade;
+	
 	public static DetailsFragment newInstance(long subjectId){
 		DetailsFragment fragment = new DetailsFragment();
 		
