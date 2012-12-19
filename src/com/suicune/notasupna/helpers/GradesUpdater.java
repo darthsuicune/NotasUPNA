@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.suicune.notasupna.PreferencesActivity;
@@ -173,9 +174,15 @@ public class GradesUpdater extends IntentService{
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		
 		//Set the notification values
-		Notification notification = new Notification(icon, tickerText, when);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+		builder.setSmallIcon(icon);
+		builder.setTicker(tickerText);
+		builder.setWhen(when);
+		builder.setContentIntent(pendingIntent);
+		builder.setContentTitle(notificationTitle);
+		builder.setContentText(notificationMessage);
+		Notification notification = builder.build();
 		notification.defaults = Notification.DEFAULT_ALL;
-		notification.setLatestEventInfo(this, notificationTitle, notificationMessage, pendingIntent);
 		
 		//Launch the notification
 		mNotificationManager.notify(NOTIFICATION_NEW_GRADES, notification);

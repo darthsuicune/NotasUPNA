@@ -12,7 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.suicune.notasupna.database.GradesContract;
-import com.suicune.notasupna.helpers.GradesParser;
+import com.suicune.notasupna.helpers.GradesParserLoader;
 
 public class DetailsFragment extends Fragment {
 	public static final String EXTRA_SUBJECT = "subject";
@@ -32,7 +32,7 @@ public class DetailsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Bundle args = new Bundle();
-		args.putLong(GradesParser.nSubjectName, this.getArguments().getLong(EXTRA_SUBJECT));
+		args.putLong(GradesParserLoader.nSubjectName, this.getArguments().getLong(EXTRA_SUBJECT));
 		getActivity().getSupportLoaderManager().initLoader(LOADER_DETAILS, args, new CursorLoaderHelper());
 		super.onCreate(savedInstanceState);
 	}
@@ -67,7 +67,7 @@ public class DetailsFragment extends Fragment {
 			CursorLoader loader = null;
 			switch(id){
 			case LOADER_DETAILS:
-				Long subjectId = args.getLong(GradesParser.nSubjectName);
+				Long subjectId = args.getLong(GradesParserLoader.nSubjectName);
 				Uri uri = GradesContract.CONTENT_NAME_ALL;
 				String[] projection = {
 						GradesContract.SubjectsTable.TABLE_NAME + "." + GradesContract.SubjectsTable._ID,

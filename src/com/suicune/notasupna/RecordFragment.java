@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -23,11 +24,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
-import com.suicune.notasupna.helpers.GradesParser;
+import com.suicune.notasupna.helpers.GradesParserLoader;
 
 public class RecordFragment extends ListFragment {
 	private boolean landscape;
@@ -35,8 +37,9 @@ public class RecordFragment extends ListFragment {
 	
 	private static final int LOADER_SPINNER = 1;
 	private static final int LOADER_SUBJECTS = 2;
-	private static final int LOADER_CONNECTION = 3;
-	private static final int LOADER_PARSER = 4;
+	private static final int LOADER_STUDENT = 3;
+	private static final int LOADER_CONNECTION = 5;
+	private static final int LOADER_PARSER = 6;
 	
 	private static final int ACTIVITY_PREFERENCES = 1;
 	
@@ -44,22 +47,31 @@ public class RecordFragment extends ListFragment {
 	
 	private Record mRecord = null;
 	private Student mStudent = null;
+	private long mCourseId = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		LoaderManager manager = getActivity().getSupportLoaderManager();
 		Bundle extras = getActivity().getIntent().getExtras();
 		if(extras != null){
-			String data = extras.getString(RecordActivity.EXTRA_DOWNLOADED_DATA);
-			
+			Bundle args = new Bundle();
+			args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA, extras.getString(RecordActivity.EXTRA_DOWNLOADED_DATA));
+			manager.initLoader(LOADER_PARSER, args, new AsyncHelper());
+		}else{
+			manager.initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
 		}
-		super.onCreate(savedInstanceState);
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
+			manager.initLoader(LOADER_SPINNER, null, new CursorLoaderHelper());
+		}
+		manager.initLoader(LOADER_STUDENT, null, new CursorLoaderHelper());
+	
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
 		
 		View detailsView = getActivity().findViewById(R.id.record_details);
 		
@@ -90,12 +102,11 @@ public class RecordFragment extends ListFragment {
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	public void onAttach(Activity activity) {
+		super.onAttach(activity);
 		ActionBar actionBar = activity.getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		getActivity().getSupportLoaderManager().initLoader(LOADER_SPINNER, null, new CursorLoaderHelper());
-
-		super.onAttach(activity);
 	}
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -104,7 +115,9 @@ public class RecordFragment extends ListFragment {
 			
 			@Override
 			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-				// TODO Auto-generated method stub
+				Bundle args = new Bundle();
+				args.putLong(COURSE_ID, itemId);
+				getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, args, new CursorLoaderHelper());
 				return false;
 			}
 		};
@@ -192,7 +205,6 @@ public class RecordFragment extends ListFragment {
 				mLoader = new CursorLoader(getActivity(), mUri, spinnerProjection, spinnerSelection, spinnerSelectionArgs, null);
 				break;
 			case LOADER_SUBJECTS:
-				
 				mUri = GradesContract.CONTENT_NAME_SUBJECTS;
 				String[] subjectsProjection = {
 						GradesContract.SubjectsTable._ID,
@@ -206,6 +218,18 @@ public class RecordFragment extends ListFragment {
 				mLoader = new CursorLoader(getActivity(), mUri, subjectsProjection, subjectsSelection, subjectsSelectionArgs, null);
 
 				break;
+			case LOADER_STUDENT:
+				mUri = GradesContract.CONTENT_NAME_STUDENTS;
+				String[] studentProjection = {
+					GradesContract.StudentsTable._ID,
+					GradesContract.StudentsTable.COL_ST_NAME,
+					GradesContract.StudentsTable.COL_ST_SURNAME_1,
+					GradesContract.StudentsTable.COL_ST_SURNAME_2,
+					GradesContract.StudentsTable.COL_ST_NIA,
+					GradesContract.StudentsTable.COL_ST_NIF,
+				};
+				mLoader = new CursorLoader(getActivity(), mUri, studentProjection, null, null, null);
+				break;
 			default:
 				break;
 			}
@@ -214,26 +238,45 @@ public class RecordFragment extends ListFragment {
 
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+			SimpleCursorAdapter mSimpleCursorAdapter = null;
 			switch (loader.getId()){
 			case LOADER_SPINNER:
-				String[] spinnerFrom = {
-						GradesContract.CoursesTable.COL_CO_NAME
-				};
-				int[] spinnerTo = {
-					android.R.id.text1	
-				};
-				SpinnerAdapter mSpinnerAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, cursor, spinnerFrom, spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-				setSpinnerAdapter(mSpinnerAdapter);
+				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+					String[] spinnerFrom = {
+							GradesContract.CoursesTable.COL_CO_NAME
+					};
+					int[] spinnerTo = {
+						android.R.id.text1	
+					};
+					SpinnerAdapter mSpinnerAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, cursor, spinnerFrom, spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+					setSpinnerAdapter(mSpinnerAdapter);
+				}
+				if(cursor.moveToFirst()){
+					mCourseId = cursor.getLong(cursor.getColumnIndex(GradesContract.CoursesTable._ID));
+				}
 				break;
 			case LOADER_SUBJECTS:
+				mRecord = new Record(cursor);
 				String[] subjectsFrom = {
 						GradesContract.SubjectsTable.COL_SU_NAME
 				};
 				int[] subjectsTo = {
 						android.R.id.text1
 				};
-				SimpleCursorAdapter mSimpleCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				mSimpleCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, cursor, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				setListAdapter(mSimpleCursorAdapter);
+				break;
+			case LOADER_STUDENT:
+				if(cursor.moveToFirst()){
+					mStudent = new Student(cursor);
+					 
+					TextView mStudentNameView = (TextView) getActivity().findViewById(R.id.student_name);
+					TextView mStudentNiaView = (TextView) getActivity().findViewById(R.id.student_nia);
+					TextView mStudentNifView = (TextView) getActivity().findViewById(R.id.student_nif);
+					mStudentNameView.setText(mStudent.mStudentFullName);
+					mStudentNiaView.setText(mStudent.mStudentNia);
+					mStudentNifView.setText(mStudent.mStudentNif);
+				}
 				break;
 			default:
 				break;
@@ -257,6 +300,7 @@ public class RecordFragment extends ListFragment {
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
+				loader = new GradesParserLoader(getActivity(), args);
 				break;
 			default:
 				break;
@@ -270,9 +314,11 @@ public class RecordFragment extends ListFragment {
 			case LOADER_CONNECTION:
 				try{
 					JSONObject object = new JSONObject(response);
-					int error = object.getInt(GradesParser.nError);
+					int error = object.getInt(GradesParserLoader.nError);
 					if(error == 0){
-						getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
+						Bundle args = new Bundle();
+						args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
+						getActivity().getSupportLoaderManager().initLoader(LOADER_PARSER, args, new AsyncHelper());
 					}else{
 						failedDownload();
 					}
@@ -284,6 +330,9 @@ public class RecordFragment extends ListFragment {
 				}
 				break;
 			case LOADER_PARSER:
+				if(!response.equalsIgnoreCase(GradesParserLoader.PARSE_FAILED)){
+					getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
+				}
 				break;
 			default:
 				break;

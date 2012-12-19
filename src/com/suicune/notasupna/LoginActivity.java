@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
-import com.suicune.notasupna.helpers.GradesParser;
+import com.suicune.notasupna.helpers.GradesParserLoader;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -239,11 +239,11 @@ public class LoginActivity extends ActionBarActivity {
 			}else{
 				try{
 					JSONObject object = new JSONObject(response);
-					int error = object.getInt(GradesParser.nError);
+					int error = object.getInt(GradesParserLoader.nError);
 					if(error == 0){
 						doLogin(response);
 					}else{
-						String errorMsg = object.getString(GradesParser.nErrorMsg);
+						String errorMsg = object.getString(GradesParserLoader.nErrorMsg);
 						failedLogin(errorMsg, ERROR_JSON);
 					}
 				}catch(JSONException e){

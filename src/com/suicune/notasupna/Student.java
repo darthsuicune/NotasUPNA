@@ -9,6 +9,7 @@ public class Student {
 	public String mStudentName;
 	public String mStudentSurname1;
 	public String mStudentSurname2;
+	public String mStudentFullName;
 	public String mStudentNia;
 	public String mStudentNif;
 	
@@ -20,6 +21,7 @@ public class Student {
 			mStudentSurname2 = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_SURNAME_2));
 			mStudentNia = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_NIA));
 			mStudentNif = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_NIF));
+			mStudentFullName = mStudentSurname1 + " " + mStudentSurname2 + ", " + mStudentName;
 		}
 	}
 }
