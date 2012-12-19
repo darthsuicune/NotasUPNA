@@ -16,7 +16,6 @@ public class Subject {
 	public int mSubjectCourseCode;
 	public int mSubjectCredits;
 	
-	
 	public Subject(Cursor c){
 		if(c != null && c.moveToFirst()){
 			mSubjectId = c.getInt(c.getColumnIndex(GradesContract.SubjectsTable._ID));
@@ -26,5 +25,9 @@ public class Subject {
 			mSubjectCourseCode = c.getInt(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE));
 			mSubjectCredits = c.getInt(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS));
 		}
+	}
+	
+	public void addGrade(Grade g){
+		mGradesList.add(g);
 	}
 }

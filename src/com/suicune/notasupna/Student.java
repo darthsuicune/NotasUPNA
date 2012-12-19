@@ -1,13 +1,10 @@
 package com.suicune.notasupna;
 
-import java.util.List;
+import android.database.Cursor;
 
 import com.suicune.notasupna.database.GradesContract;
 
-import android.database.Cursor;
-
 public class Student {
-	public List<Record> mRecordsList;
 	public int mStudentId;
 	public String mStudentName;
 	public String mStudentSurname1;

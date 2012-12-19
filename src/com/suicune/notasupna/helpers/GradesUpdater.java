@@ -140,7 +140,7 @@ public class GradesUpdater extends IntentService{
 				length = prefs.getInt(PreferencesActivity.DATA_ES, 0);
 			}
 			if(length != response.length()){
-				GradesParser.parseData(this, response, language);
+//				GradesParser.parseData(this, response, language);
 				sendNotification();
 			}else{
 				//Show a info message in the logcat to say that no new data has been downloading.

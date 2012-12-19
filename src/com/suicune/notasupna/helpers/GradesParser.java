@@ -9,12 +9,25 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
 import android.widget.Toast;
 
+import com.suicune.notasupna.PreferencesActivity;
 import com.suicune.notasupna.R;
+import com.suicune.notasupna.RecordActivity;
 import com.suicune.notasupna.database.GradesContract;
 
-public class GradesParser{
+public class GradesParser extends AsyncTaskLoader<String>{
+	private String mJsonString;
+	private Context mContext;
+	
+	public GradesParser(Context context, Bundle args) {
+		super(context);
+		mJsonString = args.getString(RecordActivity.EXTRA_DOWNLOADED_DATA);
+		mContext = context;
+	}
+
 	//Constants defined for the results list
 	public static final String nArrayPlanList = "listaResultados";
 	public static final String nObjectStudentInformation = "alumno";
@@ -55,17 +68,15 @@ public class GradesParser{
 	private static final int GRADE = 3;
 	private static final int PLAN = 4;
 
-	/*
-	 * We are using just one method to parse everything and insert it into the database.
-	 * For this method we need to know the exact structure of the object to parse. This structure is defined on the project documentation.
-	 */
-	public static boolean parseData(Context context, String data, String language){
+	@Override
+	public String loadInBackground() {
 		String nia, coCode, planName, subjectName;
+		String language = PreferencesActivity.getRecordLanguage(mContext);
 		
 		try{
-			JSONObject full = new JSONObject(data);
+			JSONObject full = new JSONObject(mJsonString);
 
-			ContentResolver cr = context.getContentResolver();
+			ContentResolver cr = mContext.getContentResolver();
 			//Parse the student info, as it's just one item with multiple subitems
 			JSONObject student = full.getJSONObject(nObjectStudentInformation);
 			//We need the nia for other insertions ahead
@@ -151,7 +162,7 @@ public class GradesParser{
 						if(call.length() > 2){
 							gradeValues.put(GradesContract.GradesTable.COL_GR_CALL, call);
 						}else{
-							gradeValues.put(GradesContract.GradesTable.COL_GR_CALL, context.getString(R.string.call_unknown));
+							gradeValues.put(GradesContract.GradesTable.COL_GR_CALL, mContext.getString(R.string.call_unknown));
 						}
 						gradeValues.put(GradesContract.GradesTable.COL_GR_CALL_NUMBER, grade.getString(nGradeCallNumber));
 						gradeValues.put(GradesContract.GradesTable.COL_GR_PROVISIONAL, grade.getString(nGradeProvisional));
@@ -161,11 +172,11 @@ public class GradesParser{
 					}
 				}
 			}
-			return true;
+			return "";
 		}catch (JSONException e){
 			e.printStackTrace();
-			Toast.makeText(context, R.string.error_parsing, Toast.LENGTH_LONG).show();
-			return false;
+			Toast.makeText(mContext, R.string.error_parsing, Toast.LENGTH_LONG).show();
+			return null;
 		}
 	}
 	
@@ -234,4 +245,5 @@ public class GradesParser{
 		}
 		return mRowId;
 	}
+
 }

@@ -36,12 +36,24 @@ public class RecordFragment extends ListFragment {
 	private static final int LOADER_SPINNER = 1;
 	private static final int LOADER_SUBJECTS = 2;
 	private static final int LOADER_CONNECTION = 3;
+	private static final int LOADER_PARSER = 4;
 	
 	private static final int ACTIVITY_PREFERENCES = 1;
 	
 	private static final String COURSE_ID = "course_id";
 	
 	private Record mRecord = null;
+	private Student mStudent = null;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		Bundle extras = getActivity().getIntent().getExtras();
+		if(extras != null){
+			String data = extras.getString(RecordActivity.EXTRA_DOWNLOADED_DATA);
+			
+		}
+		super.onCreate(savedInstanceState);
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -102,7 +114,7 @@ public class RecordFragment extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case R.id.action_record_refresh:
-			getActivity().getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new ConnectionHelper());
+			getActivity().getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new AsyncHelper());
 			break;
 		case R.id.action_record_preferences:
 			Intent intent = new Intent();
@@ -157,6 +169,7 @@ public class RecordFragment extends ListFragment {
 			}
 		});
 	}
+
 	
 	public class CursorLoaderHelper implements LoaderCallbacks<Cursor>{
 
@@ -234,7 +247,7 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 	
-	public class ConnectionHelper implements LoaderCallbacks<String>{
+	public class AsyncHelper implements LoaderCallbacks<String>{
 
 		@Override
 		public Loader<String> onCreateLoader(int id, Bundle args) {
@@ -242,6 +255,8 @@ public class RecordFragment extends ListFragment {
 			switch (id){
 			case LOADER_CONNECTION:
 				loader = new ConnectLoader(getActivity(), args);
+				break;
+			case LOADER_PARSER:
 				break;
 			default:
 				break;
@@ -251,19 +266,27 @@ public class RecordFragment extends ListFragment {
 
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
-			try{
-				JSONObject object = new JSONObject(response);
-				int error = object.getInt(GradesParser.nError);
-				if(error == 0){
-					getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
-				}else{
+			switch(loader.getId()){
+			case LOADER_CONNECTION:
+				try{
+					JSONObject object = new JSONObject(response);
+					int error = object.getInt(GradesParser.nError);
+					if(error == 0){
+						getActivity().getSupportLoaderManager().initLoader(LOADER_SUBJECTS, null, new CursorLoaderHelper());
+					}else{
+						failedDownload();
+					}
+				}catch(JSONException e){
+					Log.d(ConnectLoader.logging, "Error in response from server: " + response);
 					failedDownload();
+				}catch(Exception e){
+					e.printStackTrace();
 				}
-			}catch(JSONException e){
-				Log.d(ConnectLoader.logging, "Error in response from server: " + response);
-				failedDownload();
-			}catch(Exception e){
-				e.printStackTrace();
+				break;
+			case LOADER_PARSER:
+				break;
+			default:
+				break;
 			}
 		}
 
