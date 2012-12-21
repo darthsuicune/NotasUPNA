@@ -55,7 +55,7 @@ public class Record {
 				}
 				long gradeTime = c.getLong(c.getColumnIndex(GradesContract.GradesTable._ID));
 				int gradeSubject = c.getInt(c.getColumnIndex(GradesContract.GradesTable.COL_GR_SU_CODE));
-				if(currentGradeTime != gradeTime && currentGradeSubject != gradeSubject){
+				if(currentGradeTime != gradeTime || currentGradeSubject != gradeSubject){
 					currentGradeSubject = gradeSubject;
 					currentGradeTime = gradeTime;
 					currentGrade = new Grade(currentSubject, 

@@ -16,6 +16,7 @@
 
 package com.suicune.notasupna;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.ActionProvider;
@@ -30,6 +31,7 @@ import android.view.View;
  * <code>com.android.internal.view.menu.MenuItemImpl</code> in AOSP for a more complete
  * implementation.
  */
+@SuppressLint("NewApi")
 public class SimpleMenuItem implements MenuItem {
 
     private SimpleMenu mMenu;
