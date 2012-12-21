@@ -5,7 +5,7 @@
     android:orientation="horizontal" >
     
     <fragment 
-        android:name="com.suicune.upnagrades.RecordFragment"
+        android:name="com.suicune.notasupna.RecordFragment"
         android:id="@+id/record_record_fragment"
         android:layout_width="0dp"
         android:layout_weight="1"

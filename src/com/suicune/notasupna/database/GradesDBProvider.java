@@ -24,7 +24,7 @@ public class GradesDBProvider extends ContentProvider {
 	/*
 	 * Constant definitions for access to the database
 	 */
-	private static final String CONTENT_NAME = "com.suicune.upnagrades.Database.GradesDBProvider";
+	private static final String CONTENT_NAME = "com.suicune.notasupna.GradesDBProvider";
 	
 	
 	// Constant definitions for the different accesses to the database.

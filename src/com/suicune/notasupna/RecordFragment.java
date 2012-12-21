@@ -21,8 +21,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -93,6 +95,11 @@ public class RecordFragment extends ListFragment {
 	}
 	
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.record_fragment, container);
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
@@ -127,24 +134,30 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		ActionBar actionBar = activity.getActionBar();
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null, new CursorLoaderHelper());
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+			ActionBar actionBar = activity.getActionBar();
+			actionBar.setDisplayShowTitleEnabled(false);
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+			getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null, new CursorLoaderHelper());
+		}
 	}
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private OnNavigationListener getOnNavigationListenerCallback() {
-		return new OnNavigationListener() {
-			
-			@Override
-			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-				Bundle args = new Bundle();
-				args.putLong(COURSE_ID, itemId);
-				getActivity().getSupportLoaderManager().initLoader(LOADER_RECORD, args, new CursorLoaderHelper());
-				return false;
-			}
-		};
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+			return new OnNavigationListener() {
+				
+				@Override
+				public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+					Bundle args = new Bundle();
+					args.putLong(COURSE_ID, itemId);
+					getActivity().getSupportLoaderManager().initLoader(LOADER_RECORD, args, new CursorLoaderHelper());
+					return false;
+				}
+			};
+		}else{
+			return null;
+		}
 	}
 
 	@Override
@@ -199,15 +212,17 @@ public class RecordFragment extends ListFragment {
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void setSpinnerAdapter(SpinnerAdapter mSpinnerAdapter){
-		getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
-			@Override
-			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-				Bundle args = new Bundle();
-				args.putLong(COURSE_ID, itemId);
-				getActivity().getSupportLoaderManager().initLoader(LOADER_RECORD, null, new CursorLoaderHelper());
-				return false;
-			}
-		});
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+			getActivity().getActionBar().setListNavigationCallbacks(mSpinnerAdapter, new OnNavigationListener() {
+				@Override
+				public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+					Bundle args = new Bundle();
+					args.putLong(COURSE_ID, itemId);
+					getActivity().getSupportLoaderManager().initLoader(LOADER_RECORD, null, new CursorLoaderHelper());
+					return false;
+				}
+			});
+		}
 	}
 
 	
@@ -380,7 +395,7 @@ public class RecordFragment extends ListFragment {
 				R.id.record_item_credits,
 				R.id.record_item_grade
 		};
-		SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, c, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		RecordAdapter simpleCursorAdapter = new RecordAdapter(getActivity(), android.R.layout.simple_list_item_1, c, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		setListAdapter(simpleCursorAdapter);
 	}
 	
@@ -401,9 +416,10 @@ public class RecordFragment extends ListFragment {
 	
 	public class RecordAdapter extends SimpleCursorAdapter{
 
-		public RecordAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags, Record record) {
+		public RecordAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
 			super(context, layout, c, from, to, flags);
 			// TODO Auto-generated constructor stub
+			
 		}
 	}
 }

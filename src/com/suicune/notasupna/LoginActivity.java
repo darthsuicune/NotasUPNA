@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,6 +58,15 @@ public class LoginActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Uri url = GradesContract.CONTENT_NAME_STUDENTS;
+		ContentValues cv = new ContentValues();
+		cv.put(GradesContract.StudentsTable.COL_ST_NAME, "Denis");
+		cv.put(GradesContract.StudentsTable.COL_ST_SURNAME_1, "Lapuente");
+		cv.put(GradesContract.StudentsTable.COL_ST_SURNAME_2, "Goicoechea");
+		cv.put(GradesContract.StudentsTable.COL_ST_NIA, "48139");
+		cv.put(GradesContract.StudentsTable.COL_ST_NIF, "72811172A");
+		getContentResolver().insert(url, cv);
+		
 		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null, new CursorLoaderHelper());
 	}
 
@@ -198,8 +208,7 @@ public class LoginActivity extends ActionBarActivity {
 	
 	public void doLogin(String response){
 		PreferencesActivity.saveLoginData(getApplicationContext(), mUserName, mPassWord);
-		Intent intent = new Intent();
-		intent.setAction(RecordActivity.class.getName());
+		Intent intent = new Intent(this, RecordActivity.class);
 		if(response != null){
 			intent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
 		}

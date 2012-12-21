@@ -11,7 +11,7 @@ public class GradesContract{
 	public static final String DB_NAME = "grades";
 	public static final int DB_VERSION = 1;
 
-	private static final String CONTENT_NAME = "com.suicune.upnagrades.Database.GradesDBProvider";
+	private static final String CONTENT_NAME = "com.suicune.notasupna.GradesDBProvider";
 	public static final Uri CONTENT_NAME_ALL = Uri.parse("content://" + CONTENT_NAME + "/all");
 	public static final Uri CONTENT_NAME_GRADES = Uri.parse("content://" + CONTENT_NAME + "/grades");
 	public static final Uri CONTENT_NAME_SUBJECTS = Uri.parse("content://" + CONTENT_NAME + "/subjects");

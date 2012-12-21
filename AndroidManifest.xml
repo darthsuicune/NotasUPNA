@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity 
-            android:name=".RecordActivity">
+            android:name="com.suicune.notasupna.RecordActivity">
         </activity>
         <activity 
             android:name=".DetailsActivity">

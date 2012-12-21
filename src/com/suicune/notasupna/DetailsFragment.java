@@ -30,8 +30,14 @@ public class DetailsFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		TextView mTextView = (TextView) activity.findViewById(R.id.details_text);
-		mTextView.setText(mGrade.mSubject.mSubjectName + " " + mGrade.mGradeNumber);
+		
+		TextView mSubjectNameView = (TextView) activity.findViewById(R.id.details_subject_name);
+		TextView mSubjectTypeView = (TextView) activity.findViewById(R.id.details_subject_type);
+		TextView mSubjectCreditsView = (TextView) activity.findViewById(R.id.details_subject_credits);
+		mSubjectNameView.setText(mGrade.mSubject.mSubjectName + " " + mGrade.mGradeNumber);
+		mSubjectTypeView.setText(mGrade.mSubject.mSubjectType);
+		mSubjectCreditsView.setText(mGrade.mSubject.mSubjectCredits);
+		
 	}
 	
 	@Override
