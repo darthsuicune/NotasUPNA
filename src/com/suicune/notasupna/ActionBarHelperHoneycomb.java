@@ -16,12 +16,12 @@
 
 package com.suicune.notasupna;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -29,6 +29,7 @@ import android.view.View;
  * An extension of {@link ActionBarHelper} that provides Android 3.0-specific functionality for
  * Honeycomb tablets. It thus requires API level 11.
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ActionBarHelperHoneycomb extends ActionBarHelper {
     private Menu mOptionsMenu;
     private View mRefreshIndeterminateProgressView = null;

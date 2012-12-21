@@ -2,11 +2,12 @@ package com.suicune.notasupna;
 
 import java.util.List;
 
-import com.suicune.notasupna.database.GradesContract;
-
 import android.database.Cursor;
 
-public class Subject {
+import com.suicune.notasupna.database.GradesContract;
+
+public class Subject{
+
 	public List<Grade> mGradesList;
 	
 	public int mSubjectId;
@@ -27,7 +28,20 @@ public class Subject {
 		}
 	}
 	
+	public Subject(int subjectId, String subjectName, String subjectType, String subjectLanguage, int subjectCourseCode, int subjectCredits){
+		mSubjectId = subjectId;
+		mSubjectName = subjectName;
+		mSubjectType = subjectType;
+		mSubjectLanguage = subjectLanguage;
+		mSubjectCourseCode = subjectCourseCode;
+		mSubjectCredits = subjectCredits;
+	}
+	
 	public void addGrade(Grade g){
 		mGradesList.add(g);
+	}
+	
+	public Grade getLastGrade(){
+		return mGradesList.get(mGradesList.size() - 1);
 	}
 }
