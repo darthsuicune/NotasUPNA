@@ -1,5 +1,6 @@
 package com.suicune.notasupna;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,12 @@ import android.database.Cursor;
 
 import com.suicune.notasupna.database.GradesContract;
 
-public class Subject{
+public class Subject implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public List<Grade> mGradesList;
 	

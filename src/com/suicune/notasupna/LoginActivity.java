@@ -151,7 +151,7 @@ public class LoginActivity extends ActionBarActivity {
 		mLoginStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
-		findViewById(R.id.sign_in_button).setOnClickListener(
+		findViewById(R.id.log_in_button).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -267,7 +267,6 @@ public class LoginActivity extends ActionBarActivity {
 	}
 	
 	public void failedLogin(String response, int errorCode){
-		showProgress(false);
 		switch(errorCode){
 		case ConnectLoader.ERROR_JSON:
 			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
@@ -293,6 +292,7 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
+			showProgress(false);
 			if(response == null){
 				Toast.makeText(getApplicationContext(), R.string.error_connection, Toast.LENGTH_LONG).show();
 			}else{
@@ -355,9 +355,8 @@ public class LoginActivity extends ActionBarActivity {
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Cursor> cursor) {
-			// TODO Auto-generated method stub
-			
+		public void onLoaderReset(Loader<Cursor> loader) {
+			loader.reset();
 		}
 		
 	}

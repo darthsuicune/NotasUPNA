@@ -6,6 +6,8 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
@@ -61,8 +63,14 @@ public class RecordFragment extends ListFragment {
 
 	private static final String COURSE_ID = "course_id";
 
+	
 	private Record mRecord = null;
 	private Student mStudent = null;
+	
+	private View mRecordView;
+	private View mDetailsView;
+	private View mRecordStatusView;
+	private TextView mRecordStatusMessageView;
 
 	LoaderManager manager = null;
 
@@ -103,12 +111,18 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
 		return inflater.inflate(R.layout.record_fragment, container);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
+		mRecordView = getActivity().findViewById(R.id.record_record_fragment);
+		mDetailsView = getActivity().findViewById(R.id.record_details);
+		mRecordStatusView = getActivity().findViewById(R.id.record_status);
+		mRecordStatusMessageView = (TextView) getActivity().findViewById(R.id.record_status_message);
 
 		View detailsView = getActivity().findViewById(R.id.record_details);
 
@@ -211,7 +225,7 @@ public class RecordFragment extends ListFragment {
 					.getSupportFragmentManager().findFragmentById(
 							R.id.record_details);
 			if (details == null || details.getShownIndex() != position) {
-				details = DetailsFragment.newInstance(cursorPosition);
+				details = DetailsFragment.newInstance();
 				details.setSubject(subject);
 
 				FragmentTransaction ft = getFragmentManager()
@@ -223,7 +237,7 @@ public class RecordFragment extends ListFragment {
 		} else {
 			Intent intent = new Intent();
 			intent.setClass(getActivity(), DetailsActivity.class);
-			intent.putExtra("index", position);
+			intent.putExtra(DetailsActivity.EXTRA_SUBJECT, subject);
 			startActivity(intent);
 		}
 	}
@@ -371,7 +385,56 @@ public class RecordFragment extends ListFragment {
 
 		}
 	}
+	
+	/**
+	 * Shows the progress UI and hides the login form.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+	private void showProgress(final boolean show) {
+		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+		// for very easy animations. If available, use these APIs to fade-in
+		// the progress spinner.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			int shortAnimTime = getResources().getInteger(
+					android.R.integer.config_shortAnimTime);
 
+			mRecordStatusView.setVisibility(View.VISIBLE);
+			mRecordStatusView.animate().setDuration(shortAnimTime)
+					.alpha(show ? 1 : 0)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							mRecordStatusView.setVisibility(show ? View.VISIBLE
+									: View.GONE);
+						}
+					});
+
+			mRecordView.setVisibility(View.VISIBLE);
+			mRecordView.animate().setDuration(shortAnimTime)
+					.alpha(show ? 0 : 1)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							mRecordView.setVisibility(show ? View.GONE
+									: View.VISIBLE);
+							if(mDetailsView != null){
+								mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
+							}
+						}
+					});
+		} else {
+			// The ViewPropertyAnimator APIs are not available, so simply show
+			// and hide the relevant UI components.
+			if(mDetailsView != null){
+				mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
+			}
+			mRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
+			mRecordStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+			
+			
+		}
+	}
+	
 	public class AsyncHelper implements LoaderCallbacks<String> {
 
 		@Override
@@ -379,6 +442,8 @@ public class RecordFragment extends ListFragment {
 			Loader<String> loader = null;
 			switch (id) {
 			case LOADER_CONNECTION:
+				mRecordStatusMessageView.setText(R.string.login_progress_signing_in);
+				showProgress(true);
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
@@ -390,10 +455,13 @@ public class RecordFragment extends ListFragment {
 			return loader;
 		}
 
+		
+
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
+				showProgress(false);
 				try {
 					JSONObject object = new JSONObject(response);
 					int error = object.getInt(GradesParserLoader.nError);
@@ -478,12 +546,6 @@ public class RecordFragment extends ListFragment {
 		courseCenterView.setText(mRecord.mCourseCenter);
 		courseStudiesView.setText(mRecord.mCourseStudies);
 
-		// SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
-		// R.layout.record_list_item, c, subjectsFrom, subjectsTo,
-		// SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		// RecordAdapter simpleCursorAdapter = new RecordAdapter(getActivity(),
-		// R.layout.record_list_item, c, subjectsFrom, subjectsTo,
-		// SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(), prepareList(),
 				R.layout.record_list_item, subjectsFrom, subjectsTo);
 		setListAdapter(adapter);
@@ -505,13 +567,17 @@ public class RecordFragment extends ListFragment {
 
 	public ArrayList<HashMap<String, String>> prepareList() {
 		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
+		ArrayList<String> subjectsList = new ArrayList<String>();
 		for (int i = 0; i < mRecord.mSubjectsList.size(); i++) {
 			Subject subject = mRecord.mSubjectsList.get(i);
 			HashMap<String, String> item = new HashMap<String, String>();
 			item.put(GradesContract.SubjectsTable.COL_SU_NAME, subject.mSubjectName);
 			item.put(GradesContract.SubjectsTable.COL_SU_CREDITS, Integer.toString(subject.mSubjectCredits));
 			item.put(GradesContract.GradesTable.COL_GR_CODE, subject.mGradesList.get(subject.mGradesList.size() - 1).mGradeLetter);
-			result.add(item);
+			if(!subjectsList.contains(subject.mSubjectName)){
+				result.add(item);
+				subjectsList.add(subject.mSubjectName);
+			}
 		}
 		return result;
 	}

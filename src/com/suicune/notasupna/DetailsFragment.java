@@ -3,9 +3,12 @@ package com.suicune.notasupna;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class DetailsFragment extends Fragment {
@@ -14,7 +17,7 @@ public class DetailsFragment extends Fragment {
 	private Subject mSubject = null;
 	private Grade mGrade = null;
 	
-	public static DetailsFragment newInstance(long subjectId){
+	public static DetailsFragment newInstance(){
 		DetailsFragment fragment = new DetailsFragment();
 		Bundle args = new Bundle();
 		args.putLong(ARGUMENT_SHOWN_INDEX, 0);
@@ -25,6 +28,8 @@ public class DetailsFragment extends Fragment {
 	public void setSubject(Subject subject){
 		mSubject = subject;
 		mGrade = mSubject.getLastGrade();
+		showSubjectInformation();
+		showGradeInformation();
 	}
 	
 	@Override
@@ -32,16 +37,14 @@ public class DetailsFragment extends Fragment {
 		super.onAttach(activity);
 		
 		setHasOptionsMenu(true);
-		
-		TextView mSubjectNameView = (TextView) activity.findViewById(R.id.details_subject_name);
-		TextView mSubjectTypeView = (TextView) activity.findViewById(R.id.details_subject_type);
-		TextView mSubjectCreditsView = (TextView) activity.findViewById(R.id.details_subject_credits);
-		mSubjectNameView.setText(mGrade.mSubject.mSubjectName + " " + mGrade.mGradeNumber);
-		mSubjectTypeView.setText(mGrade.mSubject.mSubjectType);
-		mSubjectCreditsView.setText(mGrade.mSubject.mSubjectCredits);
-		
 	}
 	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.details_fragment, container);
+	}
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.action_bar_details, menu);
@@ -63,5 +66,19 @@ public class DetailsFragment extends Fragment {
 
 	public long getShownIndex(){
 		return getArguments().getLong(ARGUMENT_SHOWN_INDEX);
+	}
+	
+	private void showSubjectInformation(){
+		TextView mSubjectNameView = (TextView) getActivity().findViewById(R.id.details_subject_name);
+		TextView mSubjectTypeView = (TextView) getActivity().findViewById(R.id.details_subject_type);
+		TextView mSubjectCreditsView = (TextView) getActivity().findViewById(R.id.details_subject_credits);
+		
+		mSubjectNameView.setText(mSubject.mSubjectName);
+		mSubjectTypeView.setText(mSubject.mSubjectType);
+		mSubjectCreditsView.setText("" + mSubject.mSubjectCredits);
+	}
+	
+	private void showGradeInformation(){
+		mGrade.toString();
 	}
 }

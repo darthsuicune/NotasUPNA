@@ -1,8 +1,15 @@
 package com.suicune.notasupna;
 
+import java.io.Serializable;
+
 import android.database.Cursor;
 
-public class Grade {
+public class Grade implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6790368977196726232L;
+	
 	public Subject mSubject;
 	public String mGradeName;
 	public String mGradeNumber;
