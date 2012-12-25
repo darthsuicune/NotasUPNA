@@ -6,7 +6,6 @@ import com.suicune.notasupna.database.GradesContract;
 
 public class Grade {
 	public Subject mSubject;
-	public int mGradeId;
 	public String mGradeName;
 	public String mGradeNumber;
 	public String mGradeCall;
@@ -22,15 +21,13 @@ public class Grade {
 	
 	public Grade(Cursor c){
 		if(c != null && c.moveToFirst()){
-			mGradeId = c.getInt(c.getColumnIndex(GradesContract.GradesTable._ID));
 		}
 	}
 	
-	public Grade(Subject subject, int gradeId, String gradeName, String gradeNumber, String gradeCall, int gradeCallNumber,
+	public Grade(Subject subject, String gradeName, String gradeNumber, String gradeCall, int gradeCallNumber,
 			String gradeLetter, String gradePassed, String gradeProvisional, long gradeRevisionTime, String gradeTaken, long gradeTime, 
 			String gradeYear, String gradeLanguage){
 		mSubject = subject;
-		mGradeId = gradeId;
 		mGradeName = gradeName;
 		mGradeNumber = gradeNumber;
 		mGradeCall = gradeCall;

@@ -59,7 +59,6 @@ public class RecordFragment extends ListFragment {
 	
 	private Record mRecord = null;
 	private Student mStudent = null;
-	private long mCourseId = 0;
 
 	LoaderManager manager = null;
 
@@ -249,14 +248,37 @@ public class RecordFragment extends ListFragment {
 			case LOADER_RECORD:
 				mUri = GradesContract.CONTENT_NAME_ALL;
 				String[] subjectsProjection = {
-						"*"
+						GradesContract.CoursesTable.TABLE_NAME + "." + GradesContract.CoursesTable._ID,
+						GradesContract.CoursesTable.COL_CO_CENTER,
+						GradesContract.CoursesTable.COL_CO_LANGUAGE,
+						GradesContract.CoursesTable.COL_CO_NAME,
+						GradesContract.CoursesTable.COL_CO_PASSED_CREDITS,
+						GradesContract.CoursesTable.COL_CO_STUDIES,
+						GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS,
+						GradesContract.SubjectsTable.COL_SU_CO_CODE,
+						GradesContract.SubjectsTable.COL_SU_CREDITS,
+						GradesContract.SubjectsTable.COL_SU_LANGUAGE,
+						GradesContract.SubjectsTable.COL_SU_NAME,
+						GradesContract.SubjectsTable.COL_SU_TYPE,
+						GradesContract.GradesTable.COL_GR_ASSISTED,
+						GradesContract.GradesTable.COL_GR_CALL,
+						GradesContract.GradesTable.COL_GR_CALL_NUMBER,
+						GradesContract.GradesTable.COL_GR_CODE,
+						GradesContract.GradesTable.COL_GR_GRADE,
+						GradesContract.GradesTable.COL_GR_GRADE_NAME,
+						GradesContract.GradesTable.COL_GR_LANGUAGE,
+						GradesContract.GradesTable.COL_GR_PASSED,
+						GradesContract.GradesTable.COL_GR_PROVISIONAL,
+						GradesContract.GradesTable.COL_GR_REVISION_TIME,
+						GradesContract.GradesTable.COL_GR_SU_CODE,
+						GradesContract.GradesTable.COL_GR_TIME,
+						GradesContract.GradesTable.COL_GR_YEAR
+						
 				};
 				String subjectsSelection = 
-						GradesContract.SubjectsTable.COL_SU_LANGUAGE + "=? AND " + 
-						GradesContract.SubjectsTable.COL_SU_CO_CODE + " =?";
+						GradesContract.CoursesTable.COL_CO_LANGUAGE + "=?";
 				String[] subjectsSelectionArgs = {
-						language,
-						Long.toString(mCourseId)
+						language
 				};
 				mLoader = new CursorLoader(getActivity(), mUri, subjectsProjection, subjectsSelection, subjectsSelectionArgs, null);
 
@@ -285,9 +307,6 @@ public class RecordFragment extends ListFragment {
 			case LOADER_COURSE:
 				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
 					fillSpinner(cursor);
-				}
-				if(cursor.moveToFirst()){
-					mCourseId = cursor.getLong(cursor.getColumnIndex(GradesContract.CoursesTable._ID));
 				}
 				break;
 			case LOADER_RECORD:
@@ -395,7 +414,16 @@ public class RecordFragment extends ListFragment {
 				R.id.record_item_credits,
 				R.id.record_item_grade
 		};
-		RecordAdapter simpleCursorAdapter = new RecordAdapter(getActivity(), android.R.layout.simple_list_item_1, c, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		
+		TextView courseNameView = (TextView) getActivity().findViewById(R.id.record_course);
+		TextView courseCenterView = (TextView) getActivity().findViewById(R.id.record_center);
+		TextView courseStudiesView = (TextView) getActivity().findViewById(R.id.record_studies);
+		courseNameView.setText(mRecord.mCourseName);
+		courseCenterView.setText(mRecord.mCourseCenter);
+		courseStudiesView.setText(mRecord.mCourseStudies);
+		
+		SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.record_list_item, c, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+//		RecordAdapter simpleCursorAdapter = new RecordAdapter(getActivity(), R.layout.record_list_item, c, subjectsFrom, subjectsTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		setListAdapter(simpleCursorAdapter);
 	}
 	
@@ -410,7 +438,7 @@ public class RecordFragment extends ListFragment {
 		int[] spinnerTo = {
 			android.R.id.text1	
 		};
-		SpinnerAdapter spinnerAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, c, spinnerFrom, spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		SpinnerAdapter spinnerAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, c, spinnerFrom, spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		setSpinnerAdapter(spinnerAdapter);
 	}
 	

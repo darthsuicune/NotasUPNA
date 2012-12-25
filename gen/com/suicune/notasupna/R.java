@@ -70,14 +70,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int upna_logo_white=0x7f020010;
     }
     public static final class id {
-        public static final int action_details_calls=0x7f06001e;
-        public static final int action_details_share=0x7f06001d;
-        public static final int action_login_confirm=0x7f060021;
-        public static final int action_login_incognito=0x7f06001f;
-        public static final int action_login_preferences=0x7f060020;
-        public static final int action_record_close_session=0x7f060024;
-        public static final int action_record_preferences=0x7f060023;
-        public static final int action_record_refresh=0x7f060022;
+        public static final int action_details_calls=0x7f06001f;
+        public static final int action_details_share=0x7f06001e;
+        public static final int action_login_confirm=0x7f060022;
+        public static final int action_login_incognito=0x7f060020;
+        public static final int action_login_preferences=0x7f060021;
+        public static final int action_record_close_session=0x7f060025;
+        public static final int action_record_preferences=0x7f060024;
+        public static final int action_record_refresh=0x7f060023;
         public static final int actionbar_compat=0x7f060000;
         public static final int actionbar_compat_item_refresh=0x7f060003;
         public static final int actionbar_compat_item_refresh_progress=0x7f060002;
@@ -94,14 +94,15 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int login_user_name=0x7f060010;
         public static final int menu_refresh=0x7f060004;
         public static final int password=0x7f060009;
-        public static final int record_center=0x7f060017;
+        public static final int record_center=0x7f060018;
+        public static final int record_course=0x7f060017;
         public static final int record_details=0x7f060013;
-        public static final int record_item_credits=0x7f06001b;
-        public static final int record_item_grade=0x7f06001c;
-        public static final int record_item_name=0x7f06001a;
+        public static final int record_item_credits=0x7f06001c;
+        public static final int record_item_grade=0x7f06001d;
+        public static final int record_item_name=0x7f06001b;
         public static final int record_record_fragment=0x7f060012;
-        public static final int record_student=0x7f060019;
-        public static final int record_studies=0x7f060018;
+        public static final int record_student=0x7f06001a;
+        public static final int record_studies=0x7f060019;
         public static final int sign_in_button=0x7f06000b;
         public static final int student_name=0x7f060014;
         public static final int student_nia=0x7f060015;
