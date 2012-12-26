@@ -2,8 +2,6 @@ package com.suicune.notasupna;
 
 import android.database.Cursor;
 
-import com.suicune.notasupna.database.GradesContract;
-
 public class Grade {
 	public Subject mSubject;
 	public String mGradeName;

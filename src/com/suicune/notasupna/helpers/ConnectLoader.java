@@ -31,10 +31,13 @@ public class ConnectLoader extends AsyncTaskLoader<String>{
 	private Context context;
 	private String userName, passWord;
 
+	public static final int ERROR_JSON = 1;
+	public static final int ERROR_NO_JSON = 2;
+
 	public ConnectLoader(Context context, Bundle args) {
 		super(context);
 		this.context = context;
-		if(args.isEmpty()){
+		if(args == null || args.isEmpty()){
 			this.userName = PreferencesActivity.getUserName(context);
 			this.passWord = PreferencesActivity.getPassWord(context);	
 		}else{

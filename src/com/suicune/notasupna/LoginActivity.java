@@ -50,9 +50,6 @@ public class LoginActivity extends ActionBarActivity {
 	private static final int LOADER_CHECK_DATA = 2;
 	
 	private static final int ACTIVITY_RECORD = 1;
-	
-	private static final int ERROR_JSON = 1;
-	private static final int ERROR_NO_JSON = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -272,10 +269,10 @@ public class LoginActivity extends ActionBarActivity {
 	public void failedLogin(String response, int errorCode){
 		showProgress(false);
 		switch(errorCode){
-		case ERROR_JSON:
+		case ConnectLoader.ERROR_JSON:
 			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
 			break;
-		case ERROR_NO_JSON:
+		case ConnectLoader.ERROR_NO_JSON:
 			if(response.contains("HTTP Status 403") || response.contains("HTTP Status 401")){
 				Toast.makeText(getApplicationContext(), R.string.error_login, Toast.LENGTH_LONG).show();
 			}else{
@@ -306,11 +303,11 @@ public class LoginActivity extends ActionBarActivity {
 						doLogin(response);
 					}else{
 						String errorMsg = object.getString(GradesParserLoader.nErrorMsg);
-						failedLogin(errorMsg, ERROR_JSON);
+						failedLogin(errorMsg, ConnectLoader.ERROR_JSON);
 					}
 				}catch(JSONException e){
 					Log.d(ConnectLoader.logging, "Error in response from server: " + response);
-					failedLogin(response, ERROR_NO_JSON);
+					failedLogin(response, ConnectLoader.ERROR_NO_JSON);
 				}catch(Exception e){
 					e.printStackTrace();
 				}

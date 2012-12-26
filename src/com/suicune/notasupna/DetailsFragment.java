@@ -31,6 +31,8 @@ public class DetailsFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		
+		setHasOptionsMenu(true);
+		
 		TextView mSubjectNameView = (TextView) activity.findViewById(R.id.details_subject_name);
 		TextView mSubjectTypeView = (TextView) activity.findViewById(R.id.details_subject_type);
 		TextView mSubjectCreditsView = (TextView) activity.findViewById(R.id.details_subject_credits);

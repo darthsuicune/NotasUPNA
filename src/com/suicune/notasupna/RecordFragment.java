@@ -22,6 +22,8 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,8 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		this.setHasOptionsMenu(true);
 		
 		manager = getActivity().getSupportLoaderManager();
 		CursorLoaderHelper clh = new CursorLoaderHelper();
@@ -160,14 +164,19 @@ public class RecordFragment extends ListFragment {
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.action_bar_record, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case R.id.action_record_refresh:
 			getActivity().getSupportLoaderManager().initLoader(LOADER_CONNECTION, null, new AsyncHelper());
 			break;
 		case R.id.action_record_preferences:
-			Intent intent = new Intent();
-			intent.setAction(PreferencesActivity.class.getName());
+			Intent intent = new Intent(getActivity(), PreferencesActivity.class);
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
 		case R.id.action_record_close_session:
@@ -205,8 +214,24 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 	
-	public void failedDownload(){
+
+	
+	public void failedDownload(String response, int errorCode){
 		Toast.makeText(getActivity(), R.string.error_downloading, Toast.LENGTH_LONG).show();
+		switch(errorCode){
+		case ConnectLoader.ERROR_JSON:
+			Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
+			break;
+		case ConnectLoader.ERROR_NO_JSON:
+			if(response.contains("HTTP Status 403") || response.contains("HTTP Status 401")){
+				Toast.makeText(getActivity(), R.string.error_login, Toast.LENGTH_LONG).show();
+			}else{
+				Toast.makeText(getActivity(), R.string.error_connecting, Toast.LENGTH_LONG).show();
+			}
+			break;
+		default:
+			break;
+		}
 	}
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -357,11 +382,11 @@ public class RecordFragment extends ListFragment {
 						args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
 						getActivity().getSupportLoaderManager().initLoader(LOADER_PARSER, args, new AsyncHelper());
 					}else{
-						failedDownload();
+						failedDownload(response, ConnectLoader.ERROR_JSON);
 					}
 				}catch(JSONException e){
 					Log.d(ConnectLoader.logging, "Error in response from server: " + response);
-					failedDownload();
+					failedDownload(response, ConnectLoader.ERROR_NO_JSON);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -446,7 +471,7 @@ public class RecordFragment extends ListFragment {
 
 		public RecordAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
 			super(context, layout, c, from, to, flags);
-			// TODO Auto-generated constructor stub
+			
 			
 		}
 	}
