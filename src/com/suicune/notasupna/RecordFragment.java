@@ -14,6 +14,7 @@ import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,14 +64,15 @@ public class RecordFragment extends ListFragment {
 
 	private static final String COURSE_ID = "course_id";
 
-	
 	private Record mRecord = null;
 	private Student mStudent = null;
-	
+
 	private View mRecordView;
 	private View mDetailsView;
 	private View mRecordStatusView;
 	private TextView mRecordStatusMessageView;
+
+	private CursorLoaderHelper clh;
 
 	LoaderManager manager = null;
 
@@ -81,7 +83,7 @@ public class RecordFragment extends ListFragment {
 		this.setHasOptionsMenu(true);
 
 		manager = getActivity().getSupportLoaderManager();
-		CursorLoaderHelper clh = new CursorLoaderHelper();
+		clh = new CursorLoaderHelper();
 
 		Bundle extras = getActivity().getIntent().getExtras();
 		if (extras != null) {
@@ -90,9 +92,7 @@ public class RecordFragment extends ListFragment {
 					extras.getString(RecordActivity.EXTRA_DOWNLOADED_DATA));
 			manager.initLoader(LOADER_PARSER, args, new AsyncHelper());
 		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			manager.initLoader(LOADER_COURSE, null, clh);
-		} else {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			manageOldVersion();
 		}
 		manager.initLoader(LOADER_STUDENT, null, clh);
@@ -111,18 +111,19 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		return inflater.inflate(R.layout.record_fragment, container);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
+
 		mRecordView = getActivity().findViewById(R.id.record_record_fragment);
 		mDetailsView = getActivity().findViewById(R.id.record_details);
 		mRecordStatusView = getActivity().findViewById(R.id.record_status);
-		mRecordStatusMessageView = (TextView) getActivity().findViewById(R.id.record_status_message);
+		mRecordStatusMessageView = (TextView) getActivity().findViewById(
+				R.id.record_status_message);
 
 		View detailsView = getActivity().findViewById(R.id.record_details);
 
@@ -163,26 +164,6 @@ public class RecordFragment extends ListFragment {
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 			getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE,
 					null, new CursorLoaderHelper());
-		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private OnNavigationListener getOnNavigationListenerCallback() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			return new OnNavigationListener() {
-
-				@Override
-				public boolean onNavigationItemSelected(int itemPosition,
-						long itemId) {
-					Bundle args = new Bundle();
-					args.putLong(COURSE_ID, itemId);
-					getActivity().getSupportLoaderManager().initLoader(
-							LOADER_RECORD, args, new CursorLoaderHelper());
-					return false;
-				}
-			};
-		} else {
-			return null;
 		}
 	}
 
@@ -265,18 +246,17 @@ public class RecordFragment extends ListFragment {
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public void setSpinnerAdapter(SpinnerAdapter mSpinnerAdapter) {
+	public void setSpinnerAdapter(SpinnerAdapter spinnerAdapter) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActivity().getActionBar().setListNavigationCallbacks(
-					mSpinnerAdapter, new OnNavigationListener() {
+					spinnerAdapter, new OnNavigationListener() {
 						@Override
 						public boolean onNavigationItemSelected(
 								int itemPosition, long itemId) {
 							Bundle args = new Bundle();
 							args.putLong(COURSE_ID, itemId);
 							getActivity().getSupportLoaderManager().initLoader(
-									LOADER_RECORD, null,
-									new CursorLoaderHelper());
+									LOADER_RECORD, args, clh);
 							return false;
 						}
 					});
@@ -381,11 +361,10 @@ public class RecordFragment extends ListFragment {
 
 		@Override
 		public void onLoaderReset(Loader<Cursor> loader) {
-			// TODO Auto-generated method stub
-
+			loader.reset();
 		}
 	}
-	
+
 	/**
 	 * Shows the progress UI and hides the login form.
 	 */
@@ -417,24 +396,24 @@ public class RecordFragment extends ListFragment {
 						public void onAnimationEnd(Animator animation) {
 							mRecordView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
-							if(mDetailsView != null){
-								mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
+							if (mDetailsView != null) {
+								mDetailsView.setVisibility(show ? View.GONE
+										: View.VISIBLE);
 							}
 						}
 					});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
-			if(mDetailsView != null){
+			if (mDetailsView != null) {
 				mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
 			}
 			mRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
 			mRecordStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-			
-			
+
 		}
 	}
-	
+
 	public class AsyncHelper implements LoaderCallbacks<String> {
 
 		@Override
@@ -442,7 +421,8 @@ public class RecordFragment extends ListFragment {
 			Loader<String> loader = null;
 			switch (id) {
 			case LOADER_CONNECTION:
-				mRecordStatusMessageView.setText(R.string.login_progress_signing_in);
+				mRecordStatusMessageView
+						.setText(R.string.login_progress_signing_in);
 				showProgress(true);
 				loader = new ConnectLoader(getActivity(), args);
 				break;
@@ -454,8 +434,6 @@ public class RecordFragment extends ListFragment {
 			}
 			return loader;
 		}
-
-		
 
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
@@ -495,7 +473,7 @@ public class RecordFragment extends ListFragment {
 
 		@Override
 		public void onLoaderReset(Loader<String> loader) {
-			// TODO Auto-generated method stub
+			loader.reset();
 		}
 	}
 
@@ -530,12 +508,12 @@ public class RecordFragment extends ListFragment {
 	 */
 	public void fillRecord(Cursor c) {
 		mRecord = new Record(c);
+		Log.d("TEST", DatabaseUtils.dumpCursorToString(c));
 		String[] subjectsFrom = { GradesContract.SubjectsTable.COL_SU_NAME,
 				GradesContract.SubjectsTable.COL_SU_CREDITS,
 				GradesContract.GradesTable.COL_GR_CODE };
 		int[] subjectsTo = { R.id.record_item_name, R.id.record_item_credits,
 				R.id.record_item_grade };
-
 		TextView courseNameView = (TextView) getActivity().findViewById(
 				R.id.record_course);
 		TextView courseCenterView = (TextView) getActivity().findViewById(
@@ -545,7 +523,6 @@ public class RecordFragment extends ListFragment {
 		courseNameView.setText(mRecord.mCourseName);
 		courseCenterView.setText(mRecord.mCourseCenter);
 		courseStudiesView.setText(mRecord.mCourseStudies);
-
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(), prepareList(),
 				R.layout.record_list_item, subjectsFrom, subjectsTo);
 		setListAdapter(adapter);
@@ -571,10 +548,14 @@ public class RecordFragment extends ListFragment {
 		for (int i = 0; i < mRecord.mSubjectsList.size(); i++) {
 			Subject subject = mRecord.mSubjectsList.get(i);
 			HashMap<String, String> item = new HashMap<String, String>();
-			item.put(GradesContract.SubjectsTable.COL_SU_NAME, subject.mSubjectName);
-			item.put(GradesContract.SubjectsTable.COL_SU_CREDITS, Integer.toString(subject.mSubjectCredits));
-			item.put(GradesContract.GradesTable.COL_GR_CODE, subject.mGradesList.get(subject.mGradesList.size() - 1).mGradeLetter);
-			if(!subjectsList.contains(subject.mSubjectName)){
+			item.put(GradesContract.SubjectsTable.COL_SU_NAME,
+					subject.mSubjectName);
+			item.put(GradesContract.SubjectsTable.COL_SU_CREDITS,
+					Integer.toString(subject.mSubjectCredits));
+			item.put(
+					GradesContract.GradesTable.COL_GR_CODE,
+					subject.mGradesList.get(subject.mGradesList.size() - 1).mGradeLetter);
+			if (!subjectsList.contains(subject.mSubjectName)) {
 				result.add(item);
 				subjectsList.add(subject.mSubjectName);
 			}

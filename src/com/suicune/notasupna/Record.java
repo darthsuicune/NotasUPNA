@@ -21,7 +21,12 @@ public class Record {
 	public Record(Cursor c){
 		mSubjectsList = new ArrayList<Subject>();
 		
+		
 		if(c != null && c.getCount() != 0){
+			if(c.isAfterLast()){
+				c.moveToFirst();
+				c.moveToPrevious();
+			}
 			int currentCourseId = -1;
 			String currentSubjectName = "";
 			long currentGradeTime = -1;
