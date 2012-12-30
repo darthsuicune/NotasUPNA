@@ -16,6 +16,8 @@ public class Record {
 	public int mCoursePassedCredits;
 	public String mCourseLanguage;
 	
+	public int mSubjectsCount = 0;
+	
 	public List<Subject> mSubjectsList;
 	
 	public Record(Cursor c){
@@ -49,6 +51,7 @@ public class Record {
 				if(!currentSubjectName.equalsIgnoreCase(subjectName)){
 					if(currentSubject != null){
 						mSubjectsList.add(currentSubject);
+						mSubjectsCount++;
 					}
 					currentSubjectName = subjectName;
 					currentSubject = new Subject(

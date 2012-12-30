@@ -46,9 +46,6 @@ import com.suicune.notasupna.helpers.GradesParserLoader;
  * 
  * @author Denis Lapuente
  * 
- *         -Called -With/without extras -if extras then we have to parse the
- *         information before doing anything else.
- * 
  */
 public class RecordFragment extends ListFragment {
 	private boolean landscape;
@@ -62,7 +59,7 @@ public class RecordFragment extends ListFragment {
 
 	private static final int ACTIVITY_PREFERENCES = 1;
 
-	private static final String COURSE_ID = "course_id";
+	public static final String COURSE_ID = "course_id";
 
 	private Record mRecord = null;
 	private Student mStudent = null;
