@@ -8,11 +8,13 @@ import org.json.JSONObject;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -64,7 +66,6 @@ public class RecordFragment extends ListFragment {
 	private Student mStudent = null;
 
 	private View mRecordView;
-	private View mDetailsView;
 	private View mRecordStatusView;
 	private TextView mRecordStatusMessageView;
 
@@ -92,7 +93,7 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
+
 		this.setHasOptionsMenu(true);
 
 		manager = getActivity().getSupportLoaderManager();
@@ -107,14 +108,14 @@ public class RecordFragment extends ListFragment {
 		}
 		manager.initLoader(LOADER_STUDENT, null, clh);
 		manager.initLoader(LOADER_RECORD, null, clh);
-		
-		mRecordView = getActivity().findViewById(R.id.record_record_fragment);
-		mDetailsView = getActivity().findViewById(R.id.record_details);
+
+		mRecordView = getActivity().findViewById(R.id.record_view);
 		mRecordStatusView = getActivity().findViewById(R.id.record_status);
 		mRecordStatusMessageView = (TextView) getActivity().findViewById(
 				R.id.record_status_message);
 
 		View detailsView = getActivity().findViewById(R.id.record_details);
+		View otherCallsView = getActivity().findViewById(R.id.record_calls);
 
 		if ((detailsView != null)
 				&& (detailsView.getVisibility() == View.VISIBLE)) {
@@ -124,11 +125,16 @@ public class RecordFragment extends ListFragment {
 		}
 
 		if (landscape) {
+			if (isSmallScreen() && otherCallsView != null) {
+				otherCallsView.setVisibility(View.GONE);
+			} else {
+				otherCallsView.setVisibility(View.VISIBLE);
+			}
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			details = (DetailsFragment) getActivity()
 					.getSupportFragmentManager().findFragmentById(
 							R.id.record_details);
-			if(mRecord != null){
+			if (mRecord != null) {
 				showDetails(cursorPosition,
 						mRecord.mSubjectsList.get(cursorPosition));
 			}
@@ -198,9 +204,9 @@ public class RecordFragment extends ListFragment {
 			if (details == null || details.getShownIndex() != position) {
 				details = DetailsFragment.newInstance(position);
 				details.setSubject(subject);
-				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager()
-						.beginTransaction();
+
+				FragmentTransaction ft = getActivity()
+						.getSupportFragmentManager().beginTransaction();
 				ft.replace(R.id.record_details, details);
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 				ft.commit();
@@ -214,8 +220,6 @@ public class RecordFragment extends ListFragment {
 	}
 
 	public void failedDownload(String response, int errorCode) {
-		Toast.makeText(getActivity(), R.string.error_downloading,
-				Toast.LENGTH_LONG).show();
 		switch (errorCode) {
 		case ConnectLoader.ERROR_JSON:
 			Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
@@ -386,18 +390,18 @@ public class RecordFragment extends ListFragment {
 						public void onAnimationEnd(Animator animation) {
 							mRecordView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
-							if (mDetailsView != null) {
-								mDetailsView.setVisibility(show ? View.GONE
-										: View.VISIBLE);
-							}
+							// if (mDetailsView != null) {
+							// mDetailsView.setVisibility(show ? View.GONE
+							// : View.VISIBLE);
+							// }
 						}
 					});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
-			if (mDetailsView != null) {
-				mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
-			}
+			// if (mDetailsView != null) {
+			// mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
+			// }
 			mRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
 			mRecordStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
 
@@ -485,8 +489,10 @@ public class RecordFragment extends ListFragment {
 			TextView mStudentNifView = (TextView) getActivity().findViewById(
 					R.id.student_nif);
 			mStudentNameView.setText(mStudent.mStudentFullName);
-			mStudentNiaView.setText(getString(R.string.header_nia) + mStudent.mStudentNia);
-			mStudentNifView.setText(getString(R.string.header_nif) + mStudent.mStudentNif);
+			mStudentNiaView.setText(getString(R.string.header_nia)
+					+ mStudent.mStudentNia);
+			mStudentNifView.setText(getString(R.string.header_nif)
+					+ mStudent.mStudentNif);
 		}
 	}
 
@@ -515,7 +521,7 @@ public class RecordFragment extends ListFragment {
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(), prepareList(),
 				R.layout.record_list_item, subjectsFrom, subjectsTo);
 		setListAdapter(adapter);
-		if(details != null){
+		if (details != null) {
 			details.setSubject(mRecord.mSubjectsList.get(0));
 		}
 	}
@@ -543,7 +549,8 @@ public class RecordFragment extends ListFragment {
 			item.put(GradesContract.SubjectsTable.COL_SU_NAME,
 					subject.mSubjectName);
 			item.put(GradesContract.SubjectsTable.COL_SU_CREDITS,
-					Integer.toString(subject.mSubjectCredits));
+					getString(R.string.subject_credits)
+							+ subject.mSubjectCredits);
 			item.put(
 					GradesContract.GradesTable.COL_GR_CODE,
 					subject.mGradesList.get(subject.mGradesList.size() - 1).mGradeLetter);
@@ -551,6 +558,21 @@ public class RecordFragment extends ListFragment {
 				result.add(item);
 				subjectsList.add(subject.mSubjectName);
 			}
+		}
+		return result;
+	}
+
+	@SuppressLint("NewApi")
+	private boolean isSmallScreen() {
+		boolean result;
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			result = getResources().getConfiguration().isLayoutSizeAtLeast(
+					Configuration.SCREENLAYOUT_SIZE_LARGE) ? false : true;
+		} else {
+			// Configuration.SCREENLAYOUT_SIZE_XLARGE has a value of 4, but
+			// was introduced in API 9, so we use its numeric value
+			result = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < 3;
 		}
 		return result;
 	}

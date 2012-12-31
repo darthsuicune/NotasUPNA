@@ -19,17 +19,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class DetailsFragment extends Fragment {
 	private final static String ARGUMENT_SHOWN_INDEX = "shown index";
-	
+
 	private final static String DIALOG_CALLS = "dialog calls";
-	
+
+	private CallsDialogFragment mCallsFragment;
+
 	private Subject mSubject = null;
 	private Grade mGrade = null;
-	
-	public static DetailsFragment newInstance(int position){
+
+	public static DetailsFragment newInstance(int position) {
 		DetailsFragment fragment = new DetailsFragment();
 		Bundle args = new Bundle();
 		args.putLong(ARGUMENT_SHOWN_INDEX, position);
@@ -37,18 +40,20 @@ public class DetailsFragment extends Fragment {
 		return fragment;
 	}
 
-	public void setSubject(Subject subject){
+	public void setSubject(Subject subject) {
 		mSubject = subject;
 		mGrade = mSubject.mGradesList.get(1);
+		mCallsFragment = new CallsDialogFragment();
+		mCallsFragment.setSubject(mSubject);
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		setHasOptionsMenu(true);
 
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -71,7 +76,7 @@ public class DetailsFragment extends Fragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()){
+		switch (item.getItemId()) {
 		case R.id.action_details_calls:
 			break;
 		case R.id.action_details_share:
@@ -82,37 +87,55 @@ public class DetailsFragment extends Fragment {
 		return true;
 	}
 
-	public long getShownIndex(){
+	public long getShownIndex() {
 		return getArguments().getLong(ARGUMENT_SHOWN_INDEX);
 	}
-	
-	private void showSubjectInformation(){
-		TextView subjectNameView = (TextView) getActivity().findViewById(R.id.details_subject_name);
-		TextView subjectTypeView = (TextView) getActivity().findViewById(R.id.details_subject_type);
-		TextView subjectCreditsView = (TextView) getActivity().findViewById(R.id.details_subject_credits);
-		TextView subjectCallsView = (TextView) getActivity().findViewById(R.id.details_subject_calls);
-		
+
+	private void showSubjectInformation() {
+		TextView subjectNameView = (TextView) getActivity().findViewById(
+				R.id.details_subject_name);
+		TextView subjectTypeView = (TextView) getActivity().findViewById(
+				R.id.details_subject_type);
+		TextView subjectCreditsView = (TextView) getActivity().findViewById(
+				R.id.details_subject_credits);
+		TextView subjectCallsView = (TextView) getActivity().findViewById(
+				R.id.details_subject_calls);
+
 		subjectNameView.setText(mSubject.mSubjectName);
 		subjectTypeView.setText(mSubject.mSubjectType);
-		subjectCreditsView.setText(getString(R.string.subject_credits) + mSubject.mSubjectCredits);
-		subjectCallsView.setText(getString(R.string.subject_total_calls) + mSubject.mGradesCount);
+		subjectCreditsView.setText(getString(R.string.subject_credits)
+				+ mSubject.mSubjectCredits);
+		subjectCallsView.setText(getString(R.string.subject_total_calls)
+				+ mSubject.mGradesCount);
 	}
-	
-	private void showGradeInformation(){
-		TextView gradeView = (TextView) getActivity().findViewById(R.id.details_grade_number);
-		TextView gradeNameView = (TextView) getActivity().findViewById(R.id.details_grade_name);
-		TextView gradeTimeView = (TextView) getActivity().findViewById(R.id.details_grade_time);
-		TextView gradeRevisionTimeView = (TextView) getActivity().findViewById(R.id.details_grade_revision_time);
-		TextView gradeYearView = (TextView) getActivity().findViewById(R.id.details_grade_year);
-		TextView gradeProvisionalView = (TextView) getActivity().findViewById(R.id.details_grade_provisional);
-		TextView gradeCallView = (TextView) getActivity().findViewById(R.id.details_grade_call);
-		TextView gradeCallNumberView = (TextView) getActivity().findViewById(R.id.details_grade_call_number);
-		TextView gradePassedView = (TextView) getActivity().findViewById(R.id.details_grade_passed);
-		TextView gradeTakenView = (TextView) getActivity().findViewById(R.id.details_grade_taken);
-		
-		String gradeTime = DateFormat.getDateFormat(getActivity()).format(new Date(mGrade.mGradeTime));
-		String gradeRevisionTime = DateFormat.getDateFormat(getActivity()).format(new Date(mGrade.mGradeRevisionTime));
-		
+
+	private void showGradeInformation() {
+		TextView gradeView = (TextView) getActivity().findViewById(
+				R.id.details_grade_number);
+		TextView gradeNameView = (TextView) getActivity().findViewById(
+				R.id.details_grade_name);
+		TextView gradeTimeView = (TextView) getActivity().findViewById(
+				R.id.details_grade_time);
+		TextView gradeRevisionTimeView = (TextView) getActivity().findViewById(
+				R.id.details_grade_revision_time);
+		TextView gradeYearView = (TextView) getActivity().findViewById(
+				R.id.details_grade_year);
+		TextView gradeProvisionalView = (TextView) getActivity().findViewById(
+				R.id.details_grade_provisional);
+		TextView gradeCallView = (TextView) getActivity().findViewById(
+				R.id.details_grade_call);
+		TextView gradeCallNumberView = (TextView) getActivity().findViewById(
+				R.id.details_grade_call_number);
+		TextView gradePassedView = (TextView) getActivity().findViewById(
+				R.id.details_grade_passed);
+		TextView gradeTakenView = (TextView) getActivity().findViewById(
+				R.id.details_grade_taken);
+
+		String gradeTime = DateFormat.getDateFormat(getActivity()).format(
+				new Date(mGrade.mGradeTime));
+		String gradeRevisionTime = DateFormat.getDateFormat(getActivity())
+				.format(new Date(mGrade.mGradeRevisionTime));
+
 		gradeView.setText("" + mGrade.mGradeNumber);
 		gradeNameView.setText("" + mGrade.mGradeName);
 		gradeTimeView.setText("" + gradeTime);
@@ -124,53 +147,54 @@ public class DetailsFragment extends Fragment {
 		gradePassedView.setText("" + mGrade.mGradePassed);
 		gradeTakenView.setText("" + mGrade.mGradeTaken);
 	}
-	
-	private void showCallsList(){
-		boolean showCallsAsDialog = shouldShowAsDialog();
-		
-		Button showOtherCallsView = (Button) getActivity().findViewById(R.id.details_show_calls);
-		
-		if(showCallsAsDialog){
-			showOtherCallsView.setVisibility(View.VISIBLE);
-			showOtherCallsView.setOnClickListener(new OnClickListener() {
-				
+
+	private void showCallsList() {
+		TableRow showOtherCallsRowView = (TableRow) getActivity().findViewById(
+				R.id.details_row_show_calls);
+		Button showOtherCallsButtonView = (Button) getActivity().findViewById(
+				R.id.details_show_calls);
+
+		if (shouldShowAsDialog()) {
+			showOtherCallsRowView.setVisibility(View.VISIBLE);
+			showOtherCallsButtonView.setOnClickListener(new OnClickListener() {
+
 				@Override
 				public void onClick(View v) {
-					FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-				    CallsDialogFragment callsDialogFragment = new CallsDialogFragment();
-				    callsDialogFragment.setSubject(mSubject);
+					FragmentManager fragmentManager = getActivity()
+							.getSupportFragmentManager();
 
-				    callsDialogFragment.show(fragmentManager, DIALOG_CALLS);
+					mCallsFragment.show(fragmentManager, DIALOG_CALLS);
 				}
 			});
-			
-		}else{
-			FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-		    CallsDialogFragment callsDialogFragment = new CallsDialogFragment();
-		    callsDialogFragment.setSubject(mSubject);
-		    
-			showOtherCallsView.setVisibility(View.GONE);
-			FragmentTransaction transaction = fragmentManager.beginTransaction();
-	        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-	        transaction.add(R.id.record_calls, callsDialogFragment)
-	                   .addToBackStack(null).commit();
+
+		} else {
+			FragmentManager fragmentManager = getActivity()
+					.getSupportFragmentManager();
+
+			showOtherCallsRowView.setVisibility(View.GONE);
+			FragmentTransaction transaction = fragmentManager
+					.beginTransaction();
+			transaction
+					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			transaction.replace(R.id.record_calls, mCallsFragment)
+					.addToBackStack(null).commit();
 		}
 	}
-	
+
 	@SuppressLint("NewApi")
-	private boolean shouldShowAsDialog(){
-		boolean result = true;
-		
-	    if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-	    	if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-		    	// Configuration.SCREENLAYOUT_SIZE_XLARGE == 4. Used for compatibility issues
-		    	result = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE) ? false : true;
-		    }else{
-		    	result = (getResources().getConfiguration().screenLayout & 
-		    		    Configuration.SCREENLAYOUT_SIZE_MASK) < 
-		    	        Configuration.SCREENLAYOUT_SIZE_LARGE;
-		    }
-	    }
+	private boolean shouldShowAsDialog() {
+		boolean result;
+
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+				result = getResources().getConfiguration().isLayoutSizeAtLeast(
+						Configuration.SCREENLAYOUT_SIZE_LARGE) ? false : true;
+			} else {
+				result = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < Configuration.SCREENLAYOUT_SIZE_LARGE;
+			}
+		} else {
+			result = true;
+		}
 		return result;
 	}
 }

@@ -71,14 +71,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int upna_logo_white=0x7f020011;
     }
     public static final class id {
-        public static final int action_details_calls=0x7f06003d;
-        public static final int action_details_share=0x7f06003c;
-        public static final int action_login_confirm=0x7f060040;
-        public static final int action_login_incognito=0x7f06003e;
-        public static final int action_login_preferences=0x7f06003f;
-        public static final int action_record_close_session=0x7f060043;
-        public static final int action_record_preferences=0x7f060042;
-        public static final int action_record_refresh=0x7f060041;
+        public static final int action_details_calls=0x7f06003f;
+        public static final int action_details_share=0x7f06003e;
+        public static final int action_login_confirm=0x7f060042;
+        public static final int action_login_incognito=0x7f060040;
+        public static final int action_login_preferences=0x7f060041;
+        public static final int action_record_close_session=0x7f060045;
+        public static final int action_record_preferences=0x7f060044;
+        public static final int action_record_refresh=0x7f060043;
         public static final int actionbar_compat=0x7f060000;
         public static final int actionbar_compat_item_refresh=0x7f060003;
         public static final int actionbar_compat_item_refresh_progress=0x7f060002;
@@ -110,7 +110,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int details_row_grade_taken=0x7f06002b;
         public static final int details_row_grade_time=0x7f06001d;
         public static final int details_row_grade_year=0x7f060023;
-        public static final int details_show_calls=0x7f06002d;
+        public static final int details_row_show_calls=0x7f06002d;
+        public static final int details_show_calls=0x7f06002e;
         public static final int details_subject_block=0x7f060011;
         public static final int details_subject_calls=0x7f060014;
         public static final int details_subject_credits=0x7f060015;
@@ -123,21 +124,22 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int login_status_message=0x7f060008;
         public static final int menu_refresh=0x7f060004;
         public static final int password=0x7f06000b;
-        public static final int record_calls=0x7f060038;
-        public static final int record_center=0x7f060034;
-        public static final int record_course=0x7f060033;
-        public static final int record_details=0x7f060037;
-        public static final int record_item_credits=0x7f06003a;
-        public static final int record_item_grade=0x7f06003b;
-        public static final int record_item_name=0x7f060039;
-        public static final int record_record_fragment=0x7f060036;
-        public static final int record_status=0x7f06002e;
-        public static final int record_status_message=0x7f06002f;
-        public static final int record_studies=0x7f060035;
+        public static final int record_calls=0x7f06003a;
+        public static final int record_center=0x7f060036;
+        public static final int record_course=0x7f060035;
+        public static final int record_details=0x7f060039;
+        public static final int record_item_credits=0x7f06003c;
+        public static final int record_item_grade=0x7f06003d;
+        public static final int record_item_name=0x7f06003b;
+        public static final int record_record_fragment=0x7f060038;
+        public static final int record_status=0x7f06002f;
+        public static final int record_status_message=0x7f060030;
+        public static final int record_studies=0x7f060037;
+        public static final int record_view=0x7f060031;
         public static final int separator=0x7f060016;
-        public static final int student_name=0x7f060030;
-        public static final int student_nia=0x7f060031;
-        public static final int student_nif=0x7f060032;
+        public static final int student_name=0x7f060032;
+        public static final int student_nia=0x7f060033;
+        public static final int student_nif=0x7f060034;
         public static final int user_name=0x7f06000a;
     }
     public static final class layout {

@@ -23,7 +23,7 @@ public class CallsDialogFragment extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.dialog_calls, container);
+		View view = inflater.inflate(R.layout.dialog_calls, container, false);
 		ListView listView = (ListView) view.findViewById(android.R.id.list);
 		listView.setAdapter(getAdapter());
 		return view;
