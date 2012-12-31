@@ -21,6 +21,8 @@
     <string name="subject_type">"Tipo: "</string>
     <string name="subject_grade_name">"Calificación: "</string>
     <string name="subject_grade">"Nota: "</string>
+    <string name="subject_taken">"Realizado: "</string>
+    <string name="subject_passed">"Aprobado: "</string>
     <string name="subject_call">"Convocatoria: "</string>
     <string name="subject_call_number">"Num convocatoria: "</string>
     <string name="no_new_data">"No hay notas nuevas."</string>

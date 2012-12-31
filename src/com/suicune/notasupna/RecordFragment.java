@@ -14,7 +14,6 @@ import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -505,7 +504,6 @@ public class RecordFragment extends ListFragment {
 	 */
 	public void fillRecord(Cursor c) {
 		mRecord = new Record(c);
-		Log.d("TEST", DatabaseUtils.dumpCursorToString(c));
 		String[] subjectsFrom = { GradesContract.SubjectsTable.COL_SU_NAME,
 				GradesContract.SubjectsTable.COL_SU_CREDITS,
 				GradesContract.GradesTable.COL_GR_CODE };

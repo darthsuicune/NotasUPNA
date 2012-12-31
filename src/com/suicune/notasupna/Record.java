@@ -61,7 +61,7 @@ public class Record {
 							Integer.valueOf(c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE))).intValue(),
 							Integer.valueOf(c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS))).intValue());
 				}
-				long gradeTime = c.getLong(c.getColumnIndex(GradesContract.GradesTable._ID));
+				long gradeTime = c.getLong(c.getColumnIndex(GradesContract.GradesTable.COL_GR_TIME));
 				int gradeSubject = c.getInt(c.getColumnIndex(GradesContract.GradesTable.COL_GR_SU_CODE));
 				if(currentGradeTime != gradeTime || currentGradeSubject != gradeSubject){
 					currentGradeSubject = gradeSubject;

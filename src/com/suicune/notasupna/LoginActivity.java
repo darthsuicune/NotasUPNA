@@ -1,5 +1,7 @@
 package com.suicune.notasupna;
 
+import java.util.Random;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,18 +101,19 @@ public class LoginActivity extends ActionBarActivity {
 			getContentResolver().insert(uri, subject);
 			for(int j = 0; j < 2; j++){
 				ContentValues grade = new ContentValues();
+				int time = new Random().nextInt();
 				grade.put(GradesContract.GradesTable.COL_GR_ASSISTED, "Si");
 				grade.put(GradesContract.GradesTable.COL_GR_CALL, "Septiembre" );
 				grade.put(GradesContract.GradesTable.COL_GR_CALL_NUMBER, "1");
 				grade.put(GradesContract.GradesTable.COL_GR_CODE, "A");
-				grade.put(GradesContract.GradesTable.COL_GR_GRADE, "5" + j);
+				grade.put(GradesContract.GradesTable.COL_GR_GRADE, 5 + j);
 				grade.put(GradesContract.GradesTable.COL_GR_GRADE_NAME, "Aprobado");
 				grade.put(GradesContract.GradesTable.COL_GR_LANGUAGE, "es");
 				grade.put(GradesContract.GradesTable.COL_GR_PASSED, "Si");
 				grade.put(GradesContract.GradesTable.COL_GR_PROVISIONAL, "No");
 				grade.put(GradesContract.GradesTable.COL_GR_REVISION_TIME, "0");
 				grade.put(GradesContract.GradesTable.COL_GR_SU_CODE, 1 + i);
-				grade.put(GradesContract.GradesTable.COL_GR_TIME, "0" + j);
+				grade.put(GradesContract.GradesTable.COL_GR_TIME, time);
 				grade.put(GradesContract.GradesTable.COL_GR_YEAR, "2012");
 				getContentResolver().insert(uri1, grade);
 			}

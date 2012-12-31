@@ -51,6 +51,6 @@ public class Subject implements Serializable{
 	}
 	
 	public Grade getLastGrade(){
-		return mGradesList.get(mGradesList.size() - 1);
+		return mGradesList.get(0);
 	}
 }
