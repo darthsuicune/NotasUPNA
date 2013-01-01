@@ -69,31 +69,9 @@ public class RecordFragment extends ListFragment {
 	private TextView mRecordStatusMessageView;
 
 	private CursorLoaderHelper clh;
+	private DetailsFragment details;
 
 	LoaderManager manager = null;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		this.setHasOptionsMenu(true);
-
-		manager = getActivity().getSupportLoaderManager();
-		clh = new CursorLoaderHelper();
-
-		Bundle extras = getActivity().getIntent().getExtras();
-		if (extras != null) {
-			Bundle args = new Bundle();
-			args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA,
-					extras.getString(RecordActivity.EXTRA_DOWNLOADED_DATA));
-			manager.initLoader(LOADER_PARSER, args, new AsyncHelper());
-		}
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			manageOldVersion();
-		}
-		manager.initLoader(LOADER_STUDENT, null, clh);
-		manager.initLoader(LOADER_RECORD, null, clh);
-	}
 
 	/**
 	 * This method should allow for changing the degree when needed on older
@@ -114,7 +92,22 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
+		this.setHasOptionsMenu(true);
 
+		manager = getActivity().getSupportLoaderManager();
+		clh = new CursorLoaderHelper();
+
+		Bundle extras = getActivity().getIntent().getExtras();
+		if (extras != null) {
+			manager.initLoader(LOADER_PARSER, extras, new AsyncHelper());
+		}
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			manageOldVersion();
+		}
+		manager.initLoader(LOADER_STUDENT, null, clh);
+		manager.initLoader(LOADER_RECORD, null, clh);
+		
 		mRecordView = getActivity().findViewById(R.id.record_record_fragment);
 		mDetailsView = getActivity().findViewById(R.id.record_details);
 		mRecordStatusView = getActivity().findViewById(R.id.record_status);
@@ -132,8 +125,13 @@ public class RecordFragment extends ListFragment {
 
 		if (landscape) {
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-			showDetails(cursorPosition,
-					mRecord.mSubjectsList.get(cursorPosition));
+			details = (DetailsFragment) getActivity()
+					.getSupportFragmentManager().findFragmentById(
+							R.id.record_details);
+			if(mRecord != null){
+				showDetails(cursorPosition,
+						mRecord.mSubjectsList.get(cursorPosition));
+			}
 		}
 	}
 
@@ -145,8 +143,7 @@ public class RecordFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Subject subject = mRecord.mSubjectsList.get(position);
-		showDetails(position, subject);
+		showDetails(position, mRecord.mSubjectsList.get(position));
 		super.onListItemClick(l, v, position, id);
 	}
 
@@ -198,14 +195,11 @@ public class RecordFragment extends ListFragment {
 		getListView().setItemChecked(position, true);
 
 		if (landscape) {
-			DetailsFragment details = (DetailsFragment) getActivity()
-					.getSupportFragmentManager().findFragmentById(
-							R.id.record_details);
 			if (details == null || details.getShownIndex() != position) {
-				details = DetailsFragment.newInstance();
+				details = DetailsFragment.newInstance(position);
 				details.setSubject(subject);
-
-				FragmentTransaction ft = getFragmentManager()
+				
+				FragmentTransaction ft = getActivity().getSupportFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.record_details, details);
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -491,8 +485,8 @@ public class RecordFragment extends ListFragment {
 			TextView mStudentNifView = (TextView) getActivity().findViewById(
 					R.id.student_nif);
 			mStudentNameView.setText(mStudent.mStudentFullName);
-			mStudentNiaView.setText(mStudent.mStudentNia);
-			mStudentNifView.setText(mStudent.mStudentNif);
+			mStudentNiaView.setText(getString(R.string.header_nia) + mStudent.mStudentNia);
+			mStudentNifView.setText(getString(R.string.header_nif) + mStudent.mStudentNif);
 		}
 	}
 
@@ -521,6 +515,9 @@ public class RecordFragment extends ListFragment {
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(), prepareList(),
 				R.layout.record_list_item, subjectsFrom, subjectsTo);
 		setListAdapter(adapter);
+		if(details != null){
+			details.setSubject(mRecord.mSubjectsList.get(0));
+		}
 	}
 
 	/**

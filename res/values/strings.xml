@@ -3,7 +3,7 @@
     <string name="prompt_user_name">ID (without letter)</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
-    <string name="login_progress_signing_in">Signing in&#8230;</string>
+    <string name="login_progress_signing_in">Signing in…</string>
     <string name="error_invalid_email">This ID is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -110,4 +110,5 @@ Universidad Pública de Navarra UPNA"</string>
     <string name="about_summary">"Información del autor"</string>
     <string name="refresh">"Actualizar"</string>
     <string name="incognito_mode">"Modo de comprobación"</string>
+    <string name="subject_total_calls">"Registros: "</string>
 </resources>

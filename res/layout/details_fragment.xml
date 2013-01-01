@@ -6,17 +6,17 @@
 
     <LinearLayout
         android:id="@+id/details_subject_block"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:clickable="true"
-	    android:orientation="vertical" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="false"
+        android:orientation="vertical" >
 	    
 	    <TextView
 	        android:id="@+id/details_subject_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center"
-	        android:layout_margin="10dp"
 	        style="@style/subject_name" />
 	
 	    <LinearLayout
@@ -28,19 +28,23 @@
 	            android:id="@+id/details_subject_type"
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
-	            android:paddingRight="10dp"
 	            android:layout_weight="1" />
 	
 	        <TextView
-	            android:layout_width="wrap_content"
+	            android:id="@+id/details_subject_calls"
+	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
-	            android:text="@string/subject_credits" />
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:layout_gravity="center" />
 	        
 	        <TextView
 	            android:id="@+id/details_subject_credits"
-	            android:layout_width="30dp"
+	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
-	            android:paddingRight="10dp" />
+	            android:layout_weight="1"
+	            android:gravity="right"
+	            android:layout_gravity="right" />
 	
 	    </LinearLayout>
 	</LinearLayout>
@@ -303,7 +307,12 @@
 
             </TableRow>
         </TableLayout>
-
     </ScrollView>
-
+    <Button
+        android:id="@+id/details_show_calls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:gravity="center"
+        android:text="@string/other_calls" />
 </LinearLayout>

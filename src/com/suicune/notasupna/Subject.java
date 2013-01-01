@@ -18,6 +18,7 @@ public class Subject implements Serializable{
 	public List<Grade> mGradesList;
 	
 	public int mGradesCount;
+	public int mCallsTakenCount;
 	
 	public String mSubjectName;
 	public String mSubjectType;
@@ -48,6 +49,9 @@ public class Subject implements Serializable{
 	public void addGrade(Grade g){
 		mGradesList.add(g);
 		mGradesCount++;
+		if(!g.mGradeNumber.equalsIgnoreCase("-")){
+			mCallsTakenCount++;
+		}
 	}
 	
 	public Grade getLastGrade(){

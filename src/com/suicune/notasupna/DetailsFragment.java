@@ -2,9 +2,14 @@ package com.suicune.notasupna;
 
 import java.sql.Date;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,20 +18,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DetailsFragment extends Fragment {
-	private final static String ARGUMENT_SHOWN_INDEX = "shown index"; 
+	private final static String ARGUMENT_SHOWN_INDEX = "shown index";
+	
+	private final static String DIALOG_CALLS = "dialog calls";
 	
 	private Subject mSubject = null;
 	private Grade mGrade = null;
 	
-	public static DetailsFragment newInstance(){
+	public static DetailsFragment newInstance(int position){
 		DetailsFragment fragment = new DetailsFragment();
 		Bundle args = new Bundle();
-		args.putLong(ARGUMENT_SHOWN_INDEX, 0);
+		args.putLong(ARGUMENT_SHOWN_INDEX, position);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -34,21 +40,27 @@ public class DetailsFragment extends Fragment {
 	public void setSubject(Subject subject){
 		mSubject = subject;
 		mGrade = mSubject.mGradesList.get(1);
-		showSubjectInformation();
-		showGradeInformation();
 	}
 	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
 		setHasOptionsMenu(true);
+
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.details_fragment, container);
+		return inflater.inflate(R.layout.details_fragment, container, false);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		showSubjectInformation();
+		showGradeInformation();
+		showCallsList();
 	}
 
 	@Override
@@ -78,18 +90,12 @@ public class DetailsFragment extends Fragment {
 		TextView subjectNameView = (TextView) getActivity().findViewById(R.id.details_subject_name);
 		TextView subjectTypeView = (TextView) getActivity().findViewById(R.id.details_subject_type);
 		TextView subjectCreditsView = (TextView) getActivity().findViewById(R.id.details_subject_credits);
-		LinearLayout ll = (LinearLayout) getActivity().findViewById(R.id.details_subject_block);
+		TextView subjectCallsView = (TextView) getActivity().findViewById(R.id.details_subject_calls);
 		
 		subjectNameView.setText(mSubject.mSubjectName);
 		subjectTypeView.setText(mSubject.mSubjectType);
-		subjectCreditsView.setText("" + mSubject.mSubjectCredits);
-
-		ll.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showCallsList();
-			}
-		});
+		subjectCreditsView.setText(getString(R.string.subject_credits) + mSubject.mSubjectCredits);
+		subjectCallsView.setText(getString(R.string.subject_total_calls) + mSubject.mGradesCount);
 	}
 	
 	private void showGradeInformation(){
@@ -120,6 +126,51 @@ public class DetailsFragment extends Fragment {
 	}
 	
 	private void showCallsList(){
-		Toast.makeText(getActivity(), R.string.about, Toast.LENGTH_LONG).show();
+		boolean showCallsAsDialog = shouldShowAsDialog();
+		
+		Button showOtherCallsView = (Button) getActivity().findViewById(R.id.details_show_calls);
+		
+		if(showCallsAsDialog){
+			showOtherCallsView.setVisibility(View.VISIBLE);
+			showOtherCallsView.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+				    CallsDialogFragment callsDialogFragment = new CallsDialogFragment();
+				    callsDialogFragment.setSubject(mSubject);
+
+				    callsDialogFragment.show(fragmentManager, DIALOG_CALLS);
+				}
+			});
+			
+		}else{
+			FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+		    CallsDialogFragment callsDialogFragment = new CallsDialogFragment();
+		    callsDialogFragment.setSubject(mSubject);
+		    
+			showOtherCallsView.setVisibility(View.GONE);
+			FragmentTransaction transaction = fragmentManager.beginTransaction();
+	        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+	        transaction.add(R.id.record_calls, callsDialogFragment)
+	                   .addToBackStack(null).commit();
+		}
+	}
+	
+	@SuppressLint("NewApi")
+	private boolean shouldShowAsDialog(){
+		boolean result = true;
+		
+	    if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+	    	if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+		    	// Configuration.SCREENLAYOUT_SIZE_XLARGE == 4. Used for compatibility issues
+		    	result = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE) ? false : true;
+		    }else{
+		    	result = (getResources().getConfiguration().screenLayout & 
+		    		    Configuration.SCREENLAYOUT_SIZE_MASK) < 
+		    	        Configuration.SCREENLAYOUT_SIZE_LARGE;
+		    }
+	    }
+		return result;
 	}
 }

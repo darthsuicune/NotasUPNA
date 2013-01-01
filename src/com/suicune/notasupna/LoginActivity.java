@@ -197,6 +197,10 @@ public class LoginActivity extends ActionBarActivity {
 			mUserNameView.setError(getString(R.string.error_field_required));
 			focusView = mUserNameView;
 			cancel = true;
+		} else if (isId()) {
+			cancel = true;
+			mUserNameView.setError(getString(R.string.error_login));
+			focusView = mUserNameView;
 		}
 
 		if (cancel) {
@@ -216,6 +220,10 @@ public class LoginActivity extends ActionBarActivity {
 			
 			getSupportLoaderManager().restartLoader(LOADER_CONNECTION, args, new ConnectionHelper());
 		}
+	}
+	
+	private boolean isId(){
+		return false;
 	}
 
 	/**

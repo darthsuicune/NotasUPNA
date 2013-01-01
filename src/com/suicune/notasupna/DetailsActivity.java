@@ -38,10 +38,6 @@ public class DetailsActivity extends ActionBarActivity {
 			subject = (Subject) extras.getSerializable(EXTRA_SUBJECT);
 		}
 		DetailsFragment details = (DetailsFragment) getSupportFragmentManager().findFragmentById(R.id.details_fragment);
-		
 		details.setSubject(subject);
-//		details.setArguments(getIntent().getExtras());
-//		getSupportFragmentManager().beginTransaction()
-//				.add(R.id.details, details).commit();
 	}
 }
