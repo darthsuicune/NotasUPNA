@@ -38,33 +38,40 @@
     	android:layout_height="wrap_content"
     	android:layout_marginLeft="5dp"
     	android:layout_marginRight="5dp"
-    	android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/student_name"
-            android:layout_width="match_parent"
-    		android:layout_height="wrap_content" />
-	    <TextView
-	        android:id="@+id/student_nia"
-	        android:layout_width="wrap_content"
-	    	android:layout_height="wrap_content" />
-	    <TextView
-	        android:id="@+id/student_nif"
-	        android:layout_width="wrap_content"
-	    	android:layout_height="wrap_content" />     
-
-        <TextView
-            android:id="@+id/record_course"
-            android:layout_width="wrap_content"
-    		android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/record_center"
-            android:layout_width="wrap_content"
-    		android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/record_studies"
-            android:layout_width="wrap_content"
-    		android:layout_height="wrap_content" />
+    	android:orientation="vertical" >
+        <LinearLayout
+		    android:id="@+id/record_header_block"
+	        android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginLeft="5dp"
+	    	android:layout_marginRight="5dp"
+	    	android:orientation="vertical" >
+	        <TextView
+	            android:id="@+id/student_name"
+	            android:layout_width="match_parent"
+	    		android:layout_height="wrap_content" />
+		    <TextView
+		        android:id="@+id/student_nia"
+		        android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content" />
+		    <TextView
+		        android:id="@+id/student_nif"
+		        android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content" />     
+	
+	        <TextView
+	            android:id="@+id/record_course"
+	            android:layout_width="wrap_content"
+	    		android:layout_height="wrap_content" />
+	        <TextView
+	            android:id="@+id/record_center"
+	            android:layout_width="wrap_content"
+	    		android:layout_height="wrap_content" />
+	        <TextView
+	            android:id="@+id/record_studies"
+	            android:layout_width="wrap_content"
+	    		android:layout_height="wrap_content" />
+	    </LinearLayout>
 	    <fragment
 	        android:id="@+id/record_record_fragment"
 	        android:name="com.suicune.notasupna.RecordFragment"

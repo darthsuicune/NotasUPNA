@@ -59,6 +59,9 @@ public class RecordFragment extends ListFragment {
 	private static final int LOADER_PARSER = 5;
 
 	private static final int ACTIVITY_PREFERENCES = 1;
+	private static final int ACTIVITY_DETAILS = 2;
+	
+	private static final String STATE_POSITION = "cursor position";
 
 	public static final String COURSE_ID = "course_id";
 
@@ -74,15 +77,6 @@ public class RecordFragment extends ListFragment {
 
 	LoaderManager manager = null;
 
-	/**
-	 * This method should allow for changing the degree when needed on older
-	 * versions. Basically, activate a visual element to allow for changing
-	 * degrees TODO
-	 */
-	private void manageOldVersion() {
-
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -94,21 +88,25 @@ public class RecordFragment extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
+		if(savedInstanceState != null){
+			cursorPosition = savedInstanceState.getInt(STATE_POSITION);
+		}
 		this.setHasOptionsMenu(true);
 
 		manager = getActivity().getSupportLoaderManager();
 		clh = new CursorLoaderHelper();
 
-		Bundle extras = getActivity().getIntent().getExtras();
-		if (extras != null) {
-			manager.initLoader(LOADER_PARSER, extras, new AsyncHelper());
+		if(mRecord == null){
+			Bundle extras = getActivity().getIntent().getExtras();
+			if (extras != null) {
+				manager.initLoader(LOADER_PARSER, extras, new AsyncHelper());
+			}
+			manager.initLoader(LOADER_STUDENT, null, clh);
+			manager.initLoader(LOADER_RECORD, null, clh);
 		}
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			manageOldVersion();
 		}
-		manager.initLoader(LOADER_STUDENT, null, clh);
-		manager.initLoader(LOADER_RECORD, null, clh);
-
 		mRecordView = getActivity().findViewById(R.id.record_view);
 		mRecordStatusView = getActivity().findViewById(R.id.record_status);
 		mRecordStatusMessageView = (TextView) getActivity().findViewById(
@@ -116,6 +114,8 @@ public class RecordFragment extends ListFragment {
 
 		View detailsView = getActivity().findViewById(R.id.record_details);
 		View otherCallsView = getActivity().findViewById(R.id.record_calls);
+		View recordHeaderView = getActivity().findViewById(
+				R.id.record_header_block);
 
 		if ((detailsView != null)
 				&& (detailsView.getVisibility() == View.VISIBLE)) {
@@ -127,8 +127,10 @@ public class RecordFragment extends ListFragment {
 		if (landscape) {
 			if (isSmallScreen() && otherCallsView != null) {
 				otherCallsView.setVisibility(View.GONE);
+				recordHeaderView.setVisibility(View.GONE);
 			} else {
 				otherCallsView.setVisibility(View.VISIBLE);
+				recordHeaderView.setVisibility(View.VISIBLE);
 			}
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			details = (DetailsFragment) getActivity()
@@ -141,14 +143,24 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 
+	/**
+	 * This method should allow for changing the degree when needed on older
+	 * versions. Basically, activate a visual element to allow for changing
+	 * degrees TODO
+	 */
+	private void manageOldVersion() {
+
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt("cursorPosition", cursorPosition);
+		outState.putInt(STATE_POSITION, cursorPosition);
 		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
+		cursorPosition = position;
 		showDetails(position, mRecord.mSubjectsList.get(position));
 		super.onListItemClick(l, v, position, id);
 	}
@@ -170,6 +182,27 @@ public class RecordFragment extends ListFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.action_bar_record, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case ACTIVITY_DETAILS:
+			if (resultCode == Activity.RESULT_OK) {
+				if (landscape) {
+					if(mRecord != null){
+						fillRecord();
+						showDetails(cursorPosition, (Subject) data.getExtras().getSerializable(DetailsActivity.EXTRA_SUBJECT));
+					}
+				}
+			}
+			break;
+		case ACTIVITY_PREFERENCES:
+			break;
+		default:
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -196,8 +229,6 @@ public class RecordFragment extends ListFragment {
 
 	// TODO
 	private void showDetails(int position, Subject subject) {
-		cursorPosition = position;
-
 		getListView().setItemChecked(position, true);
 
 		if (landscape) {
@@ -212,10 +243,9 @@ public class RecordFragment extends ListFragment {
 				ft.commit();
 			}
 		} else {
-			Intent intent = new Intent();
-			intent.setClass(getActivity(), DetailsActivity.class);
+			Intent intent = new Intent(getActivity(), DetailsActivity.class);
 			intent.putExtra(DetailsActivity.EXTRA_SUBJECT, subject);
-			startActivity(intent);
+			startActivityForResult(intent, ACTIVITY_DETAILS);
 		}
 	}
 
@@ -360,7 +390,7 @@ public class RecordFragment extends ListFragment {
 	}
 
 	/**
-	 * Shows the progress UI and hides the login form.
+	 * Shows the progress UI and hides the record
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	private void showProgress(final boolean show) {
@@ -504,6 +534,10 @@ public class RecordFragment extends ListFragment {
 	 */
 	public void fillRecord(Cursor c) {
 		mRecord = new Record(c);
+		fillRecord();
+	}
+
+	public void fillRecord() {
 		String[] subjectsFrom = { GradesContract.SubjectsTable.COL_SU_NAME,
 				GradesContract.SubjectsTable.COL_SU_CREDITS,
 				GradesContract.GradesTable.COL_GR_CODE };
@@ -565,7 +599,7 @@ public class RecordFragment extends ListFragment {
 	@SuppressLint("NewApi")
 	private boolean isSmallScreen() {
 		boolean result;
-		
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			result = getResources().getConfiguration().isLayoutSizeAtLeast(
 					Configuration.SCREENLAYOUT_SIZE_LARGE) ? false : true;

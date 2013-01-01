@@ -70,7 +70,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -94,7 +94,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -117,7 +117,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_time"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -141,7 +141,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_revision_time"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -165,7 +165,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_provisional"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -189,7 +189,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_year"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -213,7 +213,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_call"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -237,7 +237,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_call_number"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -261,7 +261,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_passed"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -285,7 +285,7 @@
 
             <TableRow
                 android:id="@+id/details_row_grade_taken"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="2dp" >
 
@@ -306,22 +306,13 @@
                     android:gravity="right" />
 
             </TableRow>
-            
-	        <TableRow
-	            android:id="@+id/details_row_show_calls"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-		        android:layout_gravity="center"
-		        android:gravity="center"
-	            android:paddingTop="2dp" >
 	                
-	            <Button
-	                android:id="@+id/details_show_calls"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:padding="20dp"
-			        android:text="@string/other_calls" />
-	        </TableRow>
+	        <Button
+	            android:id="@+id/details_show_calls"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:padding="5dp"
+			    android:text="@string/other_calls" />
         </TableLayout>
     </ScrollView>
 </LinearLayout>

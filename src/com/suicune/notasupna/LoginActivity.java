@@ -1,5 +1,6 @@
 package com.suicune.notasupna;
 
+import java.util.Locale;
 import java.util.Random;
 
 import org.json.JSONException;
@@ -47,20 +48,21 @@ public class LoginActivity extends ActionBarActivity {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
-	
+
 	private static final int LOADER_CONNECTION = 1;
 	private static final int LOADER_CHECK_DATA = 2;
-	
+
 	private static final int ACTIVITY_RECORD = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		fillDB();
-		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null, new CursorLoaderHelper());
+		// fillDB();
+		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null,
+				new CursorLoaderHelper());
 	}
-	
-	private void fillDB(){
+
+	private void fillDB() {
 		Uri uri = GradesContract.CONTENT_NAME_STUDENTS;
 		ContentValues cv = new ContentValues();
 		cv.put(GradesContract.StudentsTable.COL_ST_NAME, "Denis");
@@ -79,35 +81,38 @@ public class LoginActivity extends ActionBarActivity {
 		cvcourse.put(GradesContract.CoursesTable.COL_CO_STUDIES, "ITI");
 		cvcourse.put(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS, "225");
 		getContentResolver().insert(uri, cvcourse);
-		
+
 		ContentValues cvcourseeu = new ContentValues();
 		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_CENTER, "ETSIITak");
 		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_LANGUAGE, "eu");
 		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_NAME, "ITIGak");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS, "225");
+		cvcourseeu
+				.put(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS, "225");
 		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_STUDIES, "ITIak");
 		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS, "225");
 		getContentResolver().insert(uri, cvcourseeu);
-		
+
 		uri = GradesContract.CONTENT_NAME_SUBJECTS;
 		Uri uri1 = GradesContract.CONTENT_NAME_GRADES;
-		for(int i = 0; i < 5; i++){
+		for (int i = 0; i < 5; i++) {
 			ContentValues subject = new ContentValues();
 			subject.put(GradesContract.SubjectsTable.COL_SU_CREDITS, "6");
 			subject.put(GradesContract.SubjectsTable.COL_SU_LANGUAGE, "es");
-			subject.put(GradesContract.SubjectsTable.COL_SU_NAME, "Subject " + i);
+			subject.put(GradesContract.SubjectsTable.COL_SU_NAME, "Subject "
+					+ i);
 			subject.put(GradesContract.SubjectsTable.COL_SU_TYPE, "Troncal");
 			subject.put(GradesContract.SubjectsTable.COL_SU_CO_CODE, "1");
 			getContentResolver().insert(uri, subject);
-			for(int j = 0; j < 2; j++){
+			for (int j = 0; j < 2; j++) {
 				ContentValues grade = new ContentValues();
 				int time = new Random().nextInt();
 				grade.put(GradesContract.GradesTable.COL_GR_ASSISTED, "Si");
-				grade.put(GradesContract.GradesTable.COL_GR_CALL, "Septiembre" );
+				grade.put(GradesContract.GradesTable.COL_GR_CALL, "Septiembre");
 				grade.put(GradesContract.GradesTable.COL_GR_CALL_NUMBER, "1");
 				grade.put(GradesContract.GradesTable.COL_GR_CODE, "A");
 				grade.put(GradesContract.GradesTable.COL_GR_GRADE, 5 + j);
-				grade.put(GradesContract.GradesTable.COL_GR_GRADE_NAME, "Aprobado");
+				grade.put(GradesContract.GradesTable.COL_GR_GRADE_NAME,
+						"Aprobado");
 				grade.put(GradesContract.GradesTable.COL_GR_LANGUAGE, "es");
 				grade.put(GradesContract.GradesTable.COL_GR_PASSED, "Si");
 				grade.put(GradesContract.GradesTable.COL_GR_PROVISIONAL, "No");
@@ -118,9 +123,7 @@ public class LoginActivity extends ActionBarActivity {
 				getContentResolver().insert(uri1, grade);
 			}
 		}
-		
-		
-		
+
 	}
 
 	@Override
@@ -129,8 +132,8 @@ public class LoginActivity extends ActionBarActivity {
 		getMenuInflater().inflate(R.menu.activity_login, menu);
 		return true;
 	}
-	
-	public void showLoginScreen(){
+
+	public void showLoginScreen() {
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
@@ -139,9 +142,11 @@ public class LoginActivity extends ActionBarActivity {
 		mUserNameView.setText(mUserName);
 
 		mPassWordView = (EditText) findViewById(R.id.password);
-		mPassWordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+		mPassWordView
+				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 					@Override
-					public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+					public boolean onEditorAction(TextView textView, int id,
+							KeyEvent keyEvent) {
 						if (id == R.id.login || id == EditorInfo.IME_NULL) {
 							attemptLogin();
 							return true;
@@ -164,9 +169,9 @@ public class LoginActivity extends ActionBarActivity {
 	}
 
 	/**
-	 * Attempts to sign in the account specified by the login form.
-	 * If there are form errors (invalid id, missing fields, etc.), the
-	 * errors are presented and no actual login attempt is made.
+	 * Attempts to sign in the account specified by the login form. If there are
+	 * form errors (invalid id, missing fields, etc.), the errors are presented
+	 * and no actual login attempt is made.
 	 */
 	public void attemptLogin() {
 
@@ -197,9 +202,9 @@ public class LoginActivity extends ActionBarActivity {
 			mUserNameView.setError(getString(R.string.error_field_required));
 			focusView = mUserNameView;
 			cancel = true;
-		} else if (isId()) {
+		} else if (!isId()) {
 			cancel = true;
-			mUserNameView.setError(getString(R.string.error_login));
+			mUserNameView.setError(getString(R.string.error_invalid_id));
 			focusView = mUserNameView;
 		}
 
@@ -212,18 +217,179 @@ public class LoginActivity extends ActionBarActivity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			
+
 			Bundle args = new Bundle();
 			args.putString(PreferencesActivity.PREFERENCE_USER_NAME, mUserName);
 			args.putString(PreferencesActivity.PREFERENCE_PASS_WORD, mPassWord);
-			
-			
-			getSupportLoaderManager().restartLoader(LOADER_CONNECTION, args, new ConnectionHelper());
+
+			getSupportLoaderManager().restartLoader(LOADER_CONNECTION, args,
+					new ConnectionHelper());
 		}
 	}
-	
-	private boolean isId(){
-		return false;
+
+	private boolean isId() {
+		boolean result = false;
+
+		// Foreigners
+		if (mUserName.startsWith("X")
+				&& TextUtils.isDigitsOnly(mUserName.substring(1, 8))) {
+			if (checkLetter()) {
+				result = true;
+			}
+		} else if (mUserName.startsWith("Y")
+				&& TextUtils.isDigitsOnly(mUserName.substring(1, 8))) {
+			if (checkLetter()) {
+				result = true;
+			}
+		} else if (mUserName.startsWith("Z")
+				&& TextUtils.isDigitsOnly(mUserName.substring(1, 8))) {
+			if (checkLetter()) {
+				result = true;
+			}
+		}
+		// Check spanish DNI
+		if (mUserName.length() == 9) {
+			if (TextUtils.isDigitsOnly(mUserName.substring(0, 8))
+					&& checkLetter()) {
+				result = true;
+			}
+		} else if (mUserName.length() == 8 && TextUtils.isDigitsOnly(mUserName)) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	private boolean checkLetter() {
+		boolean result = false;
+
+		String userName = mUserName;
+		int id = Integer.parseInt(userName.substring(0, 8));
+		char letter = userName.toLowerCase().charAt(userName.length() - 1);
+		switch (id % 23) {
+		case 0:
+			if (letter == 't') {
+				result = true;
+			}
+			break;
+		case 1:
+			if (letter == 'r') {
+				result = true;
+			}
+			break;
+		case 2:
+			if (letter == 'w') {
+				result = true;
+			}
+			break;
+		case 3:
+			if (letter == 'a') {
+				result = true;
+			}
+			break;
+		case 4:
+			if (letter == 'g') {
+				result = true;
+			}
+			break;
+		case 5:
+			if (letter == 'm') {
+				result = true;
+			}
+			break;
+		case 6:
+			if (letter == 'y') {
+				result = true;
+			}
+			break;
+		case 7:
+			if (letter == 'f') {
+				result = true;
+			}
+			break;
+		case 8:
+			if (letter == 'p') {
+				result = true;
+			}
+			break;
+		case 9:
+			if (letter == 'd') {
+				result = true;
+			}
+			break;
+		case 10:
+			if (letter == 'x') {
+				result = true;
+			}
+			break;
+		case 11:
+			if (letter == 'b') {
+				result = true;
+			}
+			break;
+		case 12:
+			if (letter == 'n') {
+				result = true;
+			}
+			break;
+		case 13:
+			if (letter == 'j') {
+				result = true;
+			}
+			break;
+		case 14:
+			if (letter == 'z') {
+				result = true;
+			}
+			break;
+		case 15:
+			if (letter == 's') {
+				result = true;
+			}
+			break;
+		case 16:
+			if (letter == 'q') {
+				result = true;
+			}
+			break;
+		case 17:
+			if (letter == 'v') {
+				result = true;
+			}
+			break;
+		case 18:
+			if (letter == 'h') {
+				result = true;
+			}
+			break;
+		case 19:
+			if (letter == 'l') {
+				result = true;
+			}
+			break;
+		case 20:
+			if (letter == 'c') {
+				result = true;
+			}
+			break;
+		case 21:
+			if (letter == 'k') {
+				result = true;
+			}
+			break;
+		case 22:
+			if (letter == 'e') {
+				result = true;
+			}
+			break;
+		default:
+			break;
+		}
+		if (result) {
+			mUserName = mUserName.substring(0, 8);
+		}
+
+		return result;
 	}
 
 	/**
@@ -266,35 +432,40 @@ public class LoginActivity extends ActionBarActivity {
 			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
-	
-	public void doLogin(String response){
+
+	public void doLogin(String response) {
 		Intent intent = new Intent(this, RecordActivity.class);
-		if(response != null){
-			PreferencesActivity.saveLoginData(getApplicationContext(), mUserName, mPassWord);
+		if (response != null) {
+			PreferencesActivity.saveLoginData(getApplicationContext(),
+					mUserName, mPassWord);
 			intent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
 		}
 		startActivityForResult(intent, ACTIVITY_RECORD);
 		this.finish();
 	}
-	
-	public void failedLogin(String response, int errorCode){
-		switch(errorCode){
+
+	public void failedLogin(String response, int errorCode) {
+		switch (errorCode) {
 		case ConnectLoader.ERROR_JSON:
-			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG)
+					.show();
 			break;
 		case ConnectLoader.ERROR_NO_JSON:
-			if(response.contains("HTTP Status 403") || response.contains("HTTP Status 401")){
-				Toast.makeText(getApplicationContext(), R.string.error_login, Toast.LENGTH_LONG).show();
-			}else{
-				Toast.makeText(getApplicationContext(), R.string.error_connecting, Toast.LENGTH_LONG).show();
+			if (response.contains("HTTP Status 403")
+					|| response.contains("HTTP Status 401")) {
+				Toast.makeText(getApplicationContext(), R.string.error_login,
+						Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(getApplicationContext(),
+						R.string.error_connecting, Toast.LENGTH_LONG).show();
 			}
 			break;
 		default:
 			break;
 		}
 	}
-	
-	public class ConnectionHelper implements LoaderCallbacks<String>{
+
+	public class ConnectionHelper implements LoaderCallbacks<String> {
 
 		@Override
 		public Loader<String> onCreateLoader(int id, Bundle args) {
@@ -304,22 +475,25 @@ public class LoginActivity extends ActionBarActivity {
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
 			showProgress(false);
-			if(response == null){
-				Toast.makeText(getApplicationContext(), R.string.error_connection, Toast.LENGTH_LONG).show();
-			}else{
-				try{
+			if (response == null) {
+				Toast.makeText(getApplicationContext(),
+						R.string.error_connection, Toast.LENGTH_LONG).show();
+			} else {
+				try {
 					JSONObject object = new JSONObject(response);
 					int error = object.getInt(GradesParserLoader.nError);
-					if(error == 0){
+					if (error == 0) {
 						doLogin(response);
-					}else{
-						String errorMsg = object.getString(GradesParserLoader.nErrorMsg);
+					} else {
+						String errorMsg = object
+								.getString(GradesParserLoader.nErrorMsg);
 						failedLogin(errorMsg, ConnectLoader.ERROR_JSON);
 					}
-				}catch(JSONException e){
-					Log.d(ConnectLoader.logging, "Error in response from server: " + response);
+				} catch (JSONException e) {
+					Log.d(ConnectLoader.logging,
+							"Error in response from server: " + response);
 					failedLogin(response, ConnectLoader.ERROR_NO_JSON);
-				}catch(Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -330,19 +504,18 @@ public class LoginActivity extends ActionBarActivity {
 			loader.reset();
 		}
 	}
-	
-	public class CursorLoaderHelper implements LoaderCallbacks<Cursor>{
+
+	public class CursorLoaderHelper implements LoaderCallbacks<Cursor> {
 
 		@Override
 		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 			CursorLoader loader = null;
-			switch(id){
+			switch (id) {
 			case LOADER_CHECK_DATA:
 				Uri uri = GradesContract.CONTENT_NAME_STUDENTS;
-				String[] projection = {
-						GradesContract.StudentsTable._ID
-				};
-				loader = new CursorLoader(getApplicationContext(), uri, projection, null, null, null);
+				String[] projection = { GradesContract.StudentsTable._ID };
+				loader = new CursorLoader(getApplicationContext(), uri,
+						projection, null, null, null);
 				break;
 			default:
 				break;
@@ -352,11 +525,11 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-			switch(loader.getId()){
+			switch (loader.getId()) {
 			case LOADER_CHECK_DATA:
-				if(cursor.getCount() == 0){
+				if (cursor.getCount() == 0) {
 					showLoginScreen();
-				}else{
+				} else {
 					doLogin(null);
 				}
 				break;
@@ -369,6 +542,6 @@ public class LoginActivity extends ActionBarActivity {
 		public void onLoaderReset(Loader<Cursor> loader) {
 			loader.reset();
 		}
-		
+
 	}
 }

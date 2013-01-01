@@ -38,6 +38,7 @@
         android:orientation="vertical" >
 
         <LinearLayout
+            android:id="@+id/record_header_block"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false" >
@@ -86,6 +87,7 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Fragments -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
@@ -94,20 +96,20 @@
                 android:id="@+id/record_record_fragment"
                 android:name="com.suicune.notasupna.RecordFragment"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="2" />
 
             <FrameLayout
                 android:id="@+id/record_details"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="2" >
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/record_calls"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1" >
             </FrameLayout>
 

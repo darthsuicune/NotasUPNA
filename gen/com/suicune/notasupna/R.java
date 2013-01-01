@@ -73,12 +73,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     public static final class id {
         public static final int action_details_calls=0x7f06003f;
         public static final int action_details_share=0x7f06003e;
-        public static final int action_login_confirm=0x7f060042;
-        public static final int action_login_incognito=0x7f060040;
+        public static final int action_login_confirm=0x7f060040;
         public static final int action_login_preferences=0x7f060041;
-        public static final int action_record_close_session=0x7f060045;
-        public static final int action_record_preferences=0x7f060044;
-        public static final int action_record_refresh=0x7f060043;
+        public static final int action_record_close_session=0x7f060044;
+        public static final int action_record_preferences=0x7f060043;
+        public static final int action_record_refresh=0x7f060042;
         public static final int actionbar_compat=0x7f060000;
         public static final int actionbar_compat_item_refresh=0x7f060003;
         public static final int actionbar_compat_item_refresh_progress=0x7f060002;
@@ -110,8 +109,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int details_row_grade_taken=0x7f06002b;
         public static final int details_row_grade_time=0x7f06001d;
         public static final int details_row_grade_year=0x7f060023;
-        public static final int details_row_show_calls=0x7f06002d;
-        public static final int details_show_calls=0x7f06002e;
+        public static final int details_show_calls=0x7f06002d;
         public static final int details_subject_block=0x7f060011;
         public static final int details_subject_calls=0x7f060014;
         public static final int details_subject_credits=0x7f060015;
@@ -128,14 +126,15 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int record_center=0x7f060036;
         public static final int record_course=0x7f060035;
         public static final int record_details=0x7f060039;
+        public static final int record_header_block=0x7f060031;
         public static final int record_item_credits=0x7f06003c;
         public static final int record_item_grade=0x7f06003d;
         public static final int record_item_name=0x7f06003b;
         public static final int record_record_fragment=0x7f060038;
-        public static final int record_status=0x7f06002f;
-        public static final int record_status_message=0x7f060030;
+        public static final int record_status=0x7f06002e;
+        public static final int record_status_message=0x7f06002f;
         public static final int record_studies=0x7f060037;
-        public static final int record_view=0x7f060031;
+        public static final int record_view=0x7f060030;
         public static final int separator=0x7f060016;
         public static final int student_name=0x7f060032;
         public static final int student_nia=0x7f060033;
@@ -162,57 +161,48 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     }
     public static final class string {
         public static final int about=0x7f080040;
-        public static final int about_summary=0x7f080069;
-        public static final int about_title=0x7f080068;
+        public static final int about_summary=0x7f080061;
+        public static final int about_title=0x7f080060;
         public static final int action_sign_in=0x7f080002;
         public static final int app_name=0x7f080008;
         public static final int basque=0x7f080023;
         public static final int call_unknown=0x7f08001b;
         public static final int cancel=0x7f08000d;
-        public static final int change_password=0x7f08004b;
-        public static final int change_password_summary=0x7f080049;
-        public static final int clean_data=0x7f080065;
-        public static final int clean_data_summary=0x7f080066;
-        public static final int close_session=0x7f080047;
+        public static final int clean_data=0x7f08005d;
+        public static final int clean_data_summary=0x7f08005e;
+        public static final int close_session=0x7f080043;
         public static final int confirm=0x7f08000c;
         public static final int default_language=0x7f08002c;
         public static final int default_language_used=0x7f08002d;
         public static final int dialog_change_language=0x7f080025;
-        public static final int dialog_change_password=0x7f080042;
-        public static final int dialog_close_session=0x7f080048;
+        public static final int dialog_close_session=0x7f080044;
         public static final int dialog_connect=0x7f08003b;
         public static final int dialog_parse=0x7f08003d;
         public static final int english=0x7f080024;
         public static final int error_connecting=0x7f080030;
-        public static final int error_connection=0x7f080062;
+        public static final int error_connection=0x7f08005c;
         public static final int error_downloading=0x7f080031;
         public static final int error_field_required=0x7f080007;
         public static final int error_grades=0x7f08002f;
         public static final int error_incorrect_password=0x7f080006;
-        public static final int error_invalid_email=0x7f080004;
+        public static final int error_invalid_id=0x7f080004;
         public static final int error_invalid_password=0x7f080005;
         public static final int error_login=0x7f08002e;
-        public static final int error_parsing=0x7f080060;
-        public static final int exit_mode_checkonly=0x7f080064;
-        public static final int exit_mode_checkonly_summary=0x7f080063;
+        public static final int error_parsing=0x7f08005a;
         public static final int facebook_error=0x7f080034;
         public static final int facebook_grade_published=0x7f080033;
         public static final int header_credits=0x7f08000f;
         public static final int header_nia=0x7f08002b;
         public static final int header_nif=0x7f08002a;
-        public static final int incognito_mode=0x7f08006b;
-        public static final int language=0x7f08004a;
-        public static final int language_not_supported=0x7f08004d;
-        public static final int language_summary=0x7f08004c;
+        public static final int language=0x7f080045;
+        public static final int language_not_supported=0x7f080047;
+        public static final int language_summary=0x7f080046;
         public static final int last_update=0x7f080028;
-        public static final int login_no_password=0x7f080061;
-        public static final int login_password_hint=0x7f080045;
+        public static final int login_no_password=0x7f08005b;
         public static final int login_progress_signing_in=0x7f080003;
-        public static final int login_text=0x7f080043;
+        public static final int login_text=0x7f080042;
         public static final int login_title=0x7f08000a;
-        public static final int login_username_hint=0x7f080044;
         public static final int mode_checkonly_summary=0x7f08003f;
-        public static final int new_password=0x7f080046;
         public static final int no=0x7f08001f;
         public static final int no_new_data=0x7f080019;
         public static final int no_revision_time=0x7f080021;
@@ -229,19 +219,19 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int prompt_user_name=0x7f080000;
         public static final int record=0x7f08003e;
         public static final int record_title=0x7f080009;
-        public static final int refresh=0x7f08006a;
+        public static final int refresh=0x7f080062;
         public static final int service_title=0x7f080037;
         public static final int share=0x7f08003c;
         public static final int share_grade=0x7f080029;
         public static final int share_grade_title=0x7f080032;
         public static final int share_on_facebook=0x7f080039;
-        public static final int sort_order_alpha_asc=0x7f08004e;
-        public static final int sort_order_alpha_desc=0x7f08004f;
-        public static final int sort_order_summary=0x7f080051;
-        public static final int sort_order_time_asc=0x7f080050;
-        public static final int sort_order_time_desc=0x7f080052;
+        public static final int sort_order_alpha_asc=0x7f080048;
+        public static final int sort_order_alpha_desc=0x7f080049;
+        public static final int sort_order_summary=0x7f08004b;
+        public static final int sort_order_time_asc=0x7f08004a;
+        public static final int sort_order_time_desc=0x7f08004c;
         public static final int spanish=0x7f080022;
-        public static final int subject=0x7f080067;
+        public static final int subject=0x7f08005f;
         public static final int subject_call=0x7f080017;
         public static final int subject_call_number=0x7f080018;
         public static final int subject_credits=0x7f080011;
@@ -252,27 +242,27 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int subject_revision_time=0x7f08001e;
         public static final int subject_taken=0x7f080015;
         public static final int subject_time=0x7f08001c;
-        public static final int subject_total_calls=0x7f08006c;
+        public static final int subject_total_calls=0x7f080063;
         public static final int subject_type=0x7f080012;
         public static final int subject_year=0x7f080010;
-        public static final int update_10_minutes=0x7f080053;
-        public static final int update_12_hour=0x7f080054;
-        public static final int update_15_minutes=0x7f080055;
-        public static final int update_1_hour=0x7f080056;
-        public static final int update_1_week=0x7f080058;
-        public static final int update_24_hour=0x7f080057;
-        public static final int update_2_hour=0x7f08005f;
-        public static final int update_5_minutes=0x7f080059;
-        public static final int update_6_hour=0x7f08005a;
-        public static final int update_half_hour=0x7f08005c;
-        public static final int update_no=0x7f08005b;
-        public static final int update_time=0x7f08005e;
-        public static final int update_time_summary=0x7f08005d;
+        public static final int update_10_minutes=0x7f08004d;
+        public static final int update_12_hour=0x7f08004e;
+        public static final int update_15_minutes=0x7f08004f;
+        public static final int update_1_hour=0x7f080050;
+        public static final int update_1_week=0x7f080052;
+        public static final int update_24_hour=0x7f080051;
+        public static final int update_2_hour=0x7f080059;
+        public static final int update_5_minutes=0x7f080053;
+        public static final int update_6_hour=0x7f080054;
+        public static final int update_half_hour=0x7f080056;
+        public static final int update_no=0x7f080055;
+        public static final int update_time=0x7f080058;
+        public static final int update_time_summary=0x7f080057;
         public static final int upna_logo_description=0x7f08001a;
         public static final int yes=0x7f080020;
     }
     public static final class style {
-        public static final int ActionBarTitle=0x7f09002c;
+        public static final int ActionBarTitle=0x7f090020;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -286,7 +276,6 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     
- API 11 theme customizations can go here. 
 
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
@@ -294,69 +283,54 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f090029;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f09002a;
-        public static final int LoginFormContainer=0x7f09002b;
-        /**  Style definitions for the pseudo-"action bar" 
-         */
-        public static final int action_bar=0x7f090003;
-        public static final int action_bar_icon=0x7f090006;
-        public static final int action_bar_logo=0x7f090004;
-        public static final int action_bar_logo_back=0x7f090005;
-        public static final int action_bar_title=0x7f090007;
-        public static final int activity=0x7f090000;
-        public static final int calls_list_call=0x7f090024;
-        public static final int calls_list_call_info=0x7f090028;
-        public static final int calls_list_call_text=0x7f090025;
-        public static final int calls_list_grade=0x7f090027;
-        public static final int calls_list_grade_name=0x7f090026;
+        public static final int AppTheme=0x7f090001;
+        public static final int DropDownItemStyle=0x7f09001f;
+        public static final int LoginFormContainer=0x7f090002;
+        public static final int calls_list_call=0x7f09001a;
+        public static final int calls_list_call_info=0x7f09001e;
+        public static final int calls_list_call_text=0x7f09001b;
+        public static final int calls_list_grade=0x7f09001d;
+        public static final int calls_list_grade_name=0x7f09001c;
         /**  Style definitions for the calls list 
          */
-        public static final int calls_list_text=0x7f090023;
+        public static final int calls_list_text=0x7f090019;
         /**  Style definitions for the items in the expandable list - groups 
          */
-        public static final int list_plan=0x7f090012;
-        public static final int list_plan_center=0x7f090014;
-        public static final int list_plan_credits=0x7f090016;
-        public static final int list_plan_name=0x7f090013;
-        public static final int list_plan_studies=0x7f090015;
+        public static final int list_plan=0x7f090008;
+        public static final int list_plan_center=0x7f09000a;
+        public static final int list_plan_credits=0x7f09000c;
+        public static final int list_plan_name=0x7f090009;
+        public static final int list_plan_studies=0x7f09000b;
         /**  Style definitions for the items in the expandable list - childs 
          */
-        public static final int list_subject=0x7f090017;
-        public static final int list_subject_credits=0x7f09001a;
-        public static final int list_subject_grade=0x7f09001b;
-        public static final int list_subject_name=0x7f090019;
-        public static final int list_subject_text=0x7f090018;
-        /**  Style definition for the login screen 
+        public static final int list_subject=0x7f09000d;
+        public static final int list_subject_credits=0x7f090010;
+        public static final int list_subject_grade=0x7f090011;
+        public static final int list_subject_name=0x7f09000f;
+        public static final int list_subject_text=0x7f09000e;
+        /**  Style definitions for the action bar 
+ Style definitions for the header present at the record screen 
          */
-        public static final int login_block=0x7f090008;
-        public static final int login_button=0x7f09000e;
-        public static final int login_edittext=0x7f09000b;
-        public static final int login_password=0x7f09000d;
-        public static final int login_text=0x7f090009;
-        public static final int login_upna_logo=0x7f09000a;
-        public static final int login_username=0x7f09000c;
-        /**  Style definitions for the header present at the record screen 
-         */
-        public static final int record_header=0x7f09000f;
-        public static final int record_header_info=0x7f090011;
-        public static final int record_header_student=0x7f090010;
-        public static final int subject_grid=0x7f09001d;
-        public static final int subject_info_button=0x7f090021;
-        public static final int subject_info_details=0x7f090020;
-        public static final int subject_info_predefined_text=0x7f09001f;
-        public static final int subject_info_share=0x7f090022;
-        public static final int subject_info_slot=0x7f09001e;
+        public static final int record_header=0x7f090005;
+        public static final int record_header_info=0x7f090007;
+        public static final int record_header_student=0x7f090006;
+        public static final int subject_grid=0x7f090013;
+        public static final int subject_info_button=0x7f090017;
+        public static final int subject_info_details=0x7f090016;
+        public static final int subject_info_predefined_text=0x7f090015;
+        public static final int subject_info_share=0x7f090018;
+        public static final int subject_info_slot=0x7f090014;
         /**  Style definitions for the subject details screen 
          */
-        public static final int subject_name=0x7f09001c;
+        public static final int subject_name=0x7f090012;
         /**  Style definition for the university logo 
          */
-        public static final int upna_logo=0x7f090001;
-        public static final int upna_logo_white=0x7f090002;
+        public static final int upna_logo=0x7f090003;
+        public static final int upna_logo_white=0x7f090004;
     }
     public static final class styleable {
         /** Attributes that can be used with a AppTheme.

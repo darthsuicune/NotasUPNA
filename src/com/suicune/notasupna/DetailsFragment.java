@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 public class DetailsFragment extends Fragment {
@@ -40,18 +39,9 @@ public class DetailsFragment extends Fragment {
 		return fragment;
 	}
 
-	public void setSubject(Subject subject) {
-		mSubject = subject;
-		mGrade = mSubject.mGradesList.get(1);
-		mCallsFragment = new CallsDialogFragment();
-		mCallsFragment.setSubject(mSubject);
-	}
-
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		setHasOptionsMenu(true);
-
 	}
 
 	@Override
@@ -63,9 +53,16 @@ public class DetailsFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		showSubjectInformation();
-		showGradeInformation();
-		showCallsList();
+		if(isPortrait() && isRecordActivity()){
+			return;			
+		}else{
+			setHasOptionsMenu(true);
+			if(mSubject != null){
+				showSubjectInformation();
+				showGradeInformation();
+				showCallsList();
+			}
+		}
 	}
 
 	@Override
@@ -85,6 +82,13 @@ public class DetailsFragment extends Fragment {
 			return false;
 		}
 		return true;
+	}
+
+	public void setSubject(Subject subject) {
+		mSubject = subject;
+		mGrade = mSubject.mGradesList.get(1);
+		mCallsFragment = new CallsDialogFragment();
+		mCallsFragment.setSubject(mSubject);
 	}
 
 	public long getShownIndex() {
@@ -149,13 +153,11 @@ public class DetailsFragment extends Fragment {
 	}
 
 	private void showCallsList() {
-		TableRow showOtherCallsRowView = (TableRow) getActivity().findViewById(
-				R.id.details_row_show_calls);
 		Button showOtherCallsButtonView = (Button) getActivity().findViewById(
 				R.id.details_show_calls);
 
 		if (shouldShowAsDialog()) {
-			showOtherCallsRowView.setVisibility(View.VISIBLE);
+			showOtherCallsButtonView.setVisibility(View.VISIBLE);
 			showOtherCallsButtonView.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -171,7 +173,7 @@ public class DetailsFragment extends Fragment {
 			FragmentManager fragmentManager = getActivity()
 					.getSupportFragmentManager();
 
-			showOtherCallsRowView.setVisibility(View.GONE);
+			showOtherCallsButtonView.setVisibility(View.GONE);
 			FragmentTransaction transaction = fragmentManager
 					.beginTransaction();
 			transaction
@@ -185,16 +187,25 @@ public class DetailsFragment extends Fragment {
 	private boolean shouldShowAsDialog() {
 		boolean result;
 
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		if (isPortrait()) {
+			result = true;
+		} else {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 				result = getResources().getConfiguration().isLayoutSizeAtLeast(
 						Configuration.SCREENLAYOUT_SIZE_LARGE) ? false : true;
 			} else {
 				result = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < Configuration.SCREENLAYOUT_SIZE_LARGE;
 			}
-		} else {
-			result = true;
 		}
 		return result;
+	}
+	
+	private boolean isPortrait(){
+		return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+	}
+	
+	private boolean isRecordActivity(){
+		String result = getActivity().getLocalClassName();
+		return result.contains("RecordActivity");
 	}
 }

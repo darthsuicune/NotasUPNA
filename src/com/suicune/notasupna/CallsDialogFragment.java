@@ -65,7 +65,7 @@ public class CallsDialogFragment extends DialogFragment {
 			Grade grade = mSubject.mGradesList.get(i);
 			String gradeTime = DateFormat.getDateFormat(getActivity()).format(new Date(grade.mGradeTime));
 			item.put(GradesContract.GradesTable.COL_GR_TIME, gradeTime);
-			item.put(GradesContract.GradesTable.COL_GR_GRADE, "" + grade.mGradeNumber);
+			item.put(GradesContract.GradesTable.COL_GR_GRADE, getString(R.string.subject_grade) + grade.mGradeNumber);
 			item.put(GradesContract.GradesTable.COL_GR_GRADE_NAME, grade.mGradeName);
 			result.add(item);
 		}

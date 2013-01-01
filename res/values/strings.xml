@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="prompt_user_name">ID (without letter)</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
-    <string name="login_progress_signing_in">Signing in…</string>
-    <string name="error_invalid_email">This ID is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="prompt_user_name">"NIF (DNI/NIE)"</string>
+    <string name="prompt_password">"Contraseña"</string>
+    <string name="action_sign_in">"Iniciar sesión"</string>
+    <string name="login_progress_signing_in">"Conectando…"</string>
+    <string name="error_invalid_id">"El NIF es inválido"</string>
+    <string name="error_invalid_password">"La contraseña es demasiado corta"</string>
+    <string name="error_incorrect_password">"La contraseña es incorrecta"</string>
+    <string name="error_field_required">"Este campo no puede estar vacio"</string>
     <string name="app_name">"Notas UPNA"</string>
     <string name="record_title">"Expediente"</string>
     <string name="login_title">"Iniciar sesión"</string>
@@ -68,16 +68,10 @@
 Contacto: lapuente.denis@gmail.com
 Universidad Pública de Navarra UPNA"</string>
     <string name="passed_total_credits">"Creditos superados/totales"</string>
-    <string name="dialog_change_password">"Esta opción no cambiará su contraseña de acceso. Solo la actualizará en el teléfono para que la aplicación pueda recoger las notas tras haberla cambiado en el aulario virtual."</string>
     <string name="login_text">"Tu expediente"</string>
-    <string name="login_username_hint">"DNI (sin letra)"</string>
-    <string name="login_password_hint">"Contraseña"</string>
-    <string name="new_password">"Introduzca la nueva contraseña"</string>
     <string name="close_session">"Cerrar sesión"</string>
     <string name="dialog_close_session">"Va a borrar los datos de la aplicación en el teléfono. Esto supondrá tener que volver a descargarlos cuando quiera consultar de nuevo. Para salir sin borrar los datos pulse el botón \"Atrás\"."</string>
-    <string name="change_password_summary">"Cambiar la contraseña almacenada en el teléfono."</string>
     <string name="language">"Cambiar idioma"</string>
-    <string name="change_password">"Cambiar contraseña"</string>
     <string name="language_summary">"Elija en que idioma desea usar la aplicación"</string>
     <string name="language_not_supported">"El expediente no está disponible en el idioma seleccionado. Elija en que idioma quiere verlo."</string>
     <string name="sort_order_alpha_asc">"Ordenar alfabéticamente (ascendente)"</string>
@@ -101,14 +95,11 @@ Universidad Pública de Navarra UPNA"</string>
     <string name="error_parsing">"Error en las notas. Descargue de nuevo los datos."</string>
     <string name="login_no_password">"No has introducido ninguna contraseña. Introduce una para poder acceder."</string>
     <string name="error_connection">"Hay un problema con su conexión a internet. Asegurese de estar conectado"</string>
-    <string name="exit_mode_checkonly_summary">"Vuelve a la pantalla de login en el modo normal."</string>
-    <string name="exit_mode_checkonly">"Salir del modo de comprobación"</string>
     <string name="clean_data">"Cerrar sesión"</string>
     <string name="clean_data_summary">"Borra los datos de la aplicación en el teléfono."</string>
     <string name="subject">"Asignatura"</string>
-    <string name="about_title">"Acerca de"</string>
+    <string name="about_title">"Acerca de…"</string>
     <string name="about_summary">"Información del autor"</string>
     <string name="refresh">"Actualizar"</string>
-    <string name="incognito_mode">"Modo de comprobación"</string>
     <string name="subject_total_calls">"Registros: "</string>
 </resources>

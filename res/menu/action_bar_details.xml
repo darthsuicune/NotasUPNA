@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_details_share"
           android:icon="@drawable/ic_launcher"
-          android:title="@string/incognito_mode"
+          android:title="@string/share"
           android:showAsAction="ifRoom" />
     
     <item android:id="@+id/action_details_calls" 
           android:icon="@drawable/ic_launcher"
-          android:title="@string/preferences"
+          android:title="@string/other_calls"
           android:showAsAction="ifRoom" />
 
 </menu>
