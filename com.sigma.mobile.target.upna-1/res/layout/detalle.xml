@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/round_corners" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:background="@drawable/main_bar_gradient" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <LinearLayout android:layout_gravity="center_vertical" android:orientation="vertical" android:padding="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="0.7">
+            <TextView android:textSize="16.0dip" android:textStyle="bold" android:textColor="#ffffffff" android:id="@id/tituloAplicacion" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/app_name" />
+            <TextView android:textSize="14.0dip" android:textColor="#ffffffff" android:gravity="left" android:id="@id/nombreAlumno" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        </LinearLayout>
+        <ImageView android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/logo_header" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:background="@drawable/round_corners_dark" android:padding="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="5.0dip">
+        <TextView android:id="@id/asignatura" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="0.7" style="@style/estudioTitulo" />
+        <TextView android:gravity="center" android:layout_gravity="center" android:id="@id/Nota" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/nota" />
+    </LinearLayout>
+    <ScrollView android:id="@id/ScrollView01" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <LinearLayout android:orientation="vertical" android:paddingBottom="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip">
+            <TextView android:id="@id/textoCalificacion" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/calificacion" style="@style/apilado.Bold" />
+            <TextView android:id="@id/calificacion" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+            <ImageView android:id="@id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            <LinearLayout android:orientation="vertical" android:id="@id/layoutNota" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <TextView android:id="@id/textoNota" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/nota" style="@style/apilado.Bold" />
+                <TextView android:id="@id/nota" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+                <ImageView android:id="@id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            </LinearLayout>
+            <TextView android:id="@id/textoFechaCalificacion" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fecha_calificacion" style="@style/apilado.Bold" />
+            <TextView android:id="@id/fechaCalificacion" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            <LinearLayout android:orientation="vertical" android:id="@id/layoutNotaProvisional" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <TextView android:id="@id/textoFechaRevision" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fecha_revision" style="@style/apilado.Bold" />
+                <TextView android:id="@id/fechaRevision" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+                <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+                <TextView android:id="@id/textoHoraRevision" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/hora_revision" style="@style/apilado.Bold" />
+                <TextView android:id="@id/horaRevision" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+                <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+                <TextView android:id="@id/textoLugarRevision" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/lugar_revision" style="@style/apilado.Bold" />
+                <TextView android:id="@id/lugarRevision" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+                <ImageView android:id="@id/ImageView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            </LinearLayout>
+            <TextView android:id="@id/tAno" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/anyo" style="@style/apilado.Bold" />
+            <TextView android:id="@id/anno" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+            <ImageView android:id="@id/ImageView03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            <TextView android:id="@id/tConvocatoria" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/convocatoria" style="@style/apilado.Bold" />
+            <TextView android:id="@id/convocatoria" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@id/TextView01" style="@style/apilado" />
+            <ImageView android:id="@id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            <TextView android:id="@id/tCreditos" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/creditos" style="@style/apilado.Bold" />
+            <TextView android:id="@id/creditos" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/apilado" />
+            <ImageView android:id="@id/ImageView04" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/separator" android:scaleType="fitXY" />
+            <TextView android:id="@id/tTipoAsignatura" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/tipo_asignatura" style="@style/apilado.Bold" />
+            <TextView android:id="@id/tipoAsignatura" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@id/TextView01" style="@style/apilado" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

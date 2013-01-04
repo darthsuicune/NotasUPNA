@@ -59,6 +59,7 @@ public class GradesParserLoader extends AsyncTaskLoader<String>{
 	//Constants for the student data
 	public static final String nStudentNia = "nia";
 	public static final String nStudentNif = "documento";
+	public static final String nStudentNip = "nip";
 	public static final String nStudentName = "nombre";
 	public static final String nStudentSurname1 = "apellido1";
 	public static final String nStudentSurname2 = "apellido2";
@@ -68,6 +69,12 @@ public class GradesParserLoader extends AsyncTaskLoader<String>{
 	private static final int STUDENT = 2;
 	private static final int GRADE = 3;
 	private static final int PLAN = 4;
+
+	@Override
+	protected void onStartLoading() {
+		forceLoad();
+		super.onStartLoading();
+	}
 
 	@Override
 	public String loadInBackground() {
@@ -88,6 +95,7 @@ public class GradesParserLoader extends AsyncTaskLoader<String>{
 				ContentValues studentValues = new ContentValues();
 				studentValues.put(GradesContract.StudentsTable.COL_ST_NIA, nia);
 				studentValues.put(GradesContract.StudentsTable.COL_ST_NIF, student.getString(nStudentNif));
+//				studentValues.put(GradesContract.StudentsTable.COL_ST_NIP, student.getString(nStudentNip));
 				studentValues.put(GradesContract.StudentsTable.COL_ST_NAME, student.getString(nStudentName));
 				studentValues.put(GradesContract.StudentsTable.COL_ST_SURNAME_1, student.getString(nStudentSurname1));
 				studentValues.put(GradesContract.StudentsTable.COL_ST_SURNAME_2, student.getString(nStudentSurname2));

@@ -1,7 +1,18 @@
 This application is in no way related to Universidad Pública de Navarra or Gestión universitaria Sigma.
 
-It allows checking grades of a UPNA student. Includes auto-update, encrypted login information
-This application uses the support v4 library
+It allows checking grades of a UPNA student. Includes auto-update, encrypted login information, pleasant UX and options. English, Basque and Spanish languages are supported. German is on the way.
+It keeps no connection state. Connects to receive the grades (and reconnects if auto-update is activated) but in no way is constantly checking. If you detect battery is being consumed highly by the application please contact me ASAP
+
+This application uses the support v4 library from Google for making it work, look and feel on the older android devices.
+
+It uses 3 basic screens:
+-Login screen (only shown before first time run and in case you decide to erase the information stored)
+-Record screen. In portrait mode, shows the information of the student, degree, and the list of subjects. In landscape mode, in small screens shows the list of subjects on the left pane and the selected subject on the right pane. In bigger screens it shows up the student and degree information, left pane for the subjects list, middle pane for the subject details, right pane for the different calls of the selected subject.
+-Details screen. In portrait mode, it's shown coming from the record screen. Shows the details of the selected subject. In landscape mode it's shown on the record screen.
+
+Additional
+-Other calls dialog. When the screen is on landscape mode and is big enough (tablet or highres phone) it's integrated on the record screen. When the screen is big enough, or in any case in portrait mode, a button is shown to make a floating dialog appear. It does no interaction.
+-Preferences screen. Shows preferences //TODO
 
 Contact:
 darthsuicune@gmail.com

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:icon="@drawable/ic_about" android:enabled="true" android:id="@id/AcercaDe" android:visible="true" android:title="@string/acerca_de" />
+    <item android:icon="@drawable/ic_menu" android:enabled="true" android:id="@id/mainSalir" android:visible="true" android:title="@string/Salir" />
+</menu>

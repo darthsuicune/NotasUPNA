@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@id/ChildLayout" android:background="@drawable/child_bgr_selector" android:paddingLeft="20.0dip" android:paddingRight="5.0dip" android:layout_width="fill_parent" android:layout_height="45.0dip" android:tileMode="repeat"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:id="@id/LinearLayout02" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:layout_marginBottom="2.0dip" android:layout_weight="0.7">
+        <TextView android:gravity="center_vertical" android:id="@id/Asignatura" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/asignatura" />
+        <TextView android:gravity="left" android:id="@id/Convocatoria" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/childDetalles" />
+        <TextView android:gravity="left" android:id="@id/fechaCalificacion" android:paddingLeft="5.0dip" android:paddingRight="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/childDetalles" />
+    </LinearLayout>
+    <TextView android:gravity="center" android:layout_gravity="center" android:id="@id/Nota" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/nota" />
+    <ImageView android:gravity="center" android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/arrow" />
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Sigma" parent="@*android:style/Theme">
+        <item name="android:textSize">14.0dip</item>
+    </style>
+    <style name="estudioTitulo" parent="@*android:style/TextAppearance.Medium">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffe4e4e4</item>
+    </style>
+    <style name="estudioTituloMain" parent="@*android:style/TextAppearance.Medium">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffe4e4e4</item>
+        <item name="android:layout_marginLeft">35.0dip</item>
+    </style>
+    <style name="estudioSubtitulo" parent="@*android:style/TextAppearance.Medium">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffe4e4e4</item>
+        <item name="android:layout_marginLeft">35.0dip</item>
+    </style>
+    <style name="estudioTexto" parent="@*android:style/TextAppearance.Medium">
+        <item name="android:textSize">12.0dip</item>
+        <item name="android:textColor">#ffe4e4e4</item>
+        <item name="android:layout_marginLeft">35.0dip</item>
+    </style>
+    <style name="asignatura" parent="@*android:style/TextAppearance.Medium">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff1e1e1e</item>
+    </style>
+    <style name="childDetalles" parent="@*android:style/TextAppearance.Small">
+        <item name="android:textSize">12.0dip</item>
+        <item name="android:textColor">#ff1e1e1e</item>
+    </style>
+    <style name="label" parent="@*android:style/TextAppearance">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:layout_marginRight">5.0dip</item>
+    </style>
+    <style name="nota" parent="@*android:style/TextAppearance.Medium">
+        <item name="android:textSize">24.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:padding">5.0dip</item>
+        <item name="android:minWidth">50.0dip</item>
+        <item name="android:minHeight">50.0dip</item>
+        <item name="android:height">50.0dip</item>
+        <item name="android:width">50.0dip</item>
+    </style>
+    <style name="apilado" parent="@*android:style/TextAppearance">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:textColor">#ff333333</item>
+        <item name="android:layout_marginLeft">10.0dip</item>
+    </style>
+    <style name="apilado.Bold" parent="@style/apilado">
+        <item name="android:textSize">15.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff1e1e1e</item>
+    </style>
+    <style name="login" parent="@*android:style/TextAppearance">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:layout_marginBottom">5.0dip</item>
+    </style>
+</resources>

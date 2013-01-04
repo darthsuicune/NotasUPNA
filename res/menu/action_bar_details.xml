@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_details_share"
-          android:icon="@drawable/ic_launcher"
+          android:icon="@drawable/ic_menu_share"
           android:title="@string/share"
           android:showAsAction="ifRoom" />
     
     <item android:id="@+id/action_details_calls" 
-          android:icon="@drawable/ic_launcher"
+          android:icon="@drawable/ic_menu_agenda"
           android:title="@string/other_calls"
           android:showAsAction="ifRoom" />
 

@@ -2,12 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
     <item android:id="@+id/action_login_confirm"
-          android:title="@string/confirm"
-          android:showAsAction="ifRoom|withText" />
+        android:icon="@drawable/ic_lock_power_off"
+		android:title="@string/confirm"
+        android:showAsAction="ifRoom|withText" />
     
     <item android:id="@+id/action_login_preferences" 
-          android:icon="@drawable/ic_launcher"
-          android:title="@string/preferences"
-          android:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_menu_manage"
+        android:title="@string/preferences"
+        android:showAsAction="ifRoom" />
 
 </menu>

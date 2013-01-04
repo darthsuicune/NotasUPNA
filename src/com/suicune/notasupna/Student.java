@@ -12,6 +12,7 @@ public class Student {
 	public String mStudentFullName;
 	public String mStudentNia;
 	public String mStudentNif;
+	public String mStudentNip;
 	
 	public Student(Cursor c){
 		if(c.moveToFirst()){
@@ -21,6 +22,7 @@ public class Student {
 			mStudentSurname2 = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_SURNAME_2));
 			mStudentNia = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_NIA));
 			mStudentNif = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_NIF));
+//			mStudentNip = c.getString(c.getColumnIndex(GradesContract.StudentsTable.COL_ST_NIP));
 			mStudentFullName = mStudentSurname1 + " " + mStudentSurname2 + ", " + mStudentName;
 		}
 	}

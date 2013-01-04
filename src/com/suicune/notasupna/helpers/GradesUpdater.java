@@ -34,9 +34,7 @@ public class GradesUpdater extends IntentService{
 	//Used for logging
 	private static final String SERVICE_NAME = "NotasUPNA_service";
 	
-	/*
-	 * Constant for the notification we're launching
-	 */
+	// Constant for the notification we're launching
 	public static final int NOTIFICATION_NEW_GRADES = 1;
 	
 	private SharedPreferences prefs;
@@ -94,7 +92,7 @@ public class GradesUpdater extends IntentService{
 			if(language.equalsIgnoreCase(PreferencesActivity.LANGUAGE_BASQUE)){
 				url = new URL("https", ConnectLoader.server, ConnectLoader.port, ConnectLoader.resource_eu);
 			}else{
-				url = new URL("https", ConnectLoader.server, ConnectLoader.port, ConnectLoader.resource_eu);
+				url = new URL("https", ConnectLoader.server, ConnectLoader.port, ConnectLoader.resource_es);
 			}
 		}catch(MalformedURLException e){
 			e.printStackTrace();

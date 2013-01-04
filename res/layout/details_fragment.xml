@@ -306,6 +306,29 @@
                     android:gravity="right" />
 
             </TableRow>
+            <TableRow
+                android:id="@+id/details_row_grade_calls_taken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="2dp" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="@string/subject_calls_taken" />
+
+                <TextView
+                    android:id="@+id/details_grade_calls_taken"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="right" />
+
+            </TableRow>
 	                
 	        <Button
 	            android:id="@+id/details_show_calls"

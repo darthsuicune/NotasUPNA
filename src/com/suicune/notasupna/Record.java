@@ -12,8 +12,8 @@ public class Record {
 	public String mCourseName;
 	public String mCourseCenter;
 	public String mCourseStudies;
-	public int mCourseTotalCredits;
-	public int mCoursePassedCredits;
+	public String mCourseTotalCredits;
+	public String mCoursePassedCredits;
 	public String mCourseLanguage;
 	
 	public int mSubjectsCount = 0;
@@ -43,8 +43,8 @@ public class Record {
 					mCourseName = c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_NAME));
 					mCourseCenter = c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_CENTER));
 					mCourseStudies = c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_STUDIES));
-					mCourseTotalCredits = Integer.valueOf(c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS)));
-					mCoursePassedCredits = Integer.valueOf(c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS)));
+					mCourseTotalCredits = c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS));
+					mCoursePassedCredits = c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS));
 					mCourseLanguage = c.getString(c.getColumnIndex(GradesContract.CoursesTable.COL_CO_LANGUAGE));
 				}
 				String subjectName = c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_NAME));
@@ -59,7 +59,7 @@ public class Record {
 							c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_TYPE)),
 							c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_LANGUAGE)),
 							Integer.valueOf(c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE))).intValue(),
-							Integer.valueOf(c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS))).intValue());
+							c.getString(c.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS)));
 				}
 				long gradeTime = c.getLong(c.getColumnIndex(GradesContract.GradesTable.COL_GR_TIME));
 				int gradeSubject = c.getInt(c.getColumnIndex(GradesContract.GradesTable.COL_GR_SU_CODE));

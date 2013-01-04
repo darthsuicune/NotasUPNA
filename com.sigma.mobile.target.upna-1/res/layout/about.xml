@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:id="@id/About" android:padding="10.0dip" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:padding="5.0dip" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@drawable/logo" android:adjustViewBounds="true" android:maxWidth="110.0dip" android:maxHeight="110.0dip" />
+        <LinearLayout android:orientation="vertical" android:paddingTop="15.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <TextView android:id="@id/textAppName" android:paddingRight="5.0dip" android:layout_width="wrap_content" android:layout_height="fill_parent" android:text="@string/app_name" style="@style/estudioTitulo" />
+                <TextView android:id="@id/textAppVer" android:layout_width="wrap_content" android:layout_height="fill_parent" style="@style/estudioTitulo" />
+            </LinearLayout>
+            <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <TextView android:id="@id/textEdicion" android:paddingRight="5.0dip" android:layout_width="wrap_content" android:layout_height="fill_parent" android:text="@string/edicion" />
+                <TextView android:layout_width="wrap_content" android:layout_height="fill_parent" android:text="@string/universidad" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:orientation="vertical" android:padding="5.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <TextView android:id="@id/textVisita" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/urlVisita" />
+        <TextView android:id="@id/URLuniversidad" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/urlUni" />
+        <TextView android:id="@id/URLsigma" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/urlSigma" />
+        <TextView android:paddingTop="20.0dip" android:layout_width="wrap_content" android:layout_height="fill_parent" android:text="@string/copyright" />
+    </LinearLayout>
+</LinearLayout>

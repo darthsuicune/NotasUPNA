@@ -29,6 +29,7 @@ public class GradesContract{
 		public static final String _ID = "_id";
 		public static final String COL_ST_NIA = "st_nia";
 		public static final String COL_ST_NIF = "st_nif";
+		public static final String COL_ST_NIP = "st_nip";
 		public static final String COL_ST_NAME = "st_name";
 		public static final String COL_ST_SURNAME_1 = "st_surname_1";
 		public static final String COL_ST_SURNAME_2 = "st_surname_2";

@@ -36,7 +36,8 @@ public class GradesDBHelper extends SQLiteOpenHelper {
 				GradesContract.StudentsTable.COL_ST_NIF + textNotNull +
 				GradesContract.StudentsTable.COL_ST_NAME + textNotNull +
 				GradesContract.StudentsTable.COL_ST_SURNAME_1 + textNotNull +
-				GradesContract.StudentsTable.COL_ST_SURNAME_2 + textNotNullEnd +
+				GradesContract.StudentsTable.COL_ST_SURNAME_2 + textNotNull +
+				GradesContract.StudentsTable.COL_ST_NIP + " TEXT" +
 				")"
 		);
 		

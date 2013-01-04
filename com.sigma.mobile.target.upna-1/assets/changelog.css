@@ -1,0 +1,22 @@
+body {
+	background-color:#F4F4F4;
+	margin:0;
+}
+body > *{
+	padding-top:4px;
+	padding-left:8px;
+	padding-right:8px;
+	padding-bottom:4px;
+}
+.subrallado {
+	text-decoration:underline;
+}
+div.p{
+	background-color:#E5E5E5;
+}
+div.s{
+	background-color:#F4F4F4;
+}
+div div {
+	padding-left:3%;
+}

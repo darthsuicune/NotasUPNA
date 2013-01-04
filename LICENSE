@@ -1,4 +1,8 @@
 This application is licensed under the LGPL v3.0 license.
-The CryptoBlock is a modification of a cryptography library. Credits are on the class file.
+The CryptoBlock is a modification of a cryptography library. Credits are on the class Java file.
 The servers are in control of Universidad Pública de Navarra (http://www.unavarra.es) and in no way related to the author of this application.
 
+	The support components and class files (such as the action bar related items) are from Google/Android own samples.
+
+Application developed and maintained by Denis Lapuente (darthsuicune@gmail.com).
+Git repository available at http://github.com/darthsuicune/NotasUPNA.git

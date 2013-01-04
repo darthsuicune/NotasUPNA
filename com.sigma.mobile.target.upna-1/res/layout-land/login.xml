@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_gravity="center" android:orientation="vertical" android:background="@drawable/app_background" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_margin="5.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_gravity="center" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1.0">
+        <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="0.5">
+            <ImageView android:layout_gravity="center" android:id="@id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/logo" />
+        </LinearLayout>
+        <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:id="@id/LinearLayout01" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="0.5">
+            <EditText android:layout_gravity="center" android:id="@id/login" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="200.0dip" android:hint="@string/DNI" android:inputType="text" />
+            <EditText android:layout_gravity="center" android:id="@id/password" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="200.0dip" android:hint="@string/password" android:inputType="textPassword" />
+            <Button android:layout_gravity="center" android:id="@id/Blogin" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/aceptar" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:layout_gravity="bottom" android:id="@id/demoLayer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="0.0">
+        <Button android:textStyle="bold" android:id="@id/Bdemo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Demo" />
+    </LinearLayout>
+</LinearLayout>

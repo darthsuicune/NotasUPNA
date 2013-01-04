@@ -86,7 +86,7 @@ public class DetailsFragment extends Fragment {
 
 	public void setSubject(Subject subject) {
 		mSubject = subject;
-		mGrade = mSubject.mGradesList.get(1);
+		mGrade = mSubject.mGradesList.get(mSubject.mGradesList.size() - 1);
 		mCallsFragment = new CallsDialogFragment();
 		mCallsFragment.setSubject(mSubject);
 	}
@@ -134,6 +134,8 @@ public class DetailsFragment extends Fragment {
 				R.id.details_grade_passed);
 		TextView gradeTakenView = (TextView) getActivity().findViewById(
 				R.id.details_grade_taken);
+		TextView gradeCallsTakenView = (TextView) getActivity().findViewById(
+				R.id.details_grade_calls_taken);
 
 		String gradeTime = DateFormat.getDateFormat(getActivity()).format(
 				new Date(mGrade.mGradeTime));
@@ -150,6 +152,7 @@ public class DetailsFragment extends Fragment {
 		gradeCallNumberView.setText("" + mGrade.mGradeCallNumber);
 		gradePassedView.setText("" + mGrade.mGradePassed);
 		gradeTakenView.setText("" + mGrade.mGradeTaken);
+		gradeCallsTakenView.setText("" + mSubject.mCallsTakenCount);
 	}
 
 	private void showCallsList() {

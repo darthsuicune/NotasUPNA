@@ -107,6 +107,18 @@ public class RecordFragment extends ListFragment {
 		}
 		this.setHasOptionsMenu(true);
 
+		// Set the views we are using across the fragment
+		mRecordView = getActivity().findViewById(R.id.record_view);
+		mRecordStatusView = getActivity().findViewById(R.id.record_status);
+		mRecordStatusMessageView = (TextView) getActivity().findViewById(
+				R.id.record_status_message);
+
+		mDetailsView = getActivity().findViewById(R.id.record_details);
+		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
+		mOtherCallsView = getActivity().findViewById(R.id.record_calls);
+		mRecordHeaderView = getActivity()
+				.findViewById(R.id.record_header_block);
+
 		// Set the parameters
 		manager = getActivity().getSupportLoaderManager();
 		clh = new CursorLoaderHelper();
@@ -126,18 +138,6 @@ public class RecordFragment extends ListFragment {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			manageOldVersion();
 		}
-
-		// Set the views we are using across the fragment
-		mRecordView = getActivity().findViewById(R.id.record_view);
-		mRecordStatusView = getActivity().findViewById(R.id.record_status);
-		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
-		mRecordStatusMessageView = (TextView) getActivity().findViewById(
-				R.id.record_status_message);
-
-		mDetailsView = getActivity().findViewById(R.id.record_details);
-		mOtherCallsView = getActivity().findViewById(R.id.record_calls);
-		mRecordHeaderView = getActivity()
-				.findViewById(R.id.record_header_block);
 
 		// Check if we are on Landscape mode or not
 		if ((mDetailsView != null)
@@ -408,9 +408,7 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 			switch (loader.getId()) {
 			case LOADER_COURSE:
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-					fillSpinner(cursor);
-				}
+				fillSpinner(cursor);
 				break;
 			case LOADER_RECORD:
 				fillRecord(cursor);
@@ -496,7 +494,9 @@ public class RecordFragment extends ListFragment {
 			Loader<String> loader = null;
 			switch (id) {
 			case LOADER_CONNECTION:
-				showProgress(true, PROGRESS_SIGN_IN);
+				ActionBarActivity activity = (ActionBarActivity) getActivity();
+				activity.getActionBarHelper().setRefreshActionItemState(true);
+//				showProgress(true, PROGRESS_SIGN_IN);
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
@@ -513,7 +513,9 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<String> loader, String response) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
-				showProgress(false, PROGRESS_SIGN_IN);
+//				showProgress(false, PROGRESS_SIGN_IN);
+				ActionBarActivity activity = (ActionBarActivity) getActivity();
+				activity.getActionBarHelper().setRefreshActionItemState(true);
 				try {
 					JSONObject object = new JSONObject(response);
 					int error = object.getInt(GradesParserLoader.nError);

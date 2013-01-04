@@ -1,6 +1,5 @@
 package com.suicune.notasupna;
 
-import java.util.Locale;
 import java.util.Random;
 
 import org.json.JSONException;
@@ -129,7 +128,7 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		getMenuInflater().inflate(R.menu.activity_login, menu);
+		getMenuInflater().inflate(R.menu.action_bar_login, menu);
 		return true;
 	}
 
@@ -139,7 +138,6 @@ public class LoginActivity extends ActionBarActivity {
 		// Set up the login form.
 		mUserName = PreferencesActivity.getUserName(this);
 		mUserNameView = (EditText) findViewById(R.id.user_name);
-		mUserNameView.setText(mUserName);
 
 		mPassWordView = (EditText) findViewById(R.id.password);
 		mPassWordView
@@ -202,10 +200,10 @@ public class LoginActivity extends ActionBarActivity {
 			mUserNameView.setError(getString(R.string.error_field_required));
 			focusView = mUserNameView;
 			cancel = true;
-		} else if (!isId()) {
-			cancel = true;
-			mUserNameView.setError(getString(R.string.error_invalid_id));
-			focusView = mUserNameView;
+			// } else if (!isId()) {
+			// cancel = true;
+			// mUserNameView.setError(getString(R.string.error_invalid_id));
+			// focusView = mUserNameView;
 		}
 
 		if (cancel) {
@@ -482,12 +480,15 @@ public class LoginActivity extends ActionBarActivity {
 				try {
 					JSONObject object = new JSONObject(response);
 					int error = object.getInt(GradesParserLoader.nError);
-					if (error == 0) {
+					switch (error) {
+					case 0:
 						doLogin(response);
-					} else {
+						break;
+					default:
 						String errorMsg = object
 								.getString(GradesParserLoader.nErrorMsg);
 						failedLogin(errorMsg, ConnectLoader.ERROR_JSON);
+						break;
 					}
 				} catch (JSONException e) {
 					Log.d(ConnectLoader.logging,

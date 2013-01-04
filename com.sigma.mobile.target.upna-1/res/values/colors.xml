@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ColorSuperada">#ff5fa95f</color>
+    <color name="ColorNoSuperada">#ffff0000</color>
+    <color name="Rojo">#ffff0000</color>
+    <color name="Blanco">#ffffffff</color>
+    <color name="fondoClaro">#ffded7d6</color>
+    <color name="fondoOscuro">#ff4a452a</color>
+    <color name="notasChild_normal">#ffbbbbbb</color>
+    <color name="notasChild_pressed">#ffe4e4e4</color>
+    <color name="notasProvisionalesChild_normal">#ffdddddd</color>
+    <color name="notasProvisionalesChild_pressed">#ffa4a4a4</color>
+    <color name="Header_GradientStart">#ffe43214</color>
+    <color name="Header_GradientEnd">#ff8d1f0c</color>
+</resources>
