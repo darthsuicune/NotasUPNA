@@ -102,4 +102,5 @@ Universidad Pública de Navarra UPNA"</string>
     <string name="about_summary">"Información del autor"</string>
     <string name="refresh">"Actualizar"</string>
     <string name="subject_total_calls">"Registros: "</string>
+    <string name="record_details_select_item">"Elige un elemento de la lista."</string>
 </resources>

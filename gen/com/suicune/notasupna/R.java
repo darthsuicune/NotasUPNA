@@ -71,13 +71,13 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int upna_logo_white=0x7f020011;
     }
     public static final class id {
-        public static final int action_details_calls=0x7f06003f;
-        public static final int action_details_share=0x7f06003e;
-        public static final int action_login_confirm=0x7f060040;
-        public static final int action_login_preferences=0x7f060041;
-        public static final int action_record_close_session=0x7f060044;
-        public static final int action_record_preferences=0x7f060043;
-        public static final int action_record_refresh=0x7f060042;
+        public static final int action_details_calls=0x7f060040;
+        public static final int action_details_share=0x7f06003f;
+        public static final int action_login_confirm=0x7f060041;
+        public static final int action_login_preferences=0x7f060042;
+        public static final int action_record_close_session=0x7f060045;
+        public static final int action_record_preferences=0x7f060044;
+        public static final int action_record_refresh=0x7f060043;
         public static final int actionbar_compat=0x7f060000;
         public static final int actionbar_compat_item_refresh=0x7f060003;
         public static final int actionbar_compat_item_refresh_progress=0x7f060002;
@@ -122,14 +122,15 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int login_status_message=0x7f060008;
         public static final int menu_refresh=0x7f060004;
         public static final int password=0x7f06000b;
-        public static final int record_calls=0x7f06003a;
+        public static final int record_calls=0x7f06003b;
         public static final int record_center=0x7f060036;
         public static final int record_course=0x7f060035;
-        public static final int record_details=0x7f060039;
+        public static final int record_details=0x7f06003a;
+        public static final int record_details_hint=0x7f060039;
         public static final int record_header_block=0x7f060031;
-        public static final int record_item_credits=0x7f06003c;
-        public static final int record_item_grade=0x7f06003d;
-        public static final int record_item_name=0x7f06003b;
+        public static final int record_item_credits=0x7f06003d;
+        public static final int record_item_grade=0x7f06003e;
+        public static final int record_item_name=0x7f06003c;
         public static final int record_record_fragment=0x7f060038;
         public static final int record_status=0x7f06002e;
         public static final int record_status_message=0x7f06002f;
@@ -218,6 +219,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int prompt_password=0x7f080001;
         public static final int prompt_user_name=0x7f080000;
         public static final int record=0x7f08003e;
+        public static final int record_details_select_item=0x7f080064;
         public static final int record_title=0x7f080009;
         public static final int refresh=0x7f080062;
         public static final int service_title=0x7f080037;

@@ -49,8 +49,6 @@ import com.suicune.notasupna.helpers.GradesParserLoader;
  * 
  */
 public class RecordFragment extends ListFragment {
-	private boolean landscape;
-	private int cursorPosition = 0;
 
 	private static final int LOADER_COURSE = 1;
 	private static final int LOADER_RECORD = 2;
@@ -58,18 +56,30 @@ public class RecordFragment extends ListFragment {
 	private static final int LOADER_CONNECTION = 4;
 	private static final int LOADER_PARSER = 5;
 
+	private static final int PROGRESS_SIGN_IN = 1;
+	private static final int PROGRESS_PARSE = 2;
+
 	private static final int ACTIVITY_PREFERENCES = 1;
 	private static final int ACTIVITY_DETAILS = 2;
-	
+
 	private static final String STATE_POSITION = "cursor position";
+	private static final String STATE_SUBJECT = "current subject";
 
 	public static final String COURSE_ID = "course_id";
 
+	private boolean landscape;
+	private int cursorPosition = 0;
+
 	private Record mRecord = null;
 	private Student mStudent = null;
+	private Subject mCurrentSubject = null;
 
 	private View mRecordView;
 	private View mRecordStatusView;
+	private View mDetailsHintView;
+	private View mDetailsView;
+	private View mRecordHeaderView;
+	private View mOtherCallsView;
 	private TextView mRecordStatusMessageView;
 
 	private CursorLoaderHelper clh;
@@ -88,15 +98,22 @@ public class RecordFragment extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		if(savedInstanceState != null){
+		// Restore important information in case the activity was previously
+		// active.
+		if (savedInstanceState != null) {
 			cursorPosition = savedInstanceState.getInt(STATE_POSITION);
+			mCurrentSubject = (Subject) savedInstanceState
+					.getSerializable(STATE_SUBJECT);
 		}
 		this.setHasOptionsMenu(true);
 
+		// Set the parameters
 		manager = getActivity().getSupportLoaderManager();
 		clh = new CursorLoaderHelper();
 
-		if(mRecord == null){
+		// If there is no current information attached to the fragment, load the
+		// information from the DB
+		if (mRecord == null) {
 			Bundle extras = getActivity().getIntent().getExtras();
 			if (extras != null) {
 				manager.initLoader(LOADER_PARSER, extras, new AsyncHelper());
@@ -104,41 +121,54 @@ public class RecordFragment extends ListFragment {
 			manager.initLoader(LOADER_STUDENT, null, clh);
 			manager.initLoader(LOADER_RECORD, null, clh);
 		}
+
+		// If we are on GB or below, make sure all the options are available
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			manageOldVersion();
 		}
+
+		// Set the views we are using across the fragment
 		mRecordView = getActivity().findViewById(R.id.record_view);
 		mRecordStatusView = getActivity().findViewById(R.id.record_status);
+		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
 		mRecordStatusMessageView = (TextView) getActivity().findViewById(
 				R.id.record_status_message);
 
-		View detailsView = getActivity().findViewById(R.id.record_details);
-		View otherCallsView = getActivity().findViewById(R.id.record_calls);
-		View recordHeaderView = getActivity().findViewById(
-				R.id.record_header_block);
+		mDetailsView = getActivity().findViewById(R.id.record_details);
+		mOtherCallsView = getActivity().findViewById(R.id.record_calls);
+		mRecordHeaderView = getActivity()
+				.findViewById(R.id.record_header_block);
 
-		if ((detailsView != null)
-				&& (detailsView.getVisibility() == View.VISIBLE)) {
+		// Check if we are on Landscape mode or not
+		if ((mDetailsView != null)
+				&& (mDetailsView.getVisibility() == View.VISIBLE)) {
 			landscape = true;
 		} else {
 			landscape = false;
 		}
 
+		// Manage the second (and third) fragments if we are on landscape
 		if (landscape) {
-			if (isSmallScreen() && otherCallsView != null) {
-				otherCallsView.setVisibility(View.GONE);
-				recordHeaderView.setVisibility(View.GONE);
+			// In a small screen we make the details fragment act as in portrait
+			// mode
+			if (isSmallScreen() && mOtherCallsView != null) {
+				mOtherCallsView.setVisibility(View.GONE);
+				mRecordHeaderView.setVisibility(View.GONE);
 			} else {
-				otherCallsView.setVisibility(View.VISIBLE);
-				recordHeaderView.setVisibility(View.VISIBLE);
+				mOtherCallsView.setVisibility(View.VISIBLE);
+				mRecordHeaderView.setVisibility(View.VISIBLE);
 			}
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+			// Create the details fragment and show it in its place
 			details = (DetailsFragment) getActivity()
 					.getSupportFragmentManager().findFragmentById(
 							R.id.record_details);
-			if (mRecord != null) {
-				showDetails(cursorPosition,
-						mRecord.mSubjectsList.get(cursorPosition));
+			if (mCurrentSubject == null) {
+				mDetailsHintView.setVisibility(View.VISIBLE);
+				mDetailsView.setVisibility(View.GONE);
+			} else {
+				showDetails(cursorPosition, mCurrentSubject);
 			}
 		}
 	}
@@ -155,6 +185,7 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt(STATE_POSITION, cursorPosition);
+		outState.putSerializable(STATE_SUBJECT, mCurrentSubject);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -190,10 +221,8 @@ public class RecordFragment extends ListFragment {
 		case ACTIVITY_DETAILS:
 			if (resultCode == Activity.RESULT_OK) {
 				if (landscape) {
-					if(mRecord != null){
-						fillRecord();
-						showDetails(cursorPosition, (Subject) data.getExtras().getSerializable(DetailsActivity.EXTRA_SUBJECT));
-					}
+					showDetails(cursorPosition, (Subject) data.getExtras()
+							.getSerializable(DetailsActivity.EXTRA_SUBJECT));
 				}
 			}
 			break;
@@ -227,7 +256,13 @@ public class RecordFragment extends ListFragment {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// TODO
+	/**
+	 * TODO
+	 * 
+	 * @param position
+	 *            The position of the item clicked in the list
+	 * @param subject
+	 */
 	private void showDetails(int position, Subject subject) {
 		getListView().setItemChecked(position, true);
 
@@ -235,6 +270,11 @@ public class RecordFragment extends ListFragment {
 			if (details == null || details.getShownIndex() != position) {
 				details = DetailsFragment.newInstance(position);
 				details.setSubject(subject);
+
+				if (mDetailsHintView.getVisibility() == View.VISIBLE) {
+					mDetailsHintView.setVisibility(View.GONE);
+					mDetailsView.setVisibility(View.VISIBLE);
+				}
 
 				FragmentTransaction ft = getActivity()
 						.getSupportFragmentManager().beginTransaction();
@@ -393,7 +433,18 @@ public class RecordFragment extends ListFragment {
 	 * Shows the progress UI and hides the record
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show) {
+	private void showProgress(final boolean show, int progressType) {
+		switch (progressType) {
+		case PROGRESS_SIGN_IN:
+			mRecordStatusMessageView.setText(R.string.dialog_connect);
+			break;
+		case PROGRESS_PARSE:
+			mRecordStatusMessageView.setText(R.string.dialog_parse);
+			break;
+		default:
+			break;
+
+		}
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
@@ -445,12 +496,11 @@ public class RecordFragment extends ListFragment {
 			Loader<String> loader = null;
 			switch (id) {
 			case LOADER_CONNECTION:
-				mRecordStatusMessageView
-						.setText(R.string.login_progress_signing_in);
-				showProgress(true);
+				showProgress(true, PROGRESS_SIGN_IN);
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
+				showProgress(true, PROGRESS_PARSE);
 				loader = new GradesParserLoader(getActivity(), args);
 				break;
 			default:
@@ -463,7 +513,7 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<String> loader, String response) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
-				showProgress(false);
+				showProgress(false, PROGRESS_SIGN_IN);
 				try {
 					JSONObject object = new JSONObject(response);
 					int error = object.getInt(GradesParserLoader.nError);
@@ -485,6 +535,7 @@ public class RecordFragment extends ListFragment {
 				}
 				break;
 			case LOADER_PARSER:
+				showProgress(false, PROGRESS_PARSE);
 				if (response.equalsIgnoreCase(GradesParserLoader.PARSE_FAILED)) {
 					Toast.makeText(getActivity(), R.string.error_parsing,
 							Toast.LENGTH_LONG).show();
