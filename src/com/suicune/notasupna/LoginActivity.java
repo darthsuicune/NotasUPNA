@@ -56,73 +56,8 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// fillDB();
 		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null,
 				new CursorLoaderHelper());
-	}
-
-	private void fillDB() {
-		Uri uri = GradesContract.CONTENT_NAME_STUDENTS;
-		ContentValues cv = new ContentValues();
-		cv.put(GradesContract.StudentsTable.COL_ST_NAME, "Denis");
-		cv.put(GradesContract.StudentsTable.COL_ST_SURNAME_1, "Lapuente");
-		cv.put(GradesContract.StudentsTable.COL_ST_SURNAME_2, "Goicoechea");
-		cv.put(GradesContract.StudentsTable.COL_ST_NIA, "48139");
-		cv.put(GradesContract.StudentsTable.COL_ST_NIF, "72811172A");
-		getContentResolver().insert(uri, cv);
-
-		uri = GradesContract.CONTENT_NAME_COURSES;
-		ContentValues cvcourse = new ContentValues();
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_CENTER, "ETSIIT");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_LANGUAGE, "es");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_NAME, "ITIG");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS, "225");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_STUDIES, "ITI");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS, "225");
-		getContentResolver().insert(uri, cvcourse);
-
-		ContentValues cvcourseeu = new ContentValues();
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_CENTER, "ETSIITak");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_LANGUAGE, "eu");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_NAME, "ITIGak");
-		cvcourseeu
-				.put(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS, "225");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_STUDIES, "ITIak");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS, "225");
-		getContentResolver().insert(uri, cvcourseeu);
-
-		uri = GradesContract.CONTENT_NAME_SUBJECTS;
-		Uri uri1 = GradesContract.CONTENT_NAME_GRADES;
-		for (int i = 0; i < 5; i++) {
-			ContentValues subject = new ContentValues();
-			subject.put(GradesContract.SubjectsTable.COL_SU_CREDITS, "6");
-			subject.put(GradesContract.SubjectsTable.COL_SU_LANGUAGE, "es");
-			subject.put(GradesContract.SubjectsTable.COL_SU_NAME, "Subject "
-					+ i);
-			subject.put(GradesContract.SubjectsTable.COL_SU_TYPE, "Troncal");
-			subject.put(GradesContract.SubjectsTable.COL_SU_CO_CODE, "1");
-			getContentResolver().insert(uri, subject);
-			for (int j = 0; j < 2; j++) {
-				ContentValues grade = new ContentValues();
-				int time = new Random().nextInt();
-				grade.put(GradesContract.GradesTable.COL_GR_ASSISTED, "Si");
-				grade.put(GradesContract.GradesTable.COL_GR_CALL, "Septiembre");
-				grade.put(GradesContract.GradesTable.COL_GR_CALL_NUMBER, "1");
-				grade.put(GradesContract.GradesTable.COL_GR_CODE, "A");
-				grade.put(GradesContract.GradesTable.COL_GR_GRADE, 5 + j);
-				grade.put(GradesContract.GradesTable.COL_GR_GRADE_NAME,
-						"Aprobado");
-				grade.put(GradesContract.GradesTable.COL_GR_LANGUAGE, "es");
-				grade.put(GradesContract.GradesTable.COL_GR_PASSED, "Si");
-				grade.put(GradesContract.GradesTable.COL_GR_PROVISIONAL, "No");
-				grade.put(GradesContract.GradesTable.COL_GR_REVISION_TIME, "0");
-				grade.put(GradesContract.GradesTable.COL_GR_SU_CODE, 1 + i);
-				grade.put(GradesContract.GradesTable.COL_GR_TIME, time);
-				grade.put(GradesContract.GradesTable.COL_GR_YEAR, "2012");
-				getContentResolver().insert(uri1, grade);
-			}
-		}
-
 	}
 
 	@Override
@@ -200,10 +135,10 @@ public class LoginActivity extends ActionBarActivity {
 			mUserNameView.setError(getString(R.string.error_field_required));
 			focusView = mUserNameView;
 			cancel = true;
-			// } else if (!isId()) {
-			// cancel = true;
-			// mUserNameView.setError(getString(R.string.error_invalid_id));
-			// focusView = mUserNameView;
+		} else if (!isId()) {
+			cancel = true;
+			mUserNameView.setError(getString(R.string.error_invalid_id));
+			focusView = mUserNameView;
 		}
 
 		if (cancel) {
@@ -252,142 +187,93 @@ public class LoginActivity extends ActionBarActivity {
 				result = true;
 			}
 		} else if (mUserName.length() == 8 && TextUtils.isDigitsOnly(mUserName)) {
-			result = true;
+			mUserName = mUserName + getLetter(mUserName);
 		}
 
 		return result;
 	}
 
-	private boolean checkLetter() {
-		boolean result = false;
-
-		String userName = mUserName;
-		int id = Integer.parseInt(userName.substring(0, 8));
-		char letter = userName.toLowerCase().charAt(userName.length() - 1);
+	private char getLetter(String dni) {
+		char letter = 0;
+		int id = Integer.parseInt(dni);
 		switch (id % 23) {
 		case 0:
-			if (letter == 't') {
-				result = true;
-			}
+			letter = 'T';
 			break;
 		case 1:
-			if (letter == 'r') {
-				result = true;
-			}
+			letter = 'R';
 			break;
 		case 2:
-			if (letter == 'w') {
-				result = true;
-			}
+			letter = 'W';
 			break;
 		case 3:
-			if (letter == 'a') {
-				result = true;
-			}
+			letter = 'A';
 			break;
 		case 4:
-			if (letter == 'g') {
-				result = true;
-			}
+			letter = 'G';
 			break;
 		case 5:
-			if (letter == 'm') {
-				result = true;
-			}
+			letter = 'M';
 			break;
 		case 6:
-			if (letter == 'y') {
-				result = true;
-			}
+			letter = 'Y';
 			break;
 		case 7:
-			if (letter == 'f') {
-				result = true;
-			}
+			letter = 'F';
 			break;
 		case 8:
-			if (letter == 'p') {
-				result = true;
-			}
+			letter = 'P';
 			break;
 		case 9:
-			if (letter == 'd') {
-				result = true;
-			}
+			letter = 'D';
 			break;
 		case 10:
-			if (letter == 'x') {
-				result = true;
-			}
+			letter = 'X';
 			break;
 		case 11:
-			if (letter == 'b') {
-				result = true;
-			}
+			letter = 'B';
 			break;
 		case 12:
-			if (letter == 'n') {
-				result = true;
-			}
+			letter = 'N';
 			break;
 		case 13:
-			if (letter == 'j') {
-				result = true;
-			}
+			letter = 'J';
 			break;
 		case 14:
-			if (letter == 'z') {
-				result = true;
-			}
+			letter = 'Z';
 			break;
 		case 15:
-			if (letter == 's') {
-				result = true;
-			}
+			letter = 'S';
 			break;
 		case 16:
-			if (letter == 'q') {
-				result = true;
-			}
+			letter = 'Q';
 			break;
 		case 17:
-			if (letter == 'v') {
-				result = true;
-			}
+			letter = 'V';
 			break;
 		case 18:
-			if (letter == 'h') {
-				result = true;
-			}
+			letter = 'H';
 			break;
 		case 19:
-			if (letter == 'l') {
-				result = true;
-			}
+			letter = 'L';
 			break;
 		case 20:
-			if (letter == 'c') {
-				result = true;
-			}
+			letter = 'C';
 			break;
 		case 21:
-			if (letter == 'k') {
-				result = true;
-			}
+			letter = 'K';
 			break;
 		case 22:
-			if (letter == 'e') {
-				result = true;
-			}
+			letter = 'E';
 			break;
 		default:
 			break;
 		}
-		if (result) {
-			mUserName = mUserName.substring(0, 8);
-		}
+		return letter;
+	}
 
-		return result;
+	private boolean checkLetter() {
+		return mUserName.charAt(mUserName.length() - 1) == getLetter(mUserName);
 	}
 
 	/**

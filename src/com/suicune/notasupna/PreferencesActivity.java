@@ -28,6 +28,7 @@ public class PreferencesActivity extends PreferenceActivity {
 	public static final String PREFERENCE_UPDATE_TIME = "update time";
 
 	public static final String PREFERENCE_RECORD_LANGUAGE = "record language";
+	public static final String PREFERENCE_APP_LANGUAGE = "language";
 	public static final String PREFERENCE_USER_NAME = "userName";
 	public static final String PREFERENCE_PASS_WORD = "passWord";
 
