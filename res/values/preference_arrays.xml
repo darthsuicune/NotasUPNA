@@ -10,7 +10,7 @@
         <item>es</item>
         <item>en</item>
         <item>eu</item>
-        <item>default</item>
+        <item>@string/language_code_default</item>
     </string-array>
     <string-array name="preference_sort_order">
         <item>@string/sort_order_time_asc</item>
@@ -21,7 +21,7 @@
     <string-array name="preference_sort_order_values">
         <item>sort_order_time_asc</item>
         <item>sort_order_time_desc</item>
-        <item>sort_order_alpha_asc</item>
+        <item>@string/sort_order_alpha_asc_value</item>
         <item>sort_order_alpha_desc</item>
     </string-array>
     <string-array name="preference_update_time">

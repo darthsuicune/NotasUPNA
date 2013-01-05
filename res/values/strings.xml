@@ -5,10 +5,12 @@
     <string name="prompt_password">"Contraseña"</string>
     <string name="action_sign_in">"Iniciar sesión"</string>
     <string name="login_progress_signing_in">"Conectando…"</string>
+    <string name="language_code_default">default</string>
     <string name="error_invalid_id">"El NIF es inválido"</string>
     <string name="error_invalid_password">"La contraseña es demasiado corta"</string>
     <string name="error_incorrect_password">"La contraseña es incorrecta"</string>
     <string name="error_field_required">"Este campo no puede estar vacio"</string>
+    <string name="sort_order_alpha_asc_value">"alpha_asc"</string>
     <string name="app_name">"Notas UPNA"</string>
     <string name="record_title">"Expediente"</string>
     <string name="login_title">"Iniciar sesión"</string>
