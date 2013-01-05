@@ -5,6 +5,8 @@ import android.app.ActionBar;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 @SuppressLint("NewApi")
 public class RecordActivity extends ActionBarActivity {
@@ -32,5 +34,12 @@ public class RecordActivity extends ActionBarActivity {
 		transaction.replace(R.id.record_record_fragment, mRecordFragment);
 		transaction.commit();
 		super.onResume();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.action_bar_record, menu);
+		return true;
 	}
 }

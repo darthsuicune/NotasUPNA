@@ -158,11 +158,25 @@ public class Student {
 		if(currentRecord != null){
 			currentRecord.addSubject(currentSubject);
 			addRecord(currentRecord);
+			
 		}
 	}
 
 	public void addRecord(Record r) {
 		mRecordList.add(r);
 		mRecordCount++;
+	}
+	
+	public void sortByTime(boolean asc){
+		ArrayList<Record> aux = new ArrayList<Record>();
+		for(int i = 0; i<mRecordCount; i++){
+			Record r = mRecordList.get(i);
+			r.sortByTime(asc);
+			aux.add(r);
+		}
+	}
+	
+	public void sortByName(){
+		
 	}
 }
