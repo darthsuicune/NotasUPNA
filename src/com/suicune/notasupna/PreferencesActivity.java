@@ -6,13 +6,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import com.suicune.notasupna.helpers.CryptoBlock;
 
 @SuppressLint("NewApi")
-public class PreferencesActivity extends PreferenceActivity {
+public class PreferencesActivity extends PreferenceActivity implements
+		OnPreferenceChangeListener {
 	public static final String LANGUAGE_SPANISH = "es";
 	public static final String LANGUAGE_BASQUE = "eu";
 	public static final String LANGUAGE_ENGLISH = "en";
@@ -30,7 +33,6 @@ public class PreferencesActivity extends PreferenceActivity {
 
 	public static final String PREFERENCE_UPDATE_TIME = "update time";
 
-	public static final String PREFERENCE_RECORD_LANGUAGE = "record language";
 	public static final String PREFERENCE_APP_LANGUAGE = "language";
 	public static final String PREFERENCE_USER_NAME = "userName";
 	public static final String PREFERENCE_PASS_WORD = "passWord";
@@ -59,16 +61,70 @@ public class PreferencesActivity extends PreferenceActivity {
 				.beginTransaction();
 		transaction.add(android.R.id.content, new GeneralPreferencesFragment());
 		transaction.commit();
+
 	}
 
 	@SuppressWarnings("deprecation")
 	private void loadPreferences() {
 		this.addPreferencesFromResource(R.xml.preferences_activity);
+
+		Preference languagePreference = findPreference(getString(R.string.preference_app_language));
+		languagePreference
+				.setOnPreferenceChangeListener(this);
+	}
+
+	@Override
+	public boolean onPreferenceChange(Preference preference, Object newValue) {
+		//Language changed
+		if (preference.getKey().equals(
+				getString(R.string.preference_app_language))) {
+			String newLanguage = (String) newValue;
+			changeLanguage(newLanguage);
+			if(newLanguage.equals(getString(R.string.language_code_basque))) {
+				preference.setSummary(R.string.basque);
+			} else if (newLanguage.equals(getString(R.string.language_code_default))) {
+				preference.setSummary(R.string.default_language);
+			} else if (newLanguage.equals(getString(R.string.language_code_english))) {
+				preference.setSummary(R.string.english);
+			} else if (newLanguage.equals(getString(R.string.language_code_spanish))) {
+				preference.setSummary(R.string.spanish);
+			}
+			
+			//Sort order changed
+		} else if (preference.getKey().equals(
+				getString(R.string.preference_sort_order))) {
+	
+		}
+		return true;
+	}
+
+	public void changeLanguage(String newLanguage) {
+		if (newLanguage.equals(getString(R.string.language_code_basque))) {
+			prefs.edit()
+					.putString(getString(R.string.preference_record_language),
+							getString(R.string.language_code_basque)).commit();
+		} else if (newLanguage
+				.equals(getString(R.string.language_code_spanish))) {
+			prefs.edit()
+					.putString(getString(R.string.preference_record_language),
+							getString(R.string.language_code_spanish)).commit();
+		} else {
+
+		}
+		setResult(RESULT_LANGUAGE_CHANGED);
 	}
 
 	public static String getRecordLanguage(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context)
-				.getString(PREFERENCE_RECORD_LANGUAGE, LANGUAGE_SPANISH);
+				.getString(
+						context.getString(R.string.preference_record_language),
+						LANGUAGE_SPANISH);
+	}
+
+	public static String getSortOrder(Context context) {
+		return PreferenceManager.getDefaultSharedPreferences(context)
+				.getString(context.getString(R.string.preference_sort_order),
+						context.getString(R.string.sort_order_time_asc_value));
 	}
 
 	public static void saveLoginData(Context context, String userName,

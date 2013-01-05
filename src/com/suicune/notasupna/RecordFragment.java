@@ -153,7 +153,7 @@ public class RecordFragment extends ListFragment {
 			}
 			break;
 		case ACTIVITY_PREFERENCES:
-			if (resultCode == Activity.RESULT_OK) {
+			if (resultCode == PreferencesActivity.RESULT_LANGUAGE_CHANGED) {
 
 			}
 			break;

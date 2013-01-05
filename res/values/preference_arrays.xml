@@ -7,9 +7,9 @@
         <item>@string/default_language</item>
     </string-array>
     <string-array name="preference_language_list_values">
-        <item>es</item>
-        <item>en</item>
-        <item>eu</item>
+        <item>@string/language_code_spanish</item>
+        <item>@string/language_code_english</item>
+        <item>@string/language_code_basque</item>
         <item>@string/language_code_default</item>
     </string-array>
     <string-array name="preference_sort_order">
@@ -19,10 +19,10 @@
         <item>@string/sort_order_alpha_desc</item>
     </string-array>
     <string-array name="preference_sort_order_values">
-        <item>sort_order_time_asc</item>
-        <item>sort_order_time_desc</item>
+        <item>@string/sort_order_time_asc_value</item>
+        <item>@string/sort_order_time_desc_value</item>
         <item>@string/sort_order_alpha_asc_value</item>
-        <item>sort_order_alpha_desc</item>
+        <item>@string/sort_order_alpha_desc_value</item>
     </string-array>
     <string-array name="preference_update_time">
         <item>@string/update_5_minutes</item>
@@ -38,16 +38,16 @@
 	    <item>@string/update_no</item>
     </string-array>
     <string-array name="preference_update_time_values">
-        <item>300000</item>
-        <item>600000</item>
-        <item>900000</item>
-        <item>1800000</item>
-        <item>3600000</item>
-        <item>7200000</item>
-        <item>21600000</item>
-        <item>43200000</item>
-        <item>86400000</item>
-        <item>604800000</item>
-        <item>0</item>
+        <item>@string/update_5_minutes_value</item>
+        <item>@string/update_10_minutes_value</item>
+        <item>@string/update_15_minutes_value</item>
+	    <item>@string/update_half_hour_value</item>
+	    <item>@string/update_1_hour_value</item>
+	    <item>@string/update_2_hour_value</item>
+	    <item>@string/update_6_hour_value</item>
+	    <item>@string/update_12_hour_value</item>
+	    <item>@string/update_24_hour_value</item>
+	    <item>@string/update_1_week_value</item>
+	    <item>@string/update_no_value</item>
     </string-array>
 </resources>

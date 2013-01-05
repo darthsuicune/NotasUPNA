@@ -80,6 +80,18 @@ public class LoginActivity extends ActionBarActivity {
 		return true;
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode){
+		case ACTIVITY_PREFERENCES:
+			if(resultCode == PreferencesActivity.RESULT_LANGUAGE_CHANGED){
+				
+			}
+			break;
+		}
+	}
+
 	public void showLoginScreen() {
 		setContentView(R.layout.activity_login);
 
