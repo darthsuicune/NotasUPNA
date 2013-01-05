@@ -76,6 +76,15 @@ public class RecordFragment extends ListFragment {
 	private TextView mRecordStatusMessageView;
 
 	private SharedPreferences prefs;
+	
+	private static RecordFragment mRecordFragment;
+	
+	public static RecordFragment getInstance(){
+		if(mRecordFragment == null){
+			mRecordFragment = new RecordFragment();
+		}
+		return mRecordFragment;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
