@@ -93,7 +93,6 @@ public class PreferencesActivity extends PreferenceActivity implements
 			//Sort order changed
 		} else if (preference.getKey().equals(
 				getString(R.string.preference_sort_order))) {
-	
 		}
 		return true;
 	}
