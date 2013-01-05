@@ -1,7 +1,5 @@
 package com.suicune.notasupna;
 
-import java.util.Locale;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -186,139 +184,93 @@ public class LoginActivity extends ActionBarActivity {
 				result = true;
 			}
 		} else if (mUserName.length() == 8 && TextUtils.isDigitsOnly(mUserName)) {
-			result = true;
+			mUserName = mUserName + getLetter(mUserName);
 		}
 
 		return result;
 	}
 
-	private boolean checkLetter() {
-		boolean result = false;
-
-		String userName = mUserName;
-		int id = Integer.parseInt(userName.substring(0, 8));
-		char letter = userName.toLowerCase().charAt(userName.length() - 1);
+	private char getLetter(String dni) {
+		char letter = 0;
+		int id = Integer.parseInt(dni);
 		switch (id % 23) {
 		case 0:
-			if (letter == 't') {
-				result = true;
-			}
+			letter = 'T';
 			break;
 		case 1:
-			if (letter == 'r') {
-				result = true;
-			}
+			letter = 'R';
 			break;
 		case 2:
-			if (letter == 'w') {
-				result = true;
-			}
+			letter = 'W';
 			break;
 		case 3:
-			if (letter == 'a') {
-				result = true;
-			}
+			letter = 'A';
 			break;
 		case 4:
-			if (letter == 'g') {
-				result = true;
-			}
+			letter = 'G';
 			break;
 		case 5:
-			if (letter == 'm') {
-				result = true;
-			}
+			letter = 'M';
 			break;
 		case 6:
-			if (letter == 'y') {
-				result = true;
-			}
+			letter = 'Y';
 			break;
 		case 7:
-			if (letter == 'f') {
-				result = true;
-			}
+			letter = 'F';
 			break;
 		case 8:
-			if (letter == 'p') {
-				result = true;
-			}
+			letter = 'P';
 			break;
 		case 9:
-			if (letter == 'd') {
-				result = true;
-			}
+			letter = 'D';
 			break;
 		case 10:
-			if (letter == 'x') {
-				result = true;
-			}
+			letter = 'X';
 			break;
 		case 11:
-			if (letter == 'b') {
-				result = true;
-			}
+			letter = 'B';
 			break;
 		case 12:
-			if (letter == 'n') {
-				result = true;
-			}
+			letter = 'N';
 			break;
 		case 13:
-			if (letter == 'j') {
-				result = true;
-			}
+			letter = 'J';
 			break;
 		case 14:
-			if (letter == 'z') {
-				result = true;
-			}
+			letter = 'Z';
 			break;
 		case 15:
-			if (letter == 's') {
-				result = true;
-			}
+			letter = 'S';
 			break;
 		case 16:
-			if (letter == 'q') {
-				result = true;
-			}
+			letter = 'Q';
 			break;
 		case 17:
-			if (letter == 'v') {
-				result = true;
-			}
+			letter = 'V';
 			break;
 		case 18:
-			if (letter == 'h') {
-				result = true;
-			}
+			letter = 'H';
 			break;
 		case 19:
-			if (letter == 'l') {
-				result = true;
-			}
+			letter = 'L';
 			break;
 		case 20:
-			if (letter == 'c') {
-				result = true;
-			}
+			letter = 'C';
 			break;
 		case 21:
-			if (letter == 'k') {
-				result = true;
-			}
+			letter = 'K';
 			break;
 		case 22:
-			if (letter == 'e') {
-				result = true;
-			}
+			letter = 'E';
 			break;
 		default:
 			break;
 		}
+		return letter;
+	}
 
-		return result;
+	private boolean checkLetter() {
+		return mUserName.charAt(mUserName.length() - 1) == getLetter(mUserName);
 	}
 
 	/**
