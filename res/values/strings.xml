@@ -87,10 +87,10 @@ Universidad Pública de Navarra UPNA"</string>
     <string name="sort_order_alpha_desc">"Ordenar alfabéticamente (descendente)"</string>
     <string name="sort_order_time_asc">"Ordenar por fecha (ascendente)"</string>
     <string name="sort_order_time_desc">"Ordenar por fecha (descendente)"</string>
-    <string name="sort_order_alpha_asc_value">"alpha_asc"</string>
-    <string name="sort_order_alpha_desc_value">"alpha_desc"</string>
-    <string name="sort_order_time_asc_value">"time_asc"</string>
-    <string name="sort_order_time_desc_value">"time_desc"</string>
+    <string name="sort_order_alpha_asc_value">"su_name asc"</string>
+    <string name="sort_order_alpha_desc_value">"su_name desc"</string>
+    <string name="sort_order_time_asc_value">"gr_time asc"</string>
+    <string name="sort_order_time_desc_value">"gr_time desc"</string>
     <string name="sort_order_summary">"Elegir el orden de las asignaturas"</string>
     <string name="update_10_minutes">"10 minutos"</string>
     <string name="update_12_hour">"12 horas"</string>
