@@ -57,12 +57,8 @@ public class DetailsFragment extends Fragment {
 		super.onResume();
 		showCallsAsDialog = shouldShowAsDialog();
 		boolean isRecord = isRecordActivity();
-		if (isRecord) {
-			setHasOptionsMenu(false);
-		} else {
-			setHasOptionsMenu(true);
-		}
 		if (isRecord && isPortrait()) {
+			setHasOptionsMenu(false);
 			return;
 		} else {
 			setHasOptionsMenu(true);

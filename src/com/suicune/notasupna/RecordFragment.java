@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -35,6 +36,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.suicune.notasupna.database.GradesContract;
+import com.suicune.notasupna.database.GradesDBProvider;
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.GradesParserLoader;
 
@@ -60,6 +62,7 @@ public class RecordFragment extends ListFragment {
 	private boolean isLandscape;
 	private boolean isHoneyComb;
 	private boolean isSmallScreen;
+	private boolean isParsing;
 
 	private int mCursorPosition = 0;
 	private int mCurrentCourse = 0;
@@ -76,11 +79,12 @@ public class RecordFragment extends ListFragment {
 	private TextView mRecordStatusMessageView;
 
 	private SharedPreferences prefs;
-	
+
 	private static RecordFragment mRecordFragment;
-	
-	public static RecordFragment getInstance(){
-		if(mRecordFragment == null){
+	private static DetailsFragment mDetailsFragment;
+
+	public static RecordFragment getInstance() {
+		if (mRecordFragment == null) {
 			mRecordFragment = new RecordFragment();
 		}
 		return mRecordFragment;
@@ -88,24 +92,33 @@ public class RecordFragment extends ListFragment {
 
 	@Override
 	public void onAttach(Activity activity) {
+		FragmentActivity mActivity = (FragmentActivity) activity;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			isHoneyComb = true;
 		} else {
 			isHoneyComb = false;
 		}
 
-		if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			isLandscape = true;
 		} else {
 			isLandscape = false;
 		}
 
 		checkScreenSize();
-
 		setViews(activity);
 		restoreParameters();
-		loadData();
-		if(isLandscape){
+
+		Bundle extras = activity.getIntent().getExtras();
+		if (extras != null) {
+			mActivity.getSupportLoaderManager().initLoader(LOADER_PARSER,
+					extras, new AsyncHelper());
+		}
+
+		if (!isParsing) {
+			loadData();
+		}
+		if (isLandscape) {
 			mDetailsHintView.setVisibility(View.VISIBLE);
 			mDetailsView.setVisibility(View.GONE);
 		}
@@ -121,11 +134,14 @@ public class RecordFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		if (!mCurrentSubject.equals(mCurrentRecord.mSubjectsList.get(position))) {
-			setCursorPosition(position);
-			showDetails(mCurrentSubject);
-		}
 		super.onListItemClick(l, v, position, id);
+		if ((mCurrentSubject != null)
+				&& (mCurrentSubject.equals(mCurrentRecord.mSubjectsList
+						.get(position)))) {
+			return;
+		}
+		setCursorPosition(position);
+		showDetails(mCurrentRecord.mSubjectsList.get(position));
 	}
 
 	@Override
@@ -172,15 +188,17 @@ public class RecordFragment extends ListFragment {
 	private void showDetails(Subject subject) {
 		mCurrentSubject = subject;
 		if (isLandscape) {
-			DetailsFragment details = DetailsFragment
-					.newInstance(mCursorPosition);
-			if (details != null) {
-				details.setSubject(mCurrentSubject);
-				
-				FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-				transaction.replace(R.id.record_details, details);
-				transaction.commit();
+			mDetailsHintView.setVisibility(View.GONE);
+			mDetailsView.setVisibility(View.VISIBLE);
+			
+			mDetailsFragment = DetailsFragment.newInstance(mCursorPosition);
+			if (mCurrentSubject != null) {
+				mDetailsFragment.setSubject(mCurrentSubject);
 			}
+			FragmentTransaction transaction = getActivity()
+					.getSupportFragmentManager().beginTransaction();
+			transaction.replace(R.id.record_details, mDetailsFragment);
+			transaction.commit();
 		} else {
 			Intent intent = new Intent(getActivity(), DetailsActivity.class);
 			intent.putExtra(DetailsActivity.EXTRA_SUBJECT, subject);
@@ -204,14 +222,25 @@ public class RecordFragment extends ListFragment {
 
 		mRecordView = activity.findViewById(R.id.record_view);
 		mRecordStatusView = activity.findViewById(R.id.record_status);
-		mRecordStatusMessageView = (TextView) activity.findViewById(
-				R.id.record_status_message);
+		mRecordStatusMessageView = (TextView) activity
+				.findViewById(R.id.record_status_message);
 
 		mDetailsView = activity.findViewById(R.id.record_details);
 		mDetailsHintView = activity.findViewById(R.id.record_details_hint);
-		mRecordHeaderView = activity
-				.findViewById(R.id.record_header_block);
-
+		mRecordHeaderView = activity.findViewById(R.id.record_header_block);
+		
+		View otherCallsView = activity.findViewById(R.id.record_calls);
+		if(isLandscape && isSmallScreen){
+			if(otherCallsView != null){
+				otherCallsView.setVisibility(View.GONE);
+			}
+			mRecordHeaderView.setVisibility(View.GONE);
+		}else{
+			if(otherCallsView != null){
+				otherCallsView.setVisibility(View.VISIBLE);
+			}
+			mRecordHeaderView.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private void restoreParameters() {
@@ -230,7 +259,6 @@ public class RecordFragment extends ListFragment {
 			actionBar.setListNavigationCallbacks(setSpinnerAdapter(),
 					setNavigationCallbacks());
 		}
-		mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
 	}
 
 	private void loadData() {
@@ -238,16 +266,13 @@ public class RecordFragment extends ListFragment {
 				new CursorLoaderHelper());
 	}
 
-	private void showData() {
-		if (isLandscape && isSmallScreen) {
-			mRecordHeaderView.setVisibility(View.GONE);
-		} else {
-			mRecordHeaderView.setVisibility(View.VISIBLE);
+	private void showData(boolean isLoader) {
+		if (!isLandscape || !isSmallScreen) {
 			showStudentInfo();
 			showCourseInfo();
 		}
 		showRecord();
-		if (isLandscape) {
+		if (isLandscape && !isLoader) {
 			showDetails(mCurrentSubject);
 		}
 	}
@@ -359,7 +384,7 @@ public class RecordFragment extends ListFragment {
 			public boolean onNavigationItemSelected(int itemPosition,
 					long itemId) {
 				setSpinnerPosition(itemPosition);
-				showData();
+				showData(false);
 				return true;
 			}
 		};
@@ -434,6 +459,7 @@ public class RecordFragment extends ListFragment {
 				break;
 			case LOADER_PARSER:
 				showProgress(true, PROGRESS_PARSE);
+				isParsing = true;
 				loader = new GradesParserLoader(getActivity(), args);
 				break;
 			}
@@ -444,15 +470,15 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<String> loader, String result) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
-				showProgress(false, PROGRESS_SIGN_IN);
 				Bundle args = new Bundle();
 				args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA, result);
 				getActivity().getSupportLoaderManager().initLoader(
 						LOADER_PARSER, args, this);
+				showProgress(false, PROGRESS_SIGN_IN);
 				break;
 			case LOADER_PARSER:
+				isParsing = false;
 				loadData();
-				showData();
 				showProgress(false, PROGRESS_PARSE);
 				break;
 			}
@@ -478,7 +504,7 @@ public class RecordFragment extends ListFragment {
 				String[] selectionArgs = { PreferencesActivity
 						.getRecordLanguage(getActivity()) };
 				loader = new CursorLoader(getActivity(), uri, null, selection,
-						selectionArgs, null);
+						selectionArgs, PreferencesActivity.getSortOrder(getActivity()));
 				break;
 			}
 			return loader;
@@ -489,8 +515,9 @@ public class RecordFragment extends ListFragment {
 			switch (loader.getId()) {
 			case LOADER_COURSE:
 				mStudent = new Student(cursor);
+				mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
 				setActionBar();
-				showData();
+				showData(true);
 				break;
 			}
 			showProgress(false, PROGRESS_LOAD);

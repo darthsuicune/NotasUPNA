@@ -263,7 +263,6 @@ public class LoginActivity extends ActionBarActivity {
 
 		@Override
 		public void onLoadFinished(Loader<String> loader, String response) {
-			showProgress(false);
 			if (response == null) {
 				Toast.makeText(getApplicationContext(),
 						R.string.error_connection, Toast.LENGTH_LONG).show();
@@ -289,6 +288,7 @@ public class LoginActivity extends ActionBarActivity {
 					e.printStackTrace();
 				}
 			}
+			showProgress(false);
 		}
 
 		@Override

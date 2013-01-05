@@ -45,7 +45,7 @@ public class DNIUtils {
 					&& checkLetter("2" + dni.substring(1, 9))) {
 				result = true;
 			}
-		} else if (dni.length() == 7) {
+		} else if (dni.length() == 8) {
 			if (TextUtils.isDigitsOnly(dni.substring(0, 8))) { // Spanish
 				result = true;
 			} else if (dni.startsWith("X") // Foreigners

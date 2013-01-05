@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 public class RecordActivity extends ActionBarActivity {
 	public static final String EXTRA_DOWNLOADED_DATA = "downloaded data";
 	
+	private RecordFragment mRecordFragment;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,9 +27,9 @@ public class RecordActivity extends ActionBarActivity {
 
 	@Override
 	protected void onResume() {
-		RecordFragment recordFragment = RecordFragment.getInstance();
+		mRecordFragment = RecordFragment.getInstance();
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.add(R.id.record_record_fragment, recordFragment);
+		transaction.replace(R.id.record_record_fragment, mRecordFragment);
 		transaction.commit();
 		super.onResume();
 	}

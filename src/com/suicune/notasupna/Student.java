@@ -63,7 +63,7 @@ public class Student {
 
 			// Process the course
 			int courseId = c.getInt(c
-					.getColumnIndex(GradesContract.CoursesTable._ID));
+					.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE));
 			if (currentCourseId != courseId) {
 				if (currentRecord != null) {
 					currentRecord.addSubject(currentSubject);
