@@ -27,7 +27,8 @@ public class RecordActivity extends ActionBarActivity {
 	protected void onResume() {
 		RecordFragment recordFragment = RecordFragment.getInstance();
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.record_record_fragment, recordFragment);
+		transaction.add(R.id.record_record_fragment, recordFragment);
+		transaction.commit();
 		super.onResume();
 	}
 }

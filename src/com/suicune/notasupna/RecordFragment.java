@@ -87,7 +87,7 @@ public class RecordFragment extends ListFragment {
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onAttach(Activity activity) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			isHoneyComb = true;
 		} else {
@@ -102,7 +102,7 @@ public class RecordFragment extends ListFragment {
 
 		checkScreenSize();
 
-		setViews();
+		setViews(activity);
 		restoreParameters();
 		loadData();
 		if(isLandscape){
@@ -110,13 +110,13 @@ public class RecordFragment extends ListFragment {
 			mDetailsView.setVisibility(View.GONE);
 		}
 
-		super.onActivityCreated(savedInstanceState);
+		super.onAttach(activity);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.record_fragment, container);
+		return inflater.inflate(R.layout.record_fragment, container, false);
 	}
 
 	@Override
@@ -199,17 +199,17 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 
-	private void setViews() {
+	private void setViews(Activity activity) {
 		setHasOptionsMenu(true);
 
-		mRecordView = getActivity().findViewById(R.id.record_view);
-		mRecordStatusView = getActivity().findViewById(R.id.record_status);
-		mRecordStatusMessageView = (TextView) getActivity().findViewById(
+		mRecordView = activity.findViewById(R.id.record_view);
+		mRecordStatusView = activity.findViewById(R.id.record_status);
+		mRecordStatusMessageView = (TextView) activity.findViewById(
 				R.id.record_status_message);
 
-		mDetailsView = getActivity().findViewById(R.id.record_details);
-		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
-		mRecordHeaderView = getActivity()
+		mDetailsView = activity.findViewById(R.id.record_details);
+		mDetailsHintView = activity.findViewById(R.id.record_details_hint);
+		mRecordHeaderView = activity
 				.findViewById(R.id.record_header_block);
 
 	}
@@ -230,6 +230,7 @@ public class RecordFragment extends ListFragment {
 			actionBar.setListNavigationCallbacks(setSpinnerAdapter(),
 					setNavigationCallbacks());
 		}
+		mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
 	}
 
 	private void loadData() {

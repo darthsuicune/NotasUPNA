@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
+import com.suicune.notasupna.helpers.DNIUtils;
 import com.suicune.notasupna.helpers.GradesParserLoader;
 
 /**
@@ -49,6 +51,7 @@ public class LoginActivity extends ActionBarActivity {
 	private static final int LOADER_CHECK_DATA = 2;
 
 	private static final int ACTIVITY_RECORD = 1;
+	private static final int ACTIVITY_PREFERENCES = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,19 @@ public class LoginActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.action_bar_login, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_login_confirm:
+			break;
+		case R.id.action_login_preferences:
+			Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+			startActivityForResult(intent, ACTIVITY_PREFERENCES);
+			break;
+		}
 		return true;
 	}
 
@@ -128,11 +144,19 @@ public class LoginActivity extends ActionBarActivity {
 		}
 
 		// Check for a valid ID
-		if (TextUtils.isEmpty(mUserName)) {
-			mUserNameView.setError(getString(R.string.error_field_required));
-			focusView = mUserNameView;
-			cancel = true;
-		} else if (!isId()) {
+		try{
+			if (TextUtils.isEmpty(mUserName)) {
+				mUserNameView.setError(getString(R.string.error_field_required));
+				focusView = mUserNameView;
+				cancel = true;
+			} else if (!DNIUtils.isValid(mUserName)) {
+				cancel = true;
+				mUserNameView.setError(getString(R.string.error_invalid_id));
+				focusView = mUserNameView;
+			} else if (mUserName.length() == 8){
+				mUserName = DNIUtils.addLetter(mUserName);
+			}
+		}catch(Exception e){
 			cancel = true;
 			mUserNameView.setError(getString(R.string.error_invalid_id));
 			focusView = mUserNameView;
@@ -155,122 +179,6 @@ public class LoginActivity extends ActionBarActivity {
 			getSupportLoaderManager().restartLoader(LOADER_CONNECTION, args,
 					new ConnectionHelper());
 		}
-	}
-
-	private boolean isId() {
-		boolean result = false;
-
-		// Foreigners
-		if (mUserName.startsWith("X")
-				&& TextUtils.isDigitsOnly(mUserName.substring(1, 8))) {
-			if (checkLetter()) {
-				result = true;
-			}
-		} else if (mUserName.startsWith("Y")
-				&& TextUtils.isDigitsOnly(mUserName.substring(1, 8))) {
-			if (checkLetter()) {
-				result = true;
-			}
-		} else if (mUserName.startsWith("Z")
-				&& TextUtils.isDigitsOnly(mUserName.substring(1, 8))) {
-			if (checkLetter()) {
-				result = true;
-			}
-		}
-		// Check spanish DNI
-		if (mUserName.length() == 9) {
-			if (TextUtils.isDigitsOnly(mUserName.substring(0, 8))
-					&& checkLetter()) {
-				result = true;
-			}
-		} else if (mUserName.length() == 8 && TextUtils.isDigitsOnly(mUserName)) {
-			mUserName = mUserName + getLetter(mUserName);
-		}
-
-		return result;
-	}
-
-	private char getLetter(String dni) {
-		char letter = 0;
-		int id = Integer.parseInt(dni);
-		switch (id % 23) {
-		case 0:
-			letter = 'T';
-			break;
-		case 1:
-			letter = 'R';
-			break;
-		case 2:
-			letter = 'W';
-			break;
-		case 3:
-			letter = 'A';
-			break;
-		case 4:
-			letter = 'G';
-			break;
-		case 5:
-			letter = 'M';
-			break;
-		case 6:
-			letter = 'Y';
-			break;
-		case 7:
-			letter = 'F';
-			break;
-		case 8:
-			letter = 'P';
-			break;
-		case 9:
-			letter = 'D';
-			break;
-		case 10:
-			letter = 'X';
-			break;
-		case 11:
-			letter = 'B';
-			break;
-		case 12:
-			letter = 'N';
-			break;
-		case 13:
-			letter = 'J';
-			break;
-		case 14:
-			letter = 'Z';
-			break;
-		case 15:
-			letter = 'S';
-			break;
-		case 16:
-			letter = 'Q';
-			break;
-		case 17:
-			letter = 'V';
-			break;
-		case 18:
-			letter = 'H';
-			break;
-		case 19:
-			letter = 'L';
-			break;
-		case 20:
-			letter = 'C';
-			break;
-		case 21:
-			letter = 'K';
-			break;
-		case 22:
-			letter = 'E';
-			break;
-		default:
-			break;
-		}
-		return letter;
-	}
-
-	private boolean checkLetter() {
-		return mUserName.charAt(mUserName.length() - 1) == getLetter(mUserName);
 	}
 
 	/**
