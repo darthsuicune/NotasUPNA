@@ -1,5 +1,7 @@
 package com.suicune.notasupna;
 
+import java.util.ArrayList;
+
 import android.database.Cursor;
 
 import com.suicune.notasupna.database.GradesContract;
@@ -13,6 +15,10 @@ public class Student {
 	public String mStudentNia;
 	public String mStudentNif;
 	public String mStudentNip;
+	
+	public int mRecordCount;
+	public ArrayList<Record> mRecordList;
+	
 	
 	public Student(Cursor c){
 		if(c.moveToFirst()){

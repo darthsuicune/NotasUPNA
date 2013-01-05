@@ -3,30 +3,26 @@ package com.suicune.notasupna;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +33,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
@@ -48,29 +43,28 @@ import com.suicune.notasupna.helpers.GradesParserLoader;
  * @author Denis Lapuente
  * 
  */
+@SuppressLint("NewApi")
 public class RecordFragment extends ListFragment {
 
 	private static final int LOADER_COURSE = 1;
-	private static final int LOADER_RECORD = 2;
-	private static final int LOADER_STUDENT = 3;
-	private static final int LOADER_CONNECTION = 4;
-	private static final int LOADER_PARSER = 5;
+	private static final int LOADER_CONNECTION = 2;
+	private static final int LOADER_PARSER = 3;
 
 	private static final int PROGRESS_SIGN_IN = 1;
 	private static final int PROGRESS_PARSE = 2;
+	private static final int PROGRESS_LOAD = 3;
 
 	private static final int ACTIVITY_PREFERENCES = 1;
 	private static final int ACTIVITY_DETAILS = 2;
 
-	private static final String STATE_POSITION = "cursor position";
-	private static final String STATE_SUBJECT = "current subject";
+	private boolean isLandscape;
+	private boolean isHoneyComb;
+	private boolean isSmallScreen;
 
-	public static final String COURSE_ID = "course_id";
+	private int mCursorPosition = 0;
+	private int mCurrentCourse = 0;
 
-	private boolean landscape;
-	private int cursorPosition = 0;
-
-	private Record mRecord = null;
+	private Record mCurrentRecord = null;
 	private Student mStudent = null;
 	private Subject mCurrentSubject = null;
 
@@ -79,140 +73,57 @@ public class RecordFragment extends ListFragment {
 	private View mDetailsHintView;
 	private View mDetailsView;
 	private View mRecordHeaderView;
-	private View mOtherCallsView;
 	private TextView mRecordStatusMessageView;
 
-	private CursorLoaderHelper clh;
-	private DetailsFragment details;
+	private SharedPreferences prefs;
+	
+	private static RecordFragment mRecordFragment;
 
-	LoaderManager manager = null;
+	public static RecordFragment getInstance(){
+		if(mRecordFragment == null){
+			mRecordFragment = new RecordFragment();
+		}
+		return mRecordFragment;
+	}
 
+	@Override
+	public void onAttach(Activity activity) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			isHoneyComb = true;
+		} else {
+			isHoneyComb = false;
+		}
+
+		if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			isLandscape = true;
+		} else {
+			isLandscape = false;
+		}
+
+		checkScreenSize();
+
+		setViews();
+		restoreParameters();
+		loadData();
+		if(isLandscape){
+			mDetailsHintView.setVisibility(View.VISIBLE);
+			mDetailsView.setVisibility(View.GONE);
+		}
+		super.onAttach(activity);
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-		return inflater.inflate(R.layout.record_fragment, container);
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-
-		// Restore important information in case the activity was previously
-		// active.
-		if (savedInstanceState != null) {
-			cursorPosition = savedInstanceState.getInt(STATE_POSITION);
-			mCurrentSubject = (Subject) savedInstanceState
-					.getSerializable(STATE_SUBJECT);
-		}
-		this.setHasOptionsMenu(true);
-
-		// Set the views we are using across the fragment
-		mRecordView = getActivity().findViewById(R.id.record_view);
-		mRecordStatusView = getActivity().findViewById(R.id.record_status);
-		mRecordStatusMessageView = (TextView) getActivity().findViewById(
-				R.id.record_status_message);
-
-		mDetailsView = getActivity().findViewById(R.id.record_details);
-		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
-		mOtherCallsView = getActivity().findViewById(R.id.record_calls);
-		mRecordHeaderView = getActivity()
-				.findViewById(R.id.record_header_block);
-
-		// Set the parameters
-		manager = getActivity().getSupportLoaderManager();
-		clh = new CursorLoaderHelper();
-
-		// If there is no current information attached to the fragment, load the
-		// information from the DB
-		if (mRecord == null) {
-			Bundle extras = getActivity().getIntent().getExtras();
-			if (extras != null) {
-				manager.initLoader(LOADER_PARSER, extras, new AsyncHelper());
-			}
-			manager.initLoader(LOADER_STUDENT, null, clh);
-			manager.initLoader(LOADER_RECORD, null, clh);
-		}
-
-		// If we are on GB or below, make sure all the options are available
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			manageOldVersion();
-		}
-
-		// Check if we are on Landscape mode or not
-		if ((mDetailsView != null)
-				&& (mDetailsView.getVisibility() == View.VISIBLE)) {
-			landscape = true;
-		} else {
-			landscape = false;
-		}
-
-		// Manage the second (and third) fragments if we are on landscape
-		if (landscape) {
-			// In a small screen we make the details fragment act as in portrait
-			// mode
-			if (isSmallScreen() && mOtherCallsView != null) {
-				mOtherCallsView.setVisibility(View.GONE);
-				mRecordHeaderView.setVisibility(View.GONE);
-			} else {
-				mOtherCallsView.setVisibility(View.VISIBLE);
-				mRecordHeaderView.setVisibility(View.VISIBLE);
-			}
-			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-			// Create the details fragment and show it in its place
-			details = (DetailsFragment) getActivity()
-					.getSupportFragmentManager().findFragmentById(
-							R.id.record_details);
-			if (mCurrentSubject == null) {
-				mDetailsHintView.setVisibility(View.VISIBLE);
-				mDetailsView.setVisibility(View.GONE);
-			} else {
-				showDetails(cursorPosition, mCurrentSubject);
-			}
-		}
-	}
-
-	/**
-	 * This method should allow for changing the degree when needed on older
-	 * versions. Basically, activate a visual element to allow for changing
-	 * degrees TODO
-	 */
-	private void manageOldVersion() {
-
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt(STATE_POSITION, cursorPosition);
-		outState.putSerializable(STATE_SUBJECT, mCurrentSubject);
-		super.onSaveInstanceState(outState);
+		return inflater.inflate(R.layout.record_fragment, container, false);
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		cursorPosition = position;
-		showDetails(position, mRecord.mSubjectsList.get(position));
-		super.onListItemClick(l, v, position, id);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar actionBar = activity.getActionBar();
-			actionBar.setDisplayShowTitleEnabled(false);
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-			getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE,
-					null, new CursorLoaderHelper());
+		if (!mCurrentSubject.equals(mCurrentRecord.mSubjectsList.get(position))) {
+			setCursorPosition(position);
+			showDetails(mCurrentSubject);
 		}
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.action_bar_record, menu);
-		super.onCreateOptionsMenu(menu, inflater);
+		super.onListItemClick(l, v, position, id);
 	}
 
 	@Override
@@ -220,18 +131,22 @@ public class RecordFragment extends ListFragment {
 		switch (requestCode) {
 		case ACTIVITY_DETAILS:
 			if (resultCode == Activity.RESULT_OK) {
-				if (landscape) {
-					showDetails(cursorPosition, (Subject) data.getExtras()
-							.getSerializable(DetailsActivity.EXTRA_SUBJECT));
-				}
+
 			}
 			break;
 		case ACTIVITY_PREFERENCES:
-			break;
-		default:
+			if (resultCode == Activity.RESULT_OK) {
+
+			}
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.action_bar_record, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
@@ -246,203 +161,222 @@ public class RecordFragment extends ListFragment {
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
 		case R.id.action_record_close_session:
-			// Should show a Dialog to warn about the user about closing session
-			// and then close everything
-			// TODO
-			break;
-		default:
+			getActivity().finish();
 			break;
 		}
-		return super.onOptionsItemSelected(item);
+		return true;
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @param position
-	 *            The position of the item clicked in the list
-	 * @param subject
-	 */
-	private void showDetails(int position, Subject subject) {
-		getListView().setItemChecked(position, true);
-
-		if (landscape) {
-			if (details == null || details.getShownIndex() != position) {
-				details = DetailsFragment.newInstance(position);
-				details.setSubject(subject);
-
-				if (mDetailsHintView.getVisibility() == View.VISIBLE) {
-					mDetailsHintView.setVisibility(View.GONE);
-					mDetailsView.setVisibility(View.VISIBLE);
-				}
-
-				FragmentTransaction ft = getActivity()
-						.getSupportFragmentManager().beginTransaction();
-				ft.replace(R.id.record_details, details);
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				ft.commit();
+	private void showDetails(Subject subject) {
+		mCurrentSubject = subject;
+		if (isLandscape) {
+			DetailsFragment details = DetailsFragment
+					.newInstance(mCursorPosition);
+			if (details != null) {
+				details.setSubject(mCurrentSubject);
+				
+				FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+				transaction.replace(R.id.record_details, details);
+				transaction.commit();
 			}
 		} else {
 			Intent intent = new Intent(getActivity(), DetailsActivity.class);
 			intent.putExtra(DetailsActivity.EXTRA_SUBJECT, subject);
-			startActivityForResult(intent, ACTIVITY_DETAILS);
+			startActivity(intent);
 		}
 	}
 
-	public void failedDownload(String response, int errorCode) {
-		switch (errorCode) {
-		case ConnectLoader.ERROR_JSON:
-			Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
-			break;
-		case ConnectLoader.ERROR_NO_JSON:
-			if (response.contains("HTTP Status 403")
-					|| response.contains("HTTP Status 401")) {
-				Toast.makeText(getActivity(), R.string.error_login,
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(getActivity(), R.string.error_connecting,
-						Toast.LENGTH_LONG).show();
-			}
-			break;
-		default:
-			break;
+	@SuppressLint("NewApi")
+	private void checkScreenSize() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			isSmallScreen = getResources().getConfiguration()
+					.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE) ? false
+					: true;
+		} else {
+			isSmallScreen = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < 3;
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public void setSpinnerAdapter(SpinnerAdapter spinnerAdapter) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActivity().getActionBar().setListNavigationCallbacks(
-					spinnerAdapter, new OnNavigationListener() {
-						@Override
-						public boolean onNavigationItemSelected(
-								int itemPosition, long itemId) {
-							Bundle args = new Bundle();
-							args.putLong(COURSE_ID, itemId);
-							getActivity().getSupportLoaderManager().initLoader(
-									LOADER_RECORD, args, clh);
-							return false;
-						}
-					});
+	private void setViews() {
+		setHasOptionsMenu(true);
+
+		mRecordView = getActivity().findViewById(R.id.record_view);
+		mRecordStatusView = getActivity().findViewById(R.id.record_status);
+		mRecordStatusMessageView = (TextView) getActivity().findViewById(
+				R.id.record_status_message);
+
+		mDetailsView = getActivity().findViewById(R.id.record_details);
+		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
+		mRecordHeaderView = getActivity()
+				.findViewById(R.id.record_header_block);
+
+	}
+
+	private void restoreParameters() {
+		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		mCurrentCourse = prefs
+				.getInt(PreferencesActivity.LAST_COURSE_VIEWED, 0);
+		mCursorPosition = prefs.getInt(PreferencesActivity.LAST_SUBJECT_VIEWED,
+				0);
+	}
+
+	private void setActionBar() {
+		if (isHoneyComb) {
+			ActionBar actionBar = getActivity().getActionBar();
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+			actionBar.setSelectedNavigationItem(mCurrentCourse);
+			actionBar.setListNavigationCallbacks(setSpinnerAdapter(),
+					setNavigationCallbacks());
 		}
 	}
 
-	public class CursorLoaderHelper implements LoaderCallbacks<Cursor> {
+	private void loadData() {
+		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null,
+				new CursorLoaderHelper());
+	}
 
-		@Override
-		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			CursorLoader mLoader = null;
-			Uri mUri;
-			String language = PreferencesActivity
-					.getRecordLanguage(getActivity());
-			switch (id) {
-			case LOADER_COURSE:
-				mUri = GradesContract.CONTENT_NAME_COURSES;
-				String[] spinnerProjection = { GradesContract.CoursesTable._ID,
-						GradesContract.CoursesTable.COL_CO_NAME };
-				String spinnerSelection = GradesContract.CoursesTable.COL_CO_LANGUAGE
-						+ "=?";
-				String[] spinnerSelectionArgs = { language };
-				mLoader = new CursorLoader(getActivity(), mUri,
-						spinnerProjection, spinnerSelection,
-						spinnerSelectionArgs, null);
-				break;
-			case LOADER_RECORD:
-				mUri = GradesContract.CONTENT_NAME_ALL;
-				String[] subjectsProjection = {
-						GradesContract.CoursesTable.TABLE_NAME + "."
-								+ GradesContract.CoursesTable._ID,
-						GradesContract.CoursesTable.COL_CO_CENTER,
-						GradesContract.CoursesTable.COL_CO_LANGUAGE,
-						GradesContract.CoursesTable.COL_CO_NAME,
-						GradesContract.CoursesTable.COL_CO_PASSED_CREDITS,
-						GradesContract.CoursesTable.COL_CO_STUDIES,
-						GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS,
-						GradesContract.SubjectsTable.COL_SU_CO_CODE,
-						GradesContract.SubjectsTable.COL_SU_CREDITS,
-						GradesContract.SubjectsTable.COL_SU_LANGUAGE,
-						GradesContract.SubjectsTable.COL_SU_NAME,
-						GradesContract.SubjectsTable.COL_SU_TYPE,
-						GradesContract.GradesTable.COL_GR_ASSISTED,
-						GradesContract.GradesTable.COL_GR_CALL,
-						GradesContract.GradesTable.COL_GR_CALL_NUMBER,
-						GradesContract.GradesTable.COL_GR_CODE,
-						GradesContract.GradesTable.COL_GR_GRADE,
-						GradesContract.GradesTable.COL_GR_GRADE_NAME,
-						GradesContract.GradesTable.COL_GR_LANGUAGE,
-						GradesContract.GradesTable.COL_GR_PASSED,
-						GradesContract.GradesTable.COL_GR_PROVISIONAL,
-						GradesContract.GradesTable.COL_GR_REVISION_TIME,
-						GradesContract.GradesTable.COL_GR_SU_CODE,
-						GradesContract.GradesTable.COL_GR_TIME,
-						GradesContract.GradesTable.COL_GR_YEAR
-
-				};
-				String subjectsSelection = GradesContract.CoursesTable.COL_CO_LANGUAGE
-						+ "=?";
-				String[] subjectsSelectionArgs = { language };
-				mLoader = new CursorLoader(getActivity(), mUri,
-						subjectsProjection, subjectsSelection,
-						subjectsSelectionArgs, null);
-
-				break;
-			case LOADER_STUDENT:
-				mUri = GradesContract.CONTENT_NAME_STUDENTS;
-				String[] studentProjection = {
-						GradesContract.StudentsTable._ID,
-						GradesContract.StudentsTable.COL_ST_NAME,
-						GradesContract.StudentsTable.COL_ST_SURNAME_1,
-						GradesContract.StudentsTable.COL_ST_SURNAME_2,
-						GradesContract.StudentsTable.COL_ST_NIA,
-						GradesContract.StudentsTable.COL_ST_NIF, };
-				mLoader = new CursorLoader(getActivity(), mUri,
-						studentProjection, null, null, null);
-				break;
-			default:
-				break;
-			}
-			return mLoader;
+	private void showData() {
+		if (isLandscape && isSmallScreen) {
+			mRecordHeaderView.setVisibility(View.GONE);
+		} else {
+			mRecordHeaderView.setVisibility(View.VISIBLE);
+			showStudentInfo();
+			showCourseInfo();
 		}
+		showRecord();
+		if (isLandscape) {
+			showDetails(mCurrentSubject);
+		}
+	}
 
-		@Override
-		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-			switch (loader.getId()) {
-			case LOADER_COURSE:
-				fillSpinner(cursor);
-				break;
-			case LOADER_RECORD:
-				fillRecord(cursor);
-				break;
-			case LOADER_STUDENT:
-				fillStudent(cursor);
-				break;
-			default:
-				break;
+	private void showStudentInfo() {
+		TextView studentNameView = (TextView) getActivity().findViewById(
+				R.id.student_name);
+		TextView studentNifView = (TextView) getActivity().findViewById(
+				R.id.student_nif);
+		TextView studentNiaView = (TextView) getActivity().findViewById(
+				R.id.student_nia);
+
+		studentNameView.setText(mStudent.mStudentFullName);
+		studentNifView.setText(getString(R.string.header_nif)
+				+ mStudent.mStudentNif);
+		studentNiaView.setText(getString(R.string.header_nia)
+				+ mStudent.mStudentNia);
+	}
+
+	private void showCourseInfo() {
+		TextView courseNameView = (TextView) getActivity().findViewById(
+				R.id.record_course);
+		TextView courseCenterView = (TextView) getActivity().findViewById(
+				R.id.record_center);
+		TextView courseStudiesView = (TextView) getActivity().findViewById(
+				R.id.record_studies);
+
+		courseNameView.setText(mCurrentRecord.mCourseName);
+		courseCenterView.setText(mCurrentRecord.mCourseCenter);
+		courseStudiesView.setText(mCurrentRecord.mCourseStudies);
+	}
+
+	private void showRecord() {
+		String[] from = { GradesContract.SubjectsTable.COL_SU_NAME,
+				GradesContract.SubjectsTable.COL_SU_CREDITS,
+				GradesContract.GradesTable.COL_GR_CODE };
+		int[] to = { R.id.record_item_name, R.id.record_item_credits,
+				R.id.record_item_grade };
+		SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+				prepareSubjectsList(), R.layout.record_list_item, from, to);
+		setListAdapter(adapter);
+	}
+
+	private ArrayList<HashMap<String, String>> prepareSubjectsList() {
+		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
+		ArrayList<String> subjectsList = new ArrayList<String>();
+		for (int i = 0; i < mCurrentRecord.mSubjectsCount; i++) {
+			Subject subject = mCurrentRecord.mSubjectsList.get(i);
+			if (!subjectsList.contains(subject.mSubjectName)) {
+				subjectsList.add(subject.mSubjectName);
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put(GradesContract.SubjectsTable.COL_SU_NAME,
+						subject.mSubjectName);
+				item.put(GradesContract.SubjectsTable.COL_SU_CREDITS,
+						getString(R.string.subject_credits)
+								+ subject.mSubjectCredits);
+				item.put(GradesContract.GradesTable.COL_GR_CODE,
+						subject.getLastGrade().mGradeLetter);
+				result.add(item);
 			}
 		}
-
-		@Override
-		public void onLoaderReset(Loader<Cursor> loader) {
-			loader.reset();
-		}
+		return result;
 	}
 
-	/**
-	 * Shows the progress UI and hides the record
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show, int progressType) {
-		switch (progressType) {
-		case PROGRESS_SIGN_IN:
-			mRecordStatusMessageView.setText(R.string.dialog_connect);
+	private void setCursorPosition(int position) {
+		mCurrentSubject = mCurrentRecord.mSubjectsList.get(position);
+		mCursorPosition = position;
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putInt(PreferencesActivity.LAST_SUBJECT_VIEWED, position);
+		editor.commit();
+	}
+
+	private void setSpinnerPosition(int position) {
+		mCurrentRecord = mStudent.mRecordList.get(position);
+		mCurrentSubject = null;
+		mCursorPosition = 0;
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putInt(PreferencesActivity.LAST_SUBJECT_VIEWED, 0);
+		editor.putInt(PreferencesActivity.LAST_COURSE_VIEWED, position);
+		editor.commit();
+	}
+
+	private SpinnerAdapter setSpinnerAdapter() {
+		String[] from = { GradesContract.CoursesTable.COL_CO_NAME };
+
+		int[] to = { android.R.id.text1 };
+
+		SpinnerAdapter adapter = new SimpleAdapter(getActivity(),
+				prepareSpinnerData(),
+				android.R.layout.simple_spinner_dropdown_item, from, to);
+		return adapter;
+	}
+
+	private ArrayList<HashMap<String, String>> prepareSpinnerData() {
+		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
+		for (int i = 0; i < mStudent.mRecordCount; i++) {
+			HashMap<String, String> item = new HashMap<String, String>();
+			item.put(GradesContract.CoursesTable.COL_CO_NAME,
+					mStudent.mRecordList.get(i).mCourseName);
+			result.add(item);
+		}
+		return result;
+	}
+
+	private OnNavigationListener setNavigationCallbacks() {
+		OnNavigationListener listener = new OnNavigationListener() {
+
+			@Override
+			public boolean onNavigationItemSelected(int itemPosition,
+					long itemId) {
+				setSpinnerPosition(itemPosition);
+				showData();
+				return true;
+			}
+		};
+		return listener;
+	}
+
+	private void showProgress(final boolean show, int who) {
+		String statusMessage = "";
+		switch (who) {
+		case PROGRESS_LOAD:
+			statusMessage = getString(R.string.loading_data);
 			break;
 		case PROGRESS_PARSE:
-			mRecordStatusMessageView.setText(R.string.dialog_parse);
+			statusMessage = getString(R.string.dialog_parse);
 			break;
-		default:
+		case PROGRESS_SIGN_IN:
+			statusMessage = getString(R.string.dialog_connect);
 			break;
-
 		}
+
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
@@ -469,81 +403,54 @@ public class RecordFragment extends ListFragment {
 						public void onAnimationEnd(Animator animation) {
 							mRecordView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
-							// if (mDetailsView != null) {
-							// mDetailsView.setVisibility(show ? View.GONE
-							// : View.VISIBLE);
-							// }
 						}
 					});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
-			// if (mDetailsView != null) {
-			// mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
-			// }
-			mRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
-			mRecordStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-
+			if (show) {
+				mRecordView.setVisibility(View.GONE);
+				mRecordStatusMessageView.setText(statusMessage);
+				mRecordStatusView.setVisibility(View.VISIBLE);
+			} else {
+				mRecordView.setVisibility(View.VISIBLE);
+				mRecordStatusView.setVisibility(View.GONE);
+			}
 		}
 	}
 
-	public class AsyncHelper implements LoaderCallbacks<String> {
+	private class AsyncHelper implements LoaderCallbacks<String> {
 
 		@Override
 		public Loader<String> onCreateLoader(int id, Bundle args) {
-			Loader<String> loader = null;
+			AsyncTaskLoader<String> loader = null;
 			switch (id) {
 			case LOADER_CONNECTION:
-				ActionBarActivity activity = (ActionBarActivity) getActivity();
-				activity.getActionBarHelper().setRefreshActionItemState(true);
-//				showProgress(true, PROGRESS_SIGN_IN);
+				showProgress(true, PROGRESS_SIGN_IN);
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
 				showProgress(true, PROGRESS_PARSE);
 				loader = new GradesParserLoader(getActivity(), args);
 				break;
-			default:
-				break;
 			}
 			return loader;
 		}
 
 		@Override
-		public void onLoadFinished(Loader<String> loader, String response) {
+		public void onLoadFinished(Loader<String> loader, String result) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
-//				showProgress(false, PROGRESS_SIGN_IN);
-				ActionBarActivity activity = (ActionBarActivity) getActivity();
-				activity.getActionBarHelper().setRefreshActionItemState(true);
-				try {
-					JSONObject object = new JSONObject(response);
-					int error = object.getInt(GradesParserLoader.nError);
-					if (error == 0) {
-						Bundle args = new Bundle();
-						args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA,
-								response);
-						getActivity().getSupportLoaderManager().initLoader(
-								LOADER_PARSER, args, new AsyncHelper());
-					} else {
-						failedDownload(response, ConnectLoader.ERROR_JSON);
-					}
-				} catch (JSONException e) {
-					Log.d(ConnectLoader.logging,
-							"Error in response from server: " + response);
-					failedDownload(response, ConnectLoader.ERROR_NO_JSON);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				showProgress(false, PROGRESS_SIGN_IN);
+				Bundle args = new Bundle();
+				args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA, result);
+				getActivity().getSupportLoaderManager().initLoader(
+						LOADER_PARSER, args, this);
 				break;
 			case LOADER_PARSER:
+				loadData();
+				showData();
 				showProgress(false, PROGRESS_PARSE);
-				if (response.equalsIgnoreCase(GradesParserLoader.PARSE_FAILED)) {
-					Toast.makeText(getActivity(), R.string.error_parsing,
-							Toast.LENGTH_LONG).show();
-				}
-				break;
-			default:
 				break;
 			}
 		}
@@ -554,113 +461,41 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 
-	/**
-	 * Just to fill in the student information. Also sets the Student of the
-	 * class.
-	 * 
-	 * @param c
-	 *            Cursor with the details from the database
-	 */
-	public void fillStudent(Cursor c) {
-		if (c.moveToFirst()) {
-			mStudent = new Student(c);
+	private class CursorLoaderHelper implements LoaderCallbacks<Cursor> {
 
-			TextView mStudentNameView = (TextView) getActivity().findViewById(
-					R.id.student_name);
-			TextView mStudentNiaView = (TextView) getActivity().findViewById(
-					R.id.student_nia);
-			TextView mStudentNifView = (TextView) getActivity().findViewById(
-					R.id.student_nif);
-			mStudentNameView.setText(mStudent.mStudentFullName);
-			mStudentNiaView.setText(getString(R.string.header_nia)
-					+ mStudent.mStudentNia);
-			mStudentNifView.setText(getString(R.string.header_nif)
-					+ mStudent.mStudentNif);
-		}
-	}
-
-	/**
-	 * This should fill the list and set the Record of the class.
-	 * 
-	 * @param c
-	 *            Cursor with the details from the database
-	 */
-	public void fillRecord(Cursor c) {
-		mRecord = new Record(c);
-		fillRecord();
-	}
-
-	public void fillRecord() {
-		String[] subjectsFrom = { GradesContract.SubjectsTable.COL_SU_NAME,
-				GradesContract.SubjectsTable.COL_SU_CREDITS,
-				GradesContract.GradesTable.COL_GR_CODE };
-		int[] subjectsTo = { R.id.record_item_name, R.id.record_item_credits,
-				R.id.record_item_grade };
-		TextView courseNameView = (TextView) getActivity().findViewById(
-				R.id.record_course);
-		TextView courseCenterView = (TextView) getActivity().findViewById(
-				R.id.record_center);
-		TextView courseStudiesView = (TextView) getActivity().findViewById(
-				R.id.record_studies);
-		courseNameView.setText(mRecord.mCourseName);
-		courseCenterView.setText(mRecord.mCourseCenter);
-		courseStudiesView.setText(mRecord.mCourseStudies);
-		SimpleAdapter adapter = new SimpleAdapter(getActivity(), prepareList(),
-				R.layout.record_list_item, subjectsFrom, subjectsTo);
-		setListAdapter(adapter);
-		if (details != null) {
-			details.setSubject(mRecord.mSubjectsList.get(0));
-		}
-	}
-
-	/**
-	 * 
-	 * @param c
-	 *            Cursor with the details from the database
-	 */
-	public void fillSpinner(Cursor c) {
-		String[] spinnerFrom = { GradesContract.CoursesTable.COL_CO_NAME };
-		int[] spinnerTo = { android.R.id.text1 };
-		SpinnerAdapter spinnerAdapter = new SimpleCursorAdapter(getActivity(),
-				android.R.layout.simple_spinner_dropdown_item, c, spinnerFrom,
-				spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		setSpinnerAdapter(spinnerAdapter);
-	}
-
-	public ArrayList<HashMap<String, String>> prepareList() {
-		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
-		ArrayList<String> subjectsList = new ArrayList<String>();
-		for (int i = 0; i < mRecord.mSubjectsList.size(); i++) {
-			Subject subject = mRecord.mSubjectsList.get(i);
-			HashMap<String, String> item = new HashMap<String, String>();
-			item.put(GradesContract.SubjectsTable.COL_SU_NAME,
-					subject.mSubjectName);
-			item.put(GradesContract.SubjectsTable.COL_SU_CREDITS,
-					getString(R.string.subject_credits)
-							+ subject.mSubjectCredits);
-			item.put(
-					GradesContract.GradesTable.COL_GR_CODE,
-					subject.mGradesList.get(subject.mGradesList.size() - 1).mGradeLetter);
-			if (!subjectsList.contains(subject.mSubjectName)) {
-				result.add(item);
-				subjectsList.add(subject.mSubjectName);
+		@Override
+		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			showProgress(true, PROGRESS_LOAD);
+			CursorLoader loader = null;
+			switch (id) {
+			case LOADER_COURSE:
+				Uri uri = GradesContract.CONTENT_NAME_ALL;
+				String selection = GradesContract.CoursesTable.COL_CO_LANGUAGE
+						+ "=?";
+				String[] selectionArgs = { PreferencesActivity
+						.getRecordLanguage(getActivity()) };
+				loader = new CursorLoader(getActivity(), uri, null, selection,
+						selectionArgs, null);
+				break;
 			}
+			return loader;
 		}
-		return result;
-	}
 
-	@SuppressLint("NewApi")
-	private boolean isSmallScreen() {
-		boolean result;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			result = getResources().getConfiguration().isLayoutSizeAtLeast(
-					Configuration.SCREENLAYOUT_SIZE_LARGE) ? false : true;
-		} else {
-			// Configuration.SCREENLAYOUT_SIZE_XLARGE has a value of 4, but
-			// was introduced in API 9, so we use its numeric value
-			result = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < 3;
+		@Override
+		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+			switch (loader.getId()) {
+			case LOADER_COURSE:
+				mStudent = new Student(cursor);
+				setActionBar();
+				showData();
+				break;
+			}
+			showProgress(false, PROGRESS_LOAD);
 		}
-		return result;
+
+		@Override
+		public void onLoaderReset(Loader<Cursor> loader) {
+			loader.reset();
+		}
 	}
 }

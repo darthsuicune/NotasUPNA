@@ -19,8 +19,12 @@ public class PreferencesActivity extends PreferenceActivity {
 	public static final String LAST_UPDATE = "last update";
 	public static final String DATA_EU = "data euskara";
 	public static final String DATA_ES = "data spanish";
+	public static final String LAST_COURSE_VIEWED = "last course viewed";
+	public static final String LAST_SUBJECT_VIEWED = "last course viewed";
 	
 	public static final String PREFERENCE_UPDATE_TIME = "update time";
+	
+	
 
 	public static final String PREFERENCE_RECORD_LANGUAGE = "record language";
 	public static final String PREFERENCE_USER_NAME = "userName";
