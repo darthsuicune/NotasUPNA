@@ -1,5 +1,6 @@
 package com.suicune.notasupna;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -9,6 +10,7 @@ import android.preference.PreferenceManager;
 
 import com.suicune.notasupna.helpers.CryptoBlock;
 
+@SuppressLint("NewApi")
 public class PreferencesActivity extends PreferenceActivity {
 	public static final String LANGUAGE_SPANISH = "es";
 	public static final String LANGUAGE_BASQUE = "eu";
@@ -23,24 +25,34 @@ public class PreferencesActivity extends PreferenceActivity {
 	public static final String LAST_SUBJECT_VIEWED = "last course viewed";
 	
 	public static final String PREFERENCE_UPDATE_TIME = "update time";
-	
-	
 
 	public static final String PREFERENCE_RECORD_LANGUAGE = "record language";
 	public static final String PREFERENCE_USER_NAME = "userName";
 	public static final String PREFERENCE_PASS_WORD = "passWord";
 	
+	private SharedPreferences prefs;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		/**
 		 * As the preferences for the new API are not in the support library, we need to act in different ways depending on the version of the device
 		 */
 		if(Build.VERSION.SDK_INT >= 11){
-			
+			loadFragments();
 		}else{
-			
+			loadPreferences();
 		}
 		super.onCreate(savedInstanceState);
+	}
+	
+	private void loadFragments(){
+		
+	}
+	
+	private void loadPreferences(){
+		
 	}
 
 	public static String getRecordLanguage(Context context){
