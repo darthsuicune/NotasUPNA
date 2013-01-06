@@ -43,6 +43,11 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements On
 				getString(R.string.preference_app_language))) {
 			String newLanguage = (String) newValue;
 			
+			if(newLanguage.equalsIgnoreCase(getString(R.string.language_code_basque))){
+				prefs.edit().putString(getString(R.string.preference_record_language), newLanguage).commit();
+			} else {
+				prefs.edit().putString(getString(R.string.preference_record_language), getString(R.string.language_code_spanish)).commit();
+			}
 			
 			//Sort order changed
 		} else if (preference.getKey().equals(

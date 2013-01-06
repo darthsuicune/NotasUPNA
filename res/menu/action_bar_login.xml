@@ -11,7 +11,7 @@
         android:showAsAction="never" />
     
     <item android:id="@+id/action_help"
-        android:title="@string/preferences"
+        android:title="@string/about_title"
         android:showAsAction="never" />
 
 </menu>

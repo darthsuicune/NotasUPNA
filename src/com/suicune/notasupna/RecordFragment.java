@@ -366,7 +366,7 @@ public class RecordFragment extends ListFragment {
 	private void changeLanguage() {
 		if (needsDownload()) {
 			Locale.setDefault(new Locale(
-					getString(R.string.language_code_basque)));
+					prefs.getString(PreferencesActivity.PREFERENCE_APP_LANGUAGE, getString(R.string.language_code_spanish))));
 			getActivity().getSupportLoaderManager().restartLoader(
 					LOADER_CONNECTION, null, new AsyncHelper());
 		} else {
