@@ -284,9 +284,9 @@ public class RecordFragment extends ListFragment {
 				R.id.student_nia);
 
 		studentNameView.setText(mStudent.mStudentFullName);
-		studentNifView.setText(getString(R.string.header_nif)
+		studentNifView.setText(getString(R.string.record_header_nif)
 				+ mStudent.mStudentNif);
-		studentNiaView.setText(getString(R.string.header_nia)
+		studentNiaView.setText(getString(R.string.record_header_nia)
 				+ mStudent.mStudentNia);
 	}
 
@@ -415,13 +415,11 @@ public class RecordFragment extends ListFragment {
 		String statusMessage = "";
 		switch (who) {
 		case PROGRESS_LOAD:
+		case PROGRESS_PARSE:
 			statusMessage = getString(R.string.loading_data);
 			break;
-		case PROGRESS_PARSE:
-			statusMessage = getString(R.string.dialog_parse);
-			break;
 		case PROGRESS_SIGN_IN:
-			statusMessage = getString(R.string.dialog_connect);
+			statusMessage = getString(R.string.login_progress_signing_in);
 			break;
 		}
 

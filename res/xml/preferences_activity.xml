@@ -7,11 +7,10 @@
             android:entries="@array/preference_language_list"
             android:entryValues="@array/preference_language_list_values"
             android:key="@string/preference_app_language"
-            android:summary="@string/language_summary"
             android:title="@string/language"
             android:defaultValue="@string/language_code_default" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/record" >
+    <PreferenceCategory android:title="@string/record_title" >
         <ListPreference
             android:defaultValue="@string/sort_order_time_desc_value"
             android:entries="@array/preference_sort_order"

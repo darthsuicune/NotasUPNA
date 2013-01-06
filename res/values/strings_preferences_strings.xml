@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="language_code_default">default</string>
+    <string name="language_code_spanish">es</string>
+    <string name="language_code_english">en</string>
+    <string name="language_code_basque">eu</string>
+    <string name="last_update">"Última actualización"</string>
+    <string name="default_language">"Lenguaje del sistema"</string>
+    <string name="default_language_used">"Se va a utilizar el lenguaje por defecto del dispositivo."</string>
+    <string name="sort_order_alpha_asc">"Ordenar alfabéticamente (ascendente)"</string>
+    <string name="sort_order_alpha_desc">"Ordenar alfabéticamente (descendente)"</string>
+    <string name="sort_order_time_asc">"Ordenar por fecha (ascendente)"</string>
+    <string name="sort_order_time_desc">"Ordenar por fecha (descendente)"</string>
+    <string name="sort_order_alpha_asc_value">"su_name asc"</string>
+    <string name="sort_order_alpha_desc_value">"su_name desc"</string>
+    <string name="sort_order_time_asc_value">"gr_time asc"</string>
+    <string name="sort_order_time_desc_value">"gr_time desc"</string>
+    <string name="sort_order_summary">"Elegir el orden de las asignaturas"</string>
+    <string name="update_10_minutes">"10 minutos"</string>
+    <string name="update_12_hour">"12 horas"</string>
+    <string name="update_15_minutes">"15 minutos"</string>
+    <string name="update_1_hour">"Una hora"</string>
+    <string name="update_24_hour">"24 horas"</string>
+    <string name="update_1_week">"Una semana"</string>
+    <string name="update_5_minutes">"5 minutos"</string>
+    <string name="update_6_hour">"6 horas"</string>
+    <string name="update_no">"Solo actualizaciones manuales"</string>
+    <string name="update_half_hour">"Media hora"</string>
+    <string name="update_2_hour">"2 horas"</string>
+    <string name="update_10_minutes_value">"600000"</string>
+    <string name="update_12_hour_value">"43200000"</string>
+    <string name="update_15_minutes_value">"900000"</string>
+    <string name="update_1_hour_value">"3600000"</string>
+    <string name="update_24_hour_value">"86400000"</string>
+    <string name="update_1_week_value">"604800000"</string>
+    <string name="update_5_minutes_value">"300000"</string>
+    <string name="update_6_hour_value">"21600000"</string>
+    <string name="update_no_value">"0"</string>
+    <string name="update_half_hour_value">"1800000"</string>
+    <string name="update_2_hour_value">"7200000"</string>
+    <string name="update_time_summary">"Elegir cada cuanto se actualizarán automáticamente las notas"</string>
+    <string name="update_time">"Intervalo de actualización"</string>
+    <string name="preferences_category_general">"General"</string>
+    <string name="preference_sort_order">"Orden de las asignaturas"</string>
+    <string name="preference_record_language">"record_language"</string>
+    <string name="preference_app_language">"app_language"</string>
+</resources>

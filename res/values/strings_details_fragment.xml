@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string formatted="false" name="share_grade">"Ha salido la nota de %s. He tenido un %s, %s."</string>
+    <string name="share_grade_title">"Nueva nota"</string>
+    <string name="facebook_grade_published">"Mensaje publicado en el muro."</string>
+    <string name="facebook_error">"Error al intentar publicar. Inténtalo más tarde"</string>
+    <string name="other_calls">"Otras convocatorias"</string>
+    <string name="share_on_facebook">"Compartir en facebook"</string>
+    <string name="subject_total_calls">"Registros: "</string>
+    <string name="record_details_select_item">"Elige un elemento de la lista."</string>
+    <string name="subject_year">"Curso: "</string>
+    <string name="subject_credits">"Créditos: "</string>
+    <string name="subject_type">"Tipo: "</string>
+    <string name="subject_grade_name">"Calificación: "</string>
+    <string name="subject_grade">"Nota: "</string>
+    <string name="subject_taken">"Realizado: "</string>
+    <string name="subject_calls_taken">"Convocatorias gastadas: "</string>
+    <string name="subject_passed">"Aprobado: "</string>
+    <string name="subject_call">"Convocatoria: "</string>
+    <string name="subject_call_number">"Num convocatoria: "</string>
+    <string name="call_unknown">"Desconocido"</string>
+    <string name="subject_time">"Fecha: "</string>
+    <string name="subject_provisional">"Provisional: "</string>
+    <string name="subject_revision_time">"Revisión: "</string>
+    <string name="no_revision_time">"No hay fecha de revisión."</string>
+</resources>
