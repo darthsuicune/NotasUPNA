@@ -1,6 +1,6 @@
 package com.suicune.notasupna;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import android.database.Cursor;
 
@@ -15,11 +15,11 @@ public class Student {
 	public String mStudentNif;
 	public String mStudentNip;
 
-	public LinkedList<Record> mRecordList;
+	public ArrayList<Record> mRecordList;
 	public int mRecordCount = 0;
 
 	public Student(Cursor c) {
-		mRecordList = new LinkedList<Record>();
+		mRecordList = new ArrayList<Record>();
 		if (c == null || c.getCount() <= 0) {
 			return;
 		}else{
@@ -140,7 +140,7 @@ public class Student {
 			}
 		}
 		if(!exists){
-			mRecordList.add(courseId - 1, r);
+			mRecordList.add(r);
 			mRecordCount++;
 		}
 	}
@@ -149,20 +149,18 @@ public class Student {
 		int i;
 		for(i = 0; i < mRecordCount; i++){
 			if(mRecordList.get(i).mCourseId == courseId){
-				break;
+				mRecordList.get(i).addSubject(s);
 			}
 		}
-		mRecordList.get(i).addSubject(s);
 	}
 	
 	public void addGrade(int courseId, String subjectName, Grade g){
 		int i;
 		for(i = 0; i < mRecordCount; i++){
 			if(mRecordList.get(i).mCourseId == courseId){
-				break;
+				mRecordList.get(i).addGrade(subjectName, g);
 			}
 		}
-		mRecordList.get(i).addGrade(subjectName, g);
 	}
 	
 	public void sortByTime(boolean asc){

@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -166,8 +167,9 @@ public class RecordFragment extends ListFragment {
 		case ACTIVITY_PREFERENCES:
 			if (resultCode == PreferencesActivity.RESULT_LANGUAGE_CHANGED) {
 				changeLanguage();
+			} else {
+				showData(false);
 			}
-			showData(false);
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -672,6 +674,7 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 			switch (loader.getId()) {
 			case LOADER_COURSE:
+				Log.d("TEST", DatabaseUtils.dumpCursorToString(cursor));
 				mStudent = new Student(cursor);
 				mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
 				setCourseData();

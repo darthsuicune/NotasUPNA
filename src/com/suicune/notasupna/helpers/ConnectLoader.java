@@ -51,12 +51,17 @@ public class ConnectLoader extends AsyncTaskLoader<String> {
 
 	@Override
 	public String loadInBackground() {
-		 return mContext.getString(R.string.demodata);
+		String language = PreferencesActivity.getRecordLanguage(mContext);
+		if(language.equalsIgnoreCase(mContext.getString(R.string.language_code_basque))){
+			return mContext.getString(R.string.demodata_eu);
+		} else {
+			return mContext.getString(R.string.demodata);
+		}
 //		String response = null;
 //		URL url = null;
 //
 //		try {
-//			if (PreferencesActivity.getRecordLanguage(context)
+//			if (PreferencesActivity.getRecordLanguage(mContext)
 //					.equalsIgnoreCase(mContext.getString(R.string.language_code_basque))) {
 //				url = new URL("https", server, port, resource_eu);
 //			} else {
