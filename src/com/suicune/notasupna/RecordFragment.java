@@ -10,22 +10,22 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,11 +50,9 @@ import com.suicune.notasupna.helpers.GradesParserLoader;
  */
 public class RecordFragment extends ListFragment {
 
-	private static final int LOADER_COURSE = 1;
-	private static final int LOADER_RECORD = 2;
-	private static final int LOADER_STUDENT = 3;
-	private static final int LOADER_CONNECTION = 4;
-	private static final int LOADER_PARSER = 5;
+	private static final int LOADER_STUDENT = 1;
+	private static final int LOADER_CONNECTION = 2;
+	private static final int LOADER_PARSER = 3;
 
 	private static final int PROGRESS_SIGN_IN = 1;
 	private static final int PROGRESS_PARSE = 2;
@@ -69,18 +67,19 @@ public class RecordFragment extends ListFragment {
 
 	private boolean landscape;
 	private int cursorPosition = 0;
+	private int mCurrentRecordId = 0;
 
-	private Record mRecord = null;
+	private Record mCurrentRecord = null;
 	private Student mStudent = null;
 	private Subject mCurrentSubject = null;
 
-	private View mRecordView;
-	private View mRecordStatusView;
+	private View mCurrentRecordView;
+	private View mCurrentRecordStatusView;
 	private View mDetailsHintView;
 	private View mDetailsView;
-	private View mRecordHeaderView;
+	private View mCurrentRecordHeaderView;
 	private View mOtherCallsView;
-	private TextView mRecordStatusMessageView;
+	private TextView mCurrentRecordStatusMessageView;
 
 	private CursorLoaderHelper clh;
 	private DetailsFragment details;
@@ -98,6 +97,8 @@ public class RecordFragment extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
+		mCurrentRecordId = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(PreferencesActivity.CURRENT_RECORD, 0);
+		
 		// Restore important information in case the activity was previously
 		// active.
 		if (savedInstanceState != null) {
@@ -108,16 +109,17 @@ public class RecordFragment extends ListFragment {
 		this.setHasOptionsMenu(true);
 
 		// Set the views we are using across the fragment
-		mRecordView = getActivity().findViewById(R.id.record_view);
-		mRecordStatusView = getActivity().findViewById(R.id.record_status);
-		mRecordStatusMessageView = (TextView) getActivity().findViewById(
-				R.id.record_status_message);
+		mCurrentRecordView = getActivity().findViewById(R.id.record_view);
+		mCurrentRecordStatusView = getActivity().findViewById(
+				R.id.record_status);
+		mCurrentRecordStatusMessageView = (TextView) getActivity()
+				.findViewById(R.id.record_status_message);
 
 		mDetailsView = getActivity().findViewById(R.id.record_details);
 		mDetailsHintView = getActivity().findViewById(R.id.record_details_hint);
 		mOtherCallsView = getActivity().findViewById(R.id.record_calls);
-		mRecordHeaderView = getActivity()
-				.findViewById(R.id.record_header_block);
+		mCurrentRecordHeaderView = getActivity().findViewById(
+				R.id.record_header_block);
 
 		// Set the parameters
 		manager = getActivity().getSupportLoaderManager();
@@ -125,13 +127,13 @@ public class RecordFragment extends ListFragment {
 
 		// If there is no current information attached to the fragment, load the
 		// information from the DB
-		if (mRecord == null) {
+		if (mCurrentRecord == null) {
 			Bundle extras = getActivity().getIntent().getExtras();
 			if (extras != null) {
 				manager.initLoader(LOADER_PARSER, extras, new AsyncHelper());
+			} else {
+				manager.initLoader(LOADER_STUDENT, null, clh);
 			}
-			manager.initLoader(LOADER_STUDENT, null, clh);
-			manager.initLoader(LOADER_RECORD, null, clh);
 		}
 
 		// If we are on GB or below, make sure all the options are available
@@ -153,10 +155,10 @@ public class RecordFragment extends ListFragment {
 			// mode
 			if (isSmallScreen() && mOtherCallsView != null) {
 				mOtherCallsView.setVisibility(View.GONE);
-				mRecordHeaderView.setVisibility(View.GONE);
+				mCurrentRecordHeaderView.setVisibility(View.GONE);
 			} else {
 				mOtherCallsView.setVisibility(View.VISIBLE);
-				mRecordHeaderView.setVisibility(View.VISIBLE);
+				mCurrentRecordHeaderView.setVisibility(View.VISIBLE);
 			}
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -181,6 +183,7 @@ public class RecordFragment extends ListFragment {
 	private void manageOldVersion() {
 
 	}
+	
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -192,21 +195,8 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		cursorPosition = position;
-		showDetails(position, mRecord.mSubjectsList.get(position));
+		showDetails(position, mCurrentRecord.mSubjectsList.get(position));
 		super.onListItemClick(l, v, position, id);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar actionBar = activity.getActionBar();
-			actionBar.setDisplayShowTitleEnabled(false);
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-			getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE,
-					null, new CursorLoaderHelper());
-		}
 	}
 
 	@Override
@@ -257,8 +247,6 @@ public class RecordFragment extends ListFragment {
 	}
 
 	/**
-	 * TODO
-	 * 
 	 * @param position
 	 *            The position of the item clicked in the list
 	 * @param subject
@@ -311,20 +299,27 @@ public class RecordFragment extends ListFragment {
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public void setSpinnerAdapter(SpinnerAdapter spinnerAdapter) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActivity().getActionBar().setListNavigationCallbacks(
-					spinnerAdapter, new OnNavigationListener() {
-						@Override
-						public boolean onNavigationItemSelected(
-								int itemPosition, long itemId) {
-							Bundle args = new Bundle();
-							args.putLong(COURSE_ID, itemId);
-							getActivity().getSupportLoaderManager().initLoader(
-									LOADER_RECORD, args, clh);
-							return false;
+		getActivity().getActionBar().setListNavigationCallbacks(spinnerAdapter,
+				new OnNavigationListener() {
+					@Override
+					public boolean onNavigationItemSelected(int itemPosition,
+							long itemId) {
+						SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+						editor.putInt(PreferencesActivity.CURRENT_RECORD, mCurrentRecordId);
+						editor.commit();
+						if(details != null){
+							FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+							transaction.remove(details);
+							transaction.commit();
+							details = null;
+							mDetailsHintView.setVisibility(View.VISIBLE);
+							mDetailsView.setVisibility(View.GONE);
 						}
-					});
-		}
+						mCurrentRecordId = itemPosition;
+						fillRecord();
+						return true;
+					}
+				});
 	}
 
 	public class CursorLoaderHelper implements LoaderCallbacks<Cursor> {
@@ -336,20 +331,17 @@ public class RecordFragment extends ListFragment {
 			String language = PreferencesActivity
 					.getRecordLanguage(getActivity());
 			switch (id) {
-			case LOADER_COURSE:
-				mUri = GradesContract.CONTENT_NAME_COURSES;
-				String[] spinnerProjection = { GradesContract.CoursesTable._ID,
-						GradesContract.CoursesTable.COL_CO_NAME };
-				String spinnerSelection = GradesContract.CoursesTable.COL_CO_LANGUAGE
-						+ "=?";
-				String[] spinnerSelectionArgs = { language };
-				mLoader = new CursorLoader(getActivity(), mUri,
-						spinnerProjection, spinnerSelection,
-						spinnerSelectionArgs, null);
-				break;
-			case LOADER_RECORD:
+			case LOADER_STUDENT:
 				mUri = GradesContract.CONTENT_NAME_ALL;
 				String[] subjectsProjection = {
+						// Student information
+						GradesContract.StudentsTable.COL_ST_NAME,
+						GradesContract.StudentsTable.COL_ST_SURNAME_1,
+						GradesContract.StudentsTable.COL_ST_SURNAME_2,
+						GradesContract.StudentsTable.COL_ST_NIA,
+						GradesContract.StudentsTable.COL_ST_NIF,
+						GradesContract.StudentsTable.COL_ST_NIP,
+						// Course information + id
 						GradesContract.CoursesTable.TABLE_NAME + "."
 								+ GradesContract.CoursesTable._ID,
 						GradesContract.CoursesTable.COL_CO_CENTER,
@@ -358,11 +350,13 @@ public class RecordFragment extends ListFragment {
 						GradesContract.CoursesTable.COL_CO_PASSED_CREDITS,
 						GradesContract.CoursesTable.COL_CO_STUDIES,
 						GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS,
+						// Subject information
 						GradesContract.SubjectsTable.COL_SU_CO_CODE,
 						GradesContract.SubjectsTable.COL_SU_CREDITS,
 						GradesContract.SubjectsTable.COL_SU_LANGUAGE,
 						GradesContract.SubjectsTable.COL_SU_NAME,
 						GradesContract.SubjectsTable.COL_SU_TYPE,
+						// Grade information
 						GradesContract.GradesTable.COL_GR_ASSISTED,
 						GradesContract.GradesTable.COL_GR_CALL,
 						GradesContract.GradesTable.COL_GR_CALL_NUMBER,
@@ -378,25 +372,12 @@ public class RecordFragment extends ListFragment {
 						GradesContract.GradesTable.COL_GR_YEAR
 
 				};
-				String subjectsSelection = GradesContract.CoursesTable.COL_CO_LANGUAGE
+				String studentSelection = GradesContract.CoursesTable.COL_CO_LANGUAGE
 						+ "=?";
-				String[] subjectsSelectionArgs = { language };
+				String[] studentSelectionArgs = { language };
 				mLoader = new CursorLoader(getActivity(), mUri,
-						subjectsProjection, subjectsSelection,
-						subjectsSelectionArgs, null);
-
-				break;
-			case LOADER_STUDENT:
-				mUri = GradesContract.CONTENT_NAME_STUDENTS;
-				String[] studentProjection = {
-						GradesContract.StudentsTable._ID,
-						GradesContract.StudentsTable.COL_ST_NAME,
-						GradesContract.StudentsTable.COL_ST_SURNAME_1,
-						GradesContract.StudentsTable.COL_ST_SURNAME_2,
-						GradesContract.StudentsTable.COL_ST_NIA,
-						GradesContract.StudentsTable.COL_ST_NIF, };
-				mLoader = new CursorLoader(getActivity(), mUri,
-						studentProjection, null, null, null);
+						subjectsProjection, studentSelection,
+						studentSelectionArgs, null);
 				break;
 			default:
 				break;
@@ -407,12 +388,6 @@ public class RecordFragment extends ListFragment {
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 			switch (loader.getId()) {
-			case LOADER_COURSE:
-				fillSpinner(cursor);
-				break;
-			case LOADER_RECORD:
-				fillRecord(cursor);
-				break;
 			case LOADER_STUDENT:
 				fillStudent(cursor);
 				break;
@@ -434,10 +409,10 @@ public class RecordFragment extends ListFragment {
 	private void showProgress(final boolean show, int progressType) {
 		switch (progressType) {
 		case PROGRESS_SIGN_IN:
-			mRecordStatusMessageView.setText(R.string.dialog_connect);
+			mCurrentRecordStatusMessageView.setText(R.string.dialog_connect);
 			break;
 		case PROGRESS_PARSE:
-			mRecordStatusMessageView.setText(R.string.dialog_parse);
+			mCurrentRecordStatusMessageView.setText(R.string.dialog_parse);
 			break;
 		default:
 			break;
@@ -450,24 +425,25 @@ public class RecordFragment extends ListFragment {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
 
-			mRecordStatusView.setVisibility(View.VISIBLE);
-			mRecordStatusView.animate().setDuration(shortAnimTime)
+			mCurrentRecordStatusView.setVisibility(View.VISIBLE);
+			mCurrentRecordStatusView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 1 : 0)
 					.setListener(new AnimatorListenerAdapter() {
 						@Override
 						public void onAnimationEnd(Animator animation) {
-							mRecordStatusView.setVisibility(show ? View.VISIBLE
-									: View.GONE);
+							mCurrentRecordStatusView
+									.setVisibility(show ? View.VISIBLE
+											: View.GONE);
 						}
 					});
 
-			mRecordView.setVisibility(View.VISIBLE);
-			mRecordView.animate().setDuration(shortAnimTime)
+			mCurrentRecordView.setVisibility(View.VISIBLE);
+			mCurrentRecordView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 0 : 1)
 					.setListener(new AnimatorListenerAdapter() {
 						@Override
 						public void onAnimationEnd(Animator animation) {
-							mRecordView.setVisibility(show ? View.GONE
+							mCurrentRecordView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
 							// if (mDetailsView != null) {
 							// mDetailsView.setVisibility(show ? View.GONE
@@ -481,8 +457,9 @@ public class RecordFragment extends ListFragment {
 			// if (mDetailsView != null) {
 			// mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
 			// }
-			mRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
-			mRecordStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+			mCurrentRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
+			mCurrentRecordStatusView.setVisibility(show ? View.VISIBLE
+					: View.GONE);
 
 		}
 	}
@@ -496,7 +473,7 @@ public class RecordFragment extends ListFragment {
 			case LOADER_CONNECTION:
 				ActionBarActivity activity = (ActionBarActivity) getActivity();
 				activity.getActionBarHelper().setRefreshActionItemState(true);
-//				showProgress(true, PROGRESS_SIGN_IN);
+				showProgress(true, PROGRESS_SIGN_IN);
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
@@ -513,7 +490,7 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<String> loader, String response) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
-//				showProgress(false, PROGRESS_SIGN_IN);
+				showProgress(false, PROGRESS_SIGN_IN);
 				ActionBarActivity activity = (ActionBarActivity) getActivity();
 				activity.getActionBarHelper().setRefreshActionItemState(true);
 				try {
@@ -541,6 +518,9 @@ public class RecordFragment extends ListFragment {
 				if (response.equalsIgnoreCase(GradesParserLoader.PARSE_FAILED)) {
 					Toast.makeText(getActivity(), R.string.error_parsing,
 							Toast.LENGTH_LONG).show();
+				} else {
+					getActivity().getSupportLoaderManager().initLoader(
+							LOADER_STUDENT, null, new CursorLoaderHelper());
 				}
 				break;
 			default:
@@ -556,12 +536,15 @@ public class RecordFragment extends ListFragment {
 
 	/**
 	 * Just to fill in the student information. Also sets the Student of the
-	 * class.
+	 * class. The student contains the information for all the records the
+	 * student has available. This should make possible to do everything in a
+	 * single blow.
 	 * 
 	 * @param c
 	 *            Cursor with the details from the database
 	 */
 	public void fillStudent(Cursor c) {
+
 		if (c.moveToFirst()) {
 			mStudent = new Student(c);
 
@@ -576,21 +559,23 @@ public class RecordFragment extends ListFragment {
 					+ mStudent.mStudentNia);
 			mStudentNifView.setText(getString(R.string.header_nif)
 					+ mStudent.mStudentNif);
+
+			setCourse();
 		}
 	}
 
-	/**
-	 * This should fill the list and set the Record of the class.
-	 * 
-	 * @param c
-	 *            Cursor with the details from the database
-	 */
-	public void fillRecord(Cursor c) {
-		mRecord = new Record(c);
+	private void setCourse() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			fillSpinner();
+		} else {
+			// TODO
+		}
 		fillRecord();
+
 	}
 
 	public void fillRecord() {
+		mCurrentRecord = mStudent.mRecordList.get(mCurrentRecordId);
 		String[] subjectsFrom = { GradesContract.SubjectsTable.COL_SU_NAME,
 				GradesContract.SubjectsTable.COL_SU_CREDITS,
 				GradesContract.GradesTable.COL_GR_CODE };
@@ -602,36 +587,23 @@ public class RecordFragment extends ListFragment {
 				R.id.record_center);
 		TextView courseStudiesView = (TextView) getActivity().findViewById(
 				R.id.record_studies);
-		courseNameView.setText(mRecord.mCourseName);
-		courseCenterView.setText(mRecord.mCourseCenter);
-		courseStudiesView.setText(mRecord.mCourseStudies);
-		SimpleAdapter adapter = new SimpleAdapter(getActivity(), prepareList(),
-				R.layout.record_list_item, subjectsFrom, subjectsTo);
+		courseNameView.setText(mCurrentRecord.mCourseName);
+		courseCenterView.setText(mCurrentRecord.mCourseCenter);
+		courseStudiesView.setText(mCurrentRecord.mCourseStudies);
+		SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+				setRecordList(), R.layout.record_list_item, subjectsFrom,
+				subjectsTo);
 		setListAdapter(adapter);
 		if (details != null) {
-			details.setSubject(mRecord.mSubjectsList.get(0));
+			details.setSubject(mCurrentRecord.mSubjectsList.get(0));
 		}
 	}
 
-	/**
-	 * 
-	 * @param c
-	 *            Cursor with the details from the database
-	 */
-	public void fillSpinner(Cursor c) {
-		String[] spinnerFrom = { GradesContract.CoursesTable.COL_CO_NAME };
-		int[] spinnerTo = { android.R.id.text1 };
-		SpinnerAdapter spinnerAdapter = new SimpleCursorAdapter(getActivity(),
-				android.R.layout.simple_spinner_dropdown_item, c, spinnerFrom,
-				spinnerTo, SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		setSpinnerAdapter(spinnerAdapter);
-	}
-
-	public ArrayList<HashMap<String, String>> prepareList() {
+	public ArrayList<HashMap<String, String>> setRecordList() {
 		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
 		ArrayList<String> subjectsList = new ArrayList<String>();
-		for (int i = 0; i < mRecord.mSubjectsList.size(); i++) {
-			Subject subject = mRecord.mSubjectsList.get(i);
+		for (int i = 0; i < mCurrentRecord.mSubjectsList.size(); i++) {
+			Subject subject = mCurrentRecord.mSubjectsList.get(i);
 			HashMap<String, String> item = new HashMap<String, String>();
 			item.put(GradesContract.SubjectsTable.COL_SU_NAME,
 					subject.mSubjectName);
@@ -645,6 +617,26 @@ public class RecordFragment extends ListFragment {
 				result.add(item);
 				subjectsList.add(subject.mSubjectName);
 			}
+		}
+		return result;
+	}
+
+	public void fillSpinner() {
+		String[] from = { GradesContract.CoursesTable.COL_CO_NAME };
+		int[] to = { android.R.id.text1 };
+		SpinnerAdapter adapter = new SimpleAdapter(getActivity(),
+				setSpinnerList(),
+				android.R.layout.simple_spinner_dropdown_item, from, to);
+		setSpinnerAdapter(adapter);
+	}
+
+	public ArrayList<HashMap<String, String>> setSpinnerList() {
+		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
+		for (int i = 0; i < mStudent.mRecordCount; i++) {
+			HashMap<String, String> item = new HashMap<String, String>();
+			item.put(GradesContract.CoursesTable.COL_CO_NAME,
+					mStudent.mRecordList.get(i).mCourseName);
+			result.add(item);
 		}
 		return result;
 	}

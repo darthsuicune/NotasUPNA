@@ -2,8 +2,6 @@ package com.suicune.notasupna;
 
 import java.io.Serializable;
 
-import android.database.Cursor;
-
 public class Grade implements Serializable{
 	/**
 	 * 
@@ -24,11 +22,6 @@ public class Grade implements Serializable{
 	public String mGradeYear;
 	public String mGradeLanguage;
 	
-	public Grade(Cursor c){
-		if(c != null && c.moveToFirst()){
-		}
-	}
-	
 	public Grade(Subject subject, String gradeName, String gradeNumber, String gradeCall, int gradeCallNumber,
 			String gradeLetter, String gradePassed, String gradeProvisional, long gradeRevisionTime, String gradeTaken, long gradeTime, 
 			String gradeYear, String gradeLanguage){
@@ -39,7 +32,6 @@ public class Grade implements Serializable{
 		mGradeCallNumber = gradeCallNumber;
 		mGradeLetter = gradeLetter;
 		mGradePassed = gradePassed;
-		mGradeProvisional = gradeProvisional;
 		mGradeRevisionTime = gradeRevisionTime;
 		mGradeTaken = gradeTaken;
 		mGradeTime= gradeTime;

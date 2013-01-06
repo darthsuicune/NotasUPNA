@@ -30,6 +30,8 @@ public class DetailsFragment extends Fragment {
 
 	private Subject mSubject = null;
 	private Grade mGrade = null;
+	
+	private boolean showCallsAsDialog;
 
 	public static DetailsFragment newInstance(int position) {
 		DetailsFragment fragment = new DetailsFragment();
@@ -53,14 +55,16 @@ public class DetailsFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(isPortrait() && isRecordActivity()){
-			return;			
+		setHasOptionsMenu(true);
+		showCallsAsDialog = shouldShowAsDialog();
+		if(isRecordActivity() && isPortrait()){
+				return;			
 		}else{
 			setHasOptionsMenu(true);
 			if(mSubject != null){
 				showSubjectInformation();
 				showGradeInformation();
-				showCallsList();
+				prepareCallsList();
 			}
 		}
 	}
@@ -75,8 +79,12 @@ public class DetailsFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_details_calls:
+			showCallsList();
 			break;
 		case R.id.action_details_share:
+			break;
+		case android.R.id.home:
+			getActivity().finish();
 			break;
 		default:
 			return false;
@@ -145,38 +153,53 @@ public class DetailsFragment extends Fragment {
 		gradeView.setText("" + mGrade.mGradeNumber);
 		gradeNameView.setText("" + mGrade.mGradeName);
 		gradeTimeView.setText("" + gradeTime);
-		gradeRevisionTimeView.setText("" + gradeRevisionTime);
+		if(gradeRevisionTime.contains("1970") || gradeRevisionTime.contains("false")){
+			gradeRevisionTimeView.setText(getString(R.string.no_revision_time));
+		}else{
+			gradeRevisionTimeView.setText("" + gradeRevisionTime);
+		}
 		gradeYearView.setText("" + mGrade.mGradeYear);
-		gradeProvisionalView.setText("" + mGrade.mGradeProvisional);
+		if(mGrade.mGradeProvisional == null){
+			gradeProvisionalView.setText(R.string.no);
+		}else{
+			gradeProvisionalView.setText("" + mGrade.mGradeProvisional);
+		}
 		gradeCallView.setText("" + mGrade.mGradeCall);
 		gradeCallNumberView.setText("" + mGrade.mGradeCallNumber);
-		gradePassedView.setText("" + mGrade.mGradePassed);
+		if(mGrade.mGradePassed.equalsIgnoreCase("false")){
+			gradePassedView.setText(R.string.no);
+		}else{
+			gradePassedView.setText("" + mGrade.mGradePassed);
+		}
 		gradeTakenView.setText("" + mGrade.mGradeTaken);
 		gradeCallsTakenView.setText("" + mSubject.mCallsTakenCount);
 	}
 
-	private void showCallsList() {
+	private void prepareCallsList() {
 		Button showOtherCallsButtonView = (Button) getActivity().findViewById(
 				R.id.details_show_calls);
-
-		if (shouldShowAsDialog()) {
+		
+		if (showCallsAsDialog) {
 			showOtherCallsButtonView.setVisibility(View.VISIBLE);
 			showOtherCallsButtonView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					FragmentManager fragmentManager = getActivity()
-							.getSupportFragmentManager();
-
-					mCallsFragment.show(fragmentManager, DIALOG_CALLS);
+					showCallsList();
 				}
 			});
 
 		} else {
-			FragmentManager fragmentManager = getActivity()
-					.getSupportFragmentManager();
-
 			showOtherCallsButtonView.setVisibility(View.GONE);
+			showCallsList();
+		}
+	}
+	
+	private void showCallsList(){
+		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+		if(showCallsAsDialog){
+			mCallsFragment.show(fragmentManager, DIALOG_CALLS);
+		}else{
 			FragmentTransaction transaction = fragmentManager
 					.beginTransaction();
 			transaction

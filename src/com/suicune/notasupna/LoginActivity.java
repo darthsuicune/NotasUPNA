@@ -1,6 +1,6 @@
 package com.suicune.notasupna;
 
-import java.util.Random;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -56,73 +55,8 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// fillDB();
 		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null,
 				new CursorLoaderHelper());
-	}
-
-	private void fillDB() {
-		Uri uri = GradesContract.CONTENT_NAME_STUDENTS;
-		ContentValues cv = new ContentValues();
-		cv.put(GradesContract.StudentsTable.COL_ST_NAME, "Denis");
-		cv.put(GradesContract.StudentsTable.COL_ST_SURNAME_1, "Lapuente");
-		cv.put(GradesContract.StudentsTable.COL_ST_SURNAME_2, "Goicoechea");
-		cv.put(GradesContract.StudentsTable.COL_ST_NIA, "48139");
-		cv.put(GradesContract.StudentsTable.COL_ST_NIF, "72811172A");
-		getContentResolver().insert(uri, cv);
-
-		uri = GradesContract.CONTENT_NAME_COURSES;
-		ContentValues cvcourse = new ContentValues();
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_CENTER, "ETSIIT");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_LANGUAGE, "es");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_NAME, "ITIG");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS, "225");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_STUDIES, "ITI");
-		cvcourse.put(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS, "225");
-		getContentResolver().insert(uri, cvcourse);
-
-		ContentValues cvcourseeu = new ContentValues();
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_CENTER, "ETSIITak");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_LANGUAGE, "eu");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_NAME, "ITIGak");
-		cvcourseeu
-				.put(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS, "225");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_STUDIES, "ITIak");
-		cvcourseeu.put(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS, "225");
-		getContentResolver().insert(uri, cvcourseeu);
-
-		uri = GradesContract.CONTENT_NAME_SUBJECTS;
-		Uri uri1 = GradesContract.CONTENT_NAME_GRADES;
-		for (int i = 0; i < 5; i++) {
-			ContentValues subject = new ContentValues();
-			subject.put(GradesContract.SubjectsTable.COL_SU_CREDITS, "6");
-			subject.put(GradesContract.SubjectsTable.COL_SU_LANGUAGE, "es");
-			subject.put(GradesContract.SubjectsTable.COL_SU_NAME, "Subject "
-					+ i);
-			subject.put(GradesContract.SubjectsTable.COL_SU_TYPE, "Troncal");
-			subject.put(GradesContract.SubjectsTable.COL_SU_CO_CODE, "1");
-			getContentResolver().insert(uri, subject);
-			for (int j = 0; j < 2; j++) {
-				ContentValues grade = new ContentValues();
-				int time = new Random().nextInt();
-				grade.put(GradesContract.GradesTable.COL_GR_ASSISTED, "Si");
-				grade.put(GradesContract.GradesTable.COL_GR_CALL, "Septiembre");
-				grade.put(GradesContract.GradesTable.COL_GR_CALL_NUMBER, "1");
-				grade.put(GradesContract.GradesTable.COL_GR_CODE, "A");
-				grade.put(GradesContract.GradesTable.COL_GR_GRADE, 5 + j);
-				grade.put(GradesContract.GradesTable.COL_GR_GRADE_NAME,
-						"Aprobado");
-				grade.put(GradesContract.GradesTable.COL_GR_LANGUAGE, "es");
-				grade.put(GradesContract.GradesTable.COL_GR_PASSED, "Si");
-				grade.put(GradesContract.GradesTable.COL_GR_PROVISIONAL, "No");
-				grade.put(GradesContract.GradesTable.COL_GR_REVISION_TIME, "0");
-				grade.put(GradesContract.GradesTable.COL_GR_SU_CODE, 1 + i);
-				grade.put(GradesContract.GradesTable.COL_GR_TIME, time);
-				grade.put(GradesContract.GradesTable.COL_GR_YEAR, "2012");
-				getContentResolver().insert(uri1, grade);
-			}
-		}
-
 	}
 
 	@Override
@@ -200,10 +134,10 @@ public class LoginActivity extends ActionBarActivity {
 			mUserNameView.setError(getString(R.string.error_field_required));
 			focusView = mUserNameView;
 			cancel = true;
-			// } else if (!isId()) {
-			// cancel = true;
-			// mUserNameView.setError(getString(R.string.error_invalid_id));
-			// focusView = mUserNameView;
+		} else if (!isId()) {
+			cancel = true;
+			mUserNameView.setError(getString(R.string.error_invalid_id));
+			focusView = mUserNameView;
 		}
 
 		if (cancel) {
@@ -382,9 +316,6 @@ public class LoginActivity extends ActionBarActivity {
 			break;
 		default:
 			break;
-		}
-		if (result) {
-			mUserName = mUserName.substring(0, 8);
 		}
 
 		return result;
