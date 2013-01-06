@@ -16,10 +16,6 @@ import com.suicune.notasupna.helpers.CryptoBlock;
 @SuppressLint("NewApi")
 public class PreferencesActivity extends PreferenceActivity implements
 		OnPreferenceChangeListener {
-	public static final String LANGUAGE_SPANISH = "es";
-	public static final String LANGUAGE_BASQUE = "eu";
-	public static final String LANGUAGE_ENGLISH = "en";
-
 	public static final int RESULT_LANGUAGE_CHANGED = 123;
 
 	public static final String LAST_UPDATE = "last update";
@@ -29,7 +25,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	public static final String CURRENT_RECORD = "current record";
 
 	public static final String LAST_COURSE_VIEWED = "last course viewed";
-	public static final String LAST_SUBJECT_VIEWED = "last course viewed";
+	public static final String LAST_SUBJECT_VIEWED = "last subject viewed";
 
 	public static final String PREFERENCE_UPDATE_TIME = "update time";
 
@@ -58,7 +54,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 	private void loadFragments() {
 		GeneralPreferencesFragment generalPreferences = new GeneralPreferencesFragment();
-		
+
 		FragmentTransaction transaction = getFragmentManager()
 				.beginTransaction();
 		transaction.add(android.R.id.content, generalPreferences);
@@ -70,42 +66,69 @@ public class PreferencesActivity extends PreferenceActivity implements
 		this.addPreferencesFromResource(R.xml.preferences_activity);
 
 		Preference languagePreference = findPreference(getString(R.string.preference_app_language));
-		languagePreference
-				.setOnPreferenceChangeListener(this);
+		languagePreference.setOnPreferenceChangeListener(this);
+		changeSummary(languagePreference, prefs.getString(
+				getString(R.string.preference_app_language),
+				getString(R.string.default_language)));
+		Preference sortOrderPreference = findPreference(getString(R.string.preference_sort_order));
+		sortOrderPreference.setOnPreferenceChangeListener(this);
+		changeSummary(sortOrderPreference, prefs.getString(
+				getString(R.string.preference_sort_order),
+				getString(R.string.sort_order_time_desc)));
 	}
 
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		//Language changed
+		changeSummary(preference, newValue);
+		// Language changed
 		if (preference.getKey().equals(
 				getString(R.string.preference_app_language))) {
 			String newLanguage = (String) newValue;
 			changeLanguage(newLanguage);
-			if(newLanguage.equals(getString(R.string.language_code_basque))) {
-				preference.setSummary(R.string.basque);
-			} else if (newLanguage.equals(getString(R.string.language_code_default))) {
-				preference.setSummary(R.string.default_language);
-			} else if (newLanguage.equals(getString(R.string.language_code_english))) {
-				preference.setSummary(R.string.english);
-			} else if (newLanguage.equals(getString(R.string.language_code_spanish))) {
-				preference.setSummary(R.string.spanish);
-			}
-			
-			//Sort order changed
+
+			// Sort order changed
 		} else if (preference.getKey().equals(
 				getString(R.string.preference_sort_order))) {
 			String newOrder = (String) newValue;
-			if(newOrder.equals(getString(R.string.sort_order_alpha_asc_value))) {
+		}
+		return true;
+	}
+
+	private void changeSummary(Preference preference, Object newValue) {
+		// Language changed
+		if (preference.getKey().equals(
+				getString(R.string.preference_app_language))) {
+			String newLanguage = (String) newValue;
+			if (newLanguage.equals(getString(R.string.language_code_basque))) {
+				preference.setSummary(R.string.basque);
+			} else if (newLanguage
+					.equals(getString(R.string.language_code_default))) {
+				preference.setSummary(R.string.default_language);
+			} else if (newLanguage
+					.equals(getString(R.string.language_code_english))) {
+				preference.setSummary(R.string.english);
+			} else if (newLanguage
+					.equals(getString(R.string.language_code_spanish))) {
+				preference.setSummary(R.string.spanish);
+			}
+
+			// Sort order changed
+		} else if (preference.getKey().equals(
+				getString(R.string.preference_sort_order))) {
+			String newOrder = (String) newValue;
+			if (newOrder.equals(getString(R.string.sort_order_alpha_asc_value))) {
 				preference.setSummary(R.string.sort_order_alpha_asc);
-			} else if (newOrder.equals(getString(R.string.sort_order_alpha_desc_value))) {
+			} else if (newOrder
+					.equals(getString(R.string.sort_order_alpha_desc_value))) {
 				preference.setSummary(R.string.sort_order_alpha_desc);
-			} else if (newOrder.equals(getString(R.string.sort_order_time_asc_value))) {
+			} else if (newOrder
+					.equals(getString(R.string.sort_order_time_asc_value))) {
 				preference.setSummary(R.string.sort_order_time_asc);
-			} else if (newOrder.equals(getString(R.string.sort_order_time_desc_value))) {
+			} else if (newOrder
+					.equals(getString(R.string.sort_order_time_desc_value))) {
 				preference.setSummary(R.string.sort_order_time_desc);
 			}
 		}
-		return true;
 	}
 
 	public void changeLanguage(String newLanguage) {
@@ -128,7 +151,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 		return PreferenceManager.getDefaultSharedPreferences(context)
 				.getString(
 						context.getString(R.string.preference_record_language),
-						LANGUAGE_SPANISH);
+						context.getString(R.string.language_code_spanish));
 	}
 
 	public static String getSortOrder(Context context) {

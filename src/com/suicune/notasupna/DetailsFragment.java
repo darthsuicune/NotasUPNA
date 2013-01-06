@@ -173,7 +173,13 @@ public class DetailsFragment extends Fragment {
 		} else {
 			gradePassedView.setText("" + mGrade.mGradePassed);
 		}
-		gradeTakenView.setText("" + mGrade.mGradeTaken);
+		if (mGrade.mGradeTaken.equalsIgnoreCase("false")) {
+			gradePassedView.setText(R.string.no);
+		} else {
+			gradeTakenView.setText("" + mGrade.mGradeTaken);
+			
+		}
+		
 		gradeCallsTakenView.setText("" + mSubject.mCallsTakenCount);
 	}
 

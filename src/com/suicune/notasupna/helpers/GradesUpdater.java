@@ -89,7 +89,7 @@ public class GradesUpdater extends IntentService{
 	private URL getServerURL(String language){
 		URL url = null;
 		try{
-			if(language.equalsIgnoreCase(PreferencesActivity.LANGUAGE_BASQUE)){
+			if(language.equalsIgnoreCase(getString(R.string.language_code_basque))){
 				url = new URL("https", ConnectLoader.server, ConnectLoader.port, ConnectLoader.resource_eu);
 			}else{
 				url = new URL("https", ConnectLoader.server, ConnectLoader.port, ConnectLoader.resource_es);
@@ -130,10 +130,10 @@ public class GradesUpdater extends IntentService{
 	
 	private void parseResponse(String response, String language){
 		if(response.contains("HTTP")){
-			Log.d(SERVICE_NAME, "Download error. Respones from server: " + response);
+			Log.d(SERVICE_NAME, "Download error. Response from server: " + response);
 		}else{
 			int length;
-			if(PreferencesActivity.getRecordLanguage(this).equalsIgnoreCase(PreferencesActivity.LANGUAGE_BASQUE)){
+			if(PreferencesActivity.getRecordLanguage(this).equalsIgnoreCase(getString(R.string.language_code_basque))){
 				length = prefs.getInt(PreferencesActivity.DATA_EU, 0);
 			}else{
 				length = prefs.getInt(PreferencesActivity.DATA_ES, 0);

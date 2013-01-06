@@ -154,6 +154,9 @@ public class RecordFragment extends ListFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case ACTIVITY_DETAILS:
+			if(mStudent != null) {
+				showData(false);
+			}
 			if (resultCode == Activity.RESULT_OK) {
 
 			}
@@ -342,7 +345,25 @@ public class RecordFragment extends ListFragment {
 	}
 
 	private void changeLanguage() {
-
+		if(needsDownload()){
+			//TODO whatever
+			Toast.makeText(getActivity(), "!!!!!!!!!!!!!!!!!!", Toast.LENGTH_LONG).show();
+		}
+		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null, new CursorLoaderHelper());
+	}
+	
+	private boolean needsDownload(){
+		String language = PreferencesActivity.getRecordLanguage(getActivity());
+		if(language.equalsIgnoreCase(getString(R.string.language_code_basque))){
+			if(prefs.getInt(PreferencesActivity.DATA_EU, 0) == 0){
+				return true;
+			}
+		} else if(language.equalsIgnoreCase(getString(R.string.language_code_spanish))){
+			if(prefs.getInt(PreferencesActivity.DATA_ES, 0) == 0){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private ArrayList<HashMap<String, String>> prepareSubjectsList() {
