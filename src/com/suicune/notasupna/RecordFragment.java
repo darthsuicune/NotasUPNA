@@ -131,6 +131,7 @@ public class RecordFragment extends ListFragment {
 		Bundle extras = getActivity().getIntent().getExtras();
 		if (extras != null) {
 			FragmentActivity activity = (FragmentActivity) getActivity();
+			isParsing = true;
 			activity.getSupportLoaderManager().restartLoader(LOADER_PARSER,
 					extras, new AsyncHelper());
 		}
@@ -201,11 +202,12 @@ public class RecordFragment extends ListFragment {
 			if (mCurrentSubject != null) {
 				mDetailsFragment.setSubject(mCurrentSubject);
 			}
+			
 			FragmentTransaction transaction = getActivity()
 					.getSupportFragmentManager().beginTransaction();
 			transaction.replace(R.id.record_details, mDetailsFragment);
 			transaction.commit();
-
+			
 			mDetailsHintView.setVisibility(View.GONE);
 			mDetailsView.setVisibility(View.VISIBLE);
 		} else {
@@ -682,16 +684,14 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 			switch (loader.getId()) {
 			case LOADER_COURSE:
+				isLoading = false;
 				mStudent = new Student(cursor);
 				mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
 				setCourseData();
 				showData(true);
-				isLoading = false;
 				break;
 			}
-			if(!isConnecting && !isParsing){
-				showProgress(false, PROGRESS_LOAD);
-			}
+			showProgress(false, PROGRESS_LOAD);
 		}
 
 		@Override

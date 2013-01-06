@@ -3,7 +3,7 @@ package com.suicune.notasupna;
 import java.sql.Date;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +19,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+@SuppressLint("NewApi")
 public class DetailsFragment extends Fragment {
 	private final static String ARGUMENT_SHOWN_INDEX = "shown index";
 
@@ -32,6 +34,8 @@ public class DetailsFragment extends Fragment {
 	private Grade mGrade = null;
 
 	private boolean showCallsAsDialog;
+	
+	ShareActionProvider mShareActionProvider;
 
 	public static DetailsFragment newInstance(int position) {
 		DetailsFragment fragment = new DetailsFragment();
@@ -39,11 +43,6 @@ public class DetailsFragment extends Fragment {
 		args.putLong(ARGUMENT_SHOWN_INDEX, position);
 		fragment.setArguments(args);
 		return fragment;
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
 	}
 
 	@Override
@@ -67,11 +66,20 @@ public class DetailsFragment extends Fragment {
 				prepareCallsList();
 			}
 		}
+		if(mShareActionProvider != null){
+			mShareActionProvider.setShareIntent(getShareIntent());
+		}
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.action_bar_details, menu);
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+			mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.action_details_share).getActionProvider();
+			if(mSubject != null){
+				mShareActionProvider.setShareIntent(getShareIntent());
+			}
+		}
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -82,7 +90,8 @@ public class DetailsFragment extends Fragment {
 			showCallsList();
 			break;
 		case R.id.action_details_share:
-			// TODOs
+			Intent intent = getShareIntent();
+			startActivity(intent);
 			break;
 		case android.R.id.home:
 			getActivity().finish();
@@ -92,6 +101,14 @@ public class DetailsFragment extends Fragment {
 		}
 		return true;
 	}
+	
+	private Intent getShareIntent() {
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_grade_title));
+		intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_grade, mSubject.mSubjectName, mSubject.getLastGrade().mGradeNumber,mSubject.getLastGrade().mGradeName));
+		intent.setType("text/plain");
+		return intent;
+	}
 
 	public void setSubject(Subject subject) {
 		setHasOptionsMenu(true);
@@ -100,6 +117,7 @@ public class DetailsFragment extends Fragment {
 		mGrade = mSubject.mGradesList.get(mSubject.mGradesList.size() - 1);
 		mCallsFragment = new CallsDialogFragment();
 		mCallsFragment.setSubject(mSubject);
+		
 	}
 
 	public long getShownIndex() {

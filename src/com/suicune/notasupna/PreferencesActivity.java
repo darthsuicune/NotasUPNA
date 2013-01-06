@@ -36,6 +36,9 @@ public class PreferencesActivity extends PreferenceActivity implements
 	public static final String PREFERENCE_PASS_WORD = "login token";
 
 	private SharedPreferences prefs;
+	
+	Preference languagePreference;
+	Preference sortOrderPreference;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +70,12 @@ public class PreferencesActivity extends PreferenceActivity implements
 	private void loadPreferences() {
 		this.addPreferencesFromResource(R.xml.preferences_activity);
 
-		Preference languagePreference = findPreference(getString(R.string.preference_app_language));
+		languagePreference = findPreference(getString(R.string.preference_app_language));
 		languagePreference.setOnPreferenceChangeListener(this);
 		changeSummary(languagePreference, prefs.getString(
 				getString(R.string.preference_app_language),
 				getString(R.string.default_language)));
-		Preference sortOrderPreference = findPreference(getString(R.string.preference_sort_order));
+		sortOrderPreference = findPreference(getString(R.string.preference_sort_order));
 		sortOrderPreference.setOnPreferenceChangeListener(this);
 		changeSummary(sortOrderPreference, prefs.getString(
 				getString(R.string.preference_sort_order),
@@ -141,7 +144,8 @@ public class PreferencesActivity extends PreferenceActivity implements
 							getString(R.string.language_code_spanish)).commit();
 		}
 		
-		
+		languagePreference.setTitle(R.string.language);
+		sortOrderPreference.setTitle(R.string.preference_sort_order);
 		setResult(RESULT_LANGUAGE_CHANGED);
 	}
 

@@ -8,13 +8,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,7 +24,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.CryptoBlock;
 import com.suicune.notasupna.helpers.DNIUtils;
@@ -51,7 +47,6 @@ public class LoginActivity extends ActionBarActivity {
 	private TextView mLoginStatusMessageView;
 
 	private static final int LOADER_CONNECTION = 1;
-	private static final int LOADER_CHECK_DATA = 2;
 
 	private static final int ACTIVITY_RECORD = 1;
 	private static final int ACTIVITY_PREFERENCES = 2;
@@ -59,8 +54,14 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportLoaderManager().initLoader(LOADER_CHECK_DATA, null,
-				new CursorLoaderHelper());
+
+		int data = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.DATA_ES, 0);
+		data += PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.DATA_EU, 0);
+		if (data > 0) {
+			doLogin(null);
+		} else { 
+			showLoginScreen();
+		}
 	}
 
 	@Override
@@ -74,6 +75,7 @@ public class LoginActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_login_confirm:
+			attemptLogin();
 			break;
 		case R.id.action_settings:
 			Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
@@ -327,45 +329,5 @@ public class LoginActivity extends ActionBarActivity {
 		public void onLoaderReset(Loader<String> loader) {
 			loader.reset();
 		}
-	}
-
-	public class CursorLoaderHelper implements LoaderCallbacks<Cursor> {
-
-		@Override
-		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			CursorLoader loader = null;
-			switch (id) {
-			case LOADER_CHECK_DATA:
-				Uri uri = GradesContract.CONTENT_NAME_STUDENTS;
-				String[] projection = { GradesContract.StudentsTable._ID };
-				loader = new CursorLoader(getApplicationContext(), uri,
-						projection, null, null, null);
-				break;
-			default:
-				break;
-			}
-			return loader;
-		}
-
-		@Override
-		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-			switch (loader.getId()) {
-			case LOADER_CHECK_DATA:
-				if (cursor.getCount() == 0) {
-					showLoginScreen();
-				} else {
-					doLogin(null);
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		@Override
-		public void onLoaderReset(Loader<Cursor> loader) {
-			loader.reset();
-		}
-
 	}
 }
