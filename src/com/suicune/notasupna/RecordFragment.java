@@ -94,7 +94,6 @@ public class RecordFragment extends ListFragment {
 
 	@Override
 	public void onAttach(Activity activity) {
-		FragmentActivity mActivity = (FragmentActivity) activity;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			isHoneyComb = true;
 		} else {
@@ -107,13 +106,25 @@ public class RecordFragment extends ListFragment {
 			isLandscape = false;
 		}
 
+		super.onAttach(activity);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.record_fragment, container, false);
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
 		checkScreenSize();
-		setViews(activity);
+		setViews(getActivity());
 		restoreParameters();
 
-		Bundle extras = activity.getIntent().getExtras();
+		Bundle extras = getActivity().getIntent().getExtras();
 		if (extras != null) {
-			mActivity.getSupportLoaderManager().initLoader(LOADER_PARSER,
+			FragmentActivity activity = (FragmentActivity) getActivity();
+			activity.getSupportLoaderManager().initLoader(LOADER_PARSER,
 					extras, new AsyncHelper());
 		}
 
@@ -124,14 +135,7 @@ public class RecordFragment extends ListFragment {
 			mDetailsHintView.setVisibility(View.VISIBLE);
 			mDetailsView.setVisibility(View.GONE);
 		}
-
-		super.onAttach(activity);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.record_fragment, container, false);
+		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
@@ -185,9 +189,6 @@ public class RecordFragment extends ListFragment {
 	private void showDetails(Subject subject) {
 		mCurrentSubject = subject;
 		if (isLandscape) {
-			mDetailsHintView.setVisibility(View.GONE);
-			mDetailsView.setVisibility(View.VISIBLE);
-
 			mDetailsFragment = DetailsFragment.newInstance(mCursorPosition);
 			if (mCurrentSubject != null) {
 				mDetailsFragment.setSubject(mCurrentSubject);
@@ -196,6 +197,9 @@ public class RecordFragment extends ListFragment {
 					.getSupportFragmentManager().beginTransaction();
 			transaction.replace(R.id.record_details, mDetailsFragment);
 			transaction.commit();
+
+			mDetailsHintView.setVisibility(View.GONE);
+			mDetailsView.setVisibility(View.VISIBLE);
 		} else {
 			Intent intent = new Intent(getActivity(), DetailsActivity.class);
 			intent.putExtra(DetailsActivity.EXTRA_SUBJECT, subject);
@@ -231,12 +235,16 @@ public class RecordFragment extends ListFragment {
 			if (otherCallsView != null) {
 				otherCallsView.setVisibility(View.GONE);
 			}
-			mRecordHeaderView.setVisibility(View.GONE);
+			if(mRecordHeaderView != null){
+				mRecordHeaderView.setVisibility(View.GONE);
+			}
 		} else {
 			if (otherCallsView != null) {
 				otherCallsView.setVisibility(View.VISIBLE);
 			}
-			mRecordHeaderView.setVisibility(View.VISIBLE);
+			if(mRecordHeaderView != null){
+				mRecordHeaderView.setVisibility(View.VISIBLE);
+			}
 		}
 	}
 
@@ -272,6 +280,8 @@ public class RecordFragment extends ListFragment {
 		showRecord();
 		if (isLandscape && !isLoader) {
 			showDetails(mCurrentSubject);
+			mDetailsHintView.setVisibility(View.VISIBLE);
+			mDetailsView.setVisibility(View.GONE);
 		}
 	}
 
@@ -316,7 +326,6 @@ public class RecordFragment extends ListFragment {
 
 	private void sortList() {
 		String sortOrder = PreferencesActivity.getSortOrder(getActivity());
-		Log.d("SORT ORDER", sortOrder);
 		if (sortOrder
 				.equalsIgnoreCase(getString(R.string.sort_order_alpha_asc_value))) {
 			mStudent.sortByName(true);
