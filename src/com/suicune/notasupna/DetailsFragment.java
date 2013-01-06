@@ -191,12 +191,12 @@ public class DetailsFragment extends Fragment {
 		if (mGrade.mGradePassed.equalsIgnoreCase("false")) {
 			gradePassedView.setText(R.string.no);
 		} else {
-			gradePassedView.setText("" + mGrade.mGradePassed);
+			gradePassedView.setText(R.string.yes);
 		}
 		if (mGrade.mGradeTaken.equalsIgnoreCase("false")) {
-			gradePassedView.setText(R.string.no);
+			gradeTakenView.setText(R.string.no);
 		} else {
-			gradeTakenView.setText("" + mGrade.mGradeTaken);
+			gradeTakenView.setText(R.string.yes);
 
 		}
 
