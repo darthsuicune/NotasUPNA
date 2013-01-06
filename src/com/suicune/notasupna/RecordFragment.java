@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,6 +69,8 @@ public class RecordFragment extends ListFragment {
 	private boolean isHoneyComb;
 	private boolean isSmallScreen;
 	private boolean isParsing;
+	private boolean isConnecting;
+	private boolean isLoading;
 
 	private int mCursorPosition = 0;
 	private int mCurrentCourse = 0;
@@ -130,7 +131,7 @@ public class RecordFragment extends ListFragment {
 		Bundle extras = getActivity().getIntent().getExtras();
 		if (extras != null) {
 			FragmentActivity activity = (FragmentActivity) getActivity();
-			activity.getSupportLoaderManager().initLoader(LOADER_PARSER,
+			activity.getSupportLoaderManager().restartLoader(LOADER_PARSER,
 					extras, new AsyncHelper());
 		}
 
@@ -179,7 +180,7 @@ public class RecordFragment extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_record_refresh:
-			getActivity().getSupportLoaderManager().initLoader(
+			getActivity().getSupportLoaderManager().restartLoader(
 					LOADER_CONNECTION, null, new AsyncHelper());
 			break;
 		case R.id.action_settings:
@@ -286,7 +287,7 @@ public class RecordFragment extends ListFragment {
 	}
 
 	private void loadData() {
-		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null,
+		getActivity().getSupportLoaderManager().restartLoader(LOADER_COURSE, null,
 				new CursorLoaderHelper());
 	}
 
@@ -364,10 +365,10 @@ public class RecordFragment extends ListFragment {
 		if (needsDownload()) {
 			Locale.setDefault(new Locale(
 					getString(R.string.language_code_basque)));
-			getActivity().getSupportLoaderManager().initLoader(
+			getActivity().getSupportLoaderManager().restartLoader(
 					LOADER_CONNECTION, null, new AsyncHelper());
 		} else {
-			getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE,
+			getActivity().getSupportLoaderManager().restartLoader(LOADER_COURSE,
 					null, new CursorLoaderHelper());
 		}
 
@@ -566,6 +567,7 @@ public class RecordFragment extends ListFragment {
 			switch (id) {
 			case LOADER_CONNECTION:
 				showProgress(true, PROGRESS_SIGN_IN);
+				isConnecting = true;
 				loader = new ConnectLoader(getActivity(), args);
 				break;
 			case LOADER_PARSER:
@@ -596,7 +598,7 @@ public class RecordFragment extends ListFragment {
 										RecordActivity.EXTRA_DOWNLOADED_DATA,
 										result);
 								getActivity().getSupportLoaderManager()
-										.initLoader(LOADER_PARSER, args, this);
+										.restartLoader(LOADER_PARSER, args, this);
 							} else {
 								Toast.makeText(getActivity(),
 										R.string.no_new_data, Toast.LENGTH_LONG)
@@ -617,13 +619,18 @@ public class RecordFragment extends ListFragment {
 						e.printStackTrace();
 					}
 				}
-				showProgress(false, PROGRESS_SIGN_IN);
+				isConnecting = false;
+				if(!isParsing && !isLoading){
+					showProgress(false, PROGRESS_SIGN_IN);
+				}
 
 				break;
 			case LOADER_PARSER:
 				isParsing = false;
 				loadData();
-				showProgress(false, PROGRESS_PARSE);
+				if(!isConnecting && !isLoading){
+					showProgress(false, PROGRESS_PARSE);
+				}
 				break;
 			}
 		}
@@ -657,8 +664,9 @@ public class RecordFragment extends ListFragment {
 			CursorLoader loader = null;
 			switch (id) {
 			case LOADER_COURSE:
+				isLoading = true;
 				Uri uri = GradesContract.CONTENT_NAME_ALL;
-				String selection = GradesContract.CoursesTable.COL_CO_LANGUAGE
+				String selection = GradesContract.GradesTable.COL_GR_LANGUAGE
 						+ "=?";
 				String[] selectionArgs = { PreferencesActivity
 						.getRecordLanguage(getActivity()) };
@@ -674,14 +682,16 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 			switch (loader.getId()) {
 			case LOADER_COURSE:
-				Log.d("TEST", DatabaseUtils.dumpCursorToString(cursor));
 				mStudent = new Student(cursor);
 				mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
 				setCourseData();
 				showData(true);
+				isLoading = false;
 				break;
 			}
-			showProgress(false, PROGRESS_LOAD);
+			if(!isConnecting && !isParsing){
+				showProgress(false, PROGRESS_LOAD);
+			}
 		}
 
 		@Override
