@@ -6,17 +6,17 @@
         <ListPreference
             android:entries="@array/preference_language_list"
             android:entryValues="@array/preference_language_list_values"
-            android:key="preference_language"
+            android:key="@string/preference_app_language"
             android:summary="@string/language_summary"
             android:title="@string/language"
             android:defaultValue="@string/language_code_default" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/record" >
         <ListPreference
-            android:defaultValue="@string/sort_order_alpha_asc_value"
+            android:defaultValue="@string/sort_order_time_desc_value"
             android:entries="@array/preference_sort_order"
             android:entryValues="@array/preference_sort_order_values"
-            android:key="sort_order"
+            android:key="@string/preference_sort_order"
             android:summary="@string/sort_order_summary"
             android:title="@string/preference_sort_order" />
 

@@ -57,11 +57,12 @@ public class PreferencesActivity extends PreferenceActivity implements
 	}
 
 	private void loadFragments() {
+		GeneralPreferencesFragment generalPreferences = new GeneralPreferencesFragment();
+		
 		FragmentTransaction transaction = getFragmentManager()
 				.beginTransaction();
-		transaction.add(android.R.id.content, new GeneralPreferencesFragment());
+		transaction.add(android.R.id.content, generalPreferences);
 		transaction.commit();
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -93,6 +94,16 @@ public class PreferencesActivity extends PreferenceActivity implements
 			//Sort order changed
 		} else if (preference.getKey().equals(
 				getString(R.string.preference_sort_order))) {
+			String newOrder = (String) newValue;
+			if(newOrder.equals(getString(R.string.sort_order_alpha_asc_value))) {
+				preference.setSummary(R.string.sort_order_alpha_asc);
+			} else if (newOrder.equals(getString(R.string.sort_order_alpha_desc_value))) {
+				preference.setSummary(R.string.sort_order_alpha_desc);
+			} else if (newOrder.equals(getString(R.string.sort_order_time_asc_value))) {
+				preference.setSummary(R.string.sort_order_time_asc);
+			} else if (newOrder.equals(getString(R.string.sort_order_time_desc_value))) {
+				preference.setSummary(R.string.sort_order_time_desc);
+			}
 		}
 		return true;
 	}
@@ -123,7 +134,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	public static String getSortOrder(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context)
 				.getString(context.getString(R.string.preference_sort_order),
-						context.getString(R.string.sort_order_time_asc_value));
+						context.getString(R.string.sort_order_time_desc_value));
 	}
 
 	public static void saveLoginData(Context context, String userName,

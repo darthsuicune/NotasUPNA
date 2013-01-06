@@ -3,6 +3,9 @@ package com.suicune.notasupna;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -24,9 +27,8 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +36,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.suicune.notasupna.database.GradesContract;
-import com.suicune.notasupna.database.GradesDBProvider;
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.GradesParserLoader;
 
@@ -154,8 +156,9 @@ public class RecordFragment extends ListFragment {
 			break;
 		case ACTIVITY_PREFERENCES:
 			if (resultCode == PreferencesActivity.RESULT_LANGUAGE_CHANGED) {
-
+				changeLanguage();
 			}
+			showData(false);
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -184,7 +187,7 @@ public class RecordFragment extends ListFragment {
 		if (isLandscape) {
 			mDetailsHintView.setVisibility(View.GONE);
 			mDetailsView.setVisibility(View.VISIBLE);
-			
+
 			mDetailsFragment = DetailsFragment.newInstance(mCursorPosition);
 			if (mCurrentSubject != null) {
 				mDetailsFragment.setSubject(mCurrentSubject);
@@ -222,15 +225,15 @@ public class RecordFragment extends ListFragment {
 		mDetailsView = activity.findViewById(R.id.record_details);
 		mDetailsHintView = activity.findViewById(R.id.record_details_hint);
 		mRecordHeaderView = activity.findViewById(R.id.record_header_block);
-		
+
 		View otherCallsView = activity.findViewById(R.id.record_calls);
-		if(isLandscape && isSmallScreen){
-			if(otherCallsView != null){
+		if (isLandscape && isSmallScreen) {
+			if (otherCallsView != null) {
 				otherCallsView.setVisibility(View.GONE);
 			}
 			mRecordHeaderView.setVisibility(View.GONE);
-		}else{
-			if(otherCallsView != null){
+		} else {
+			if (otherCallsView != null) {
 				otherCallsView.setVisibility(View.VISIBLE);
 			}
 			mRecordHeaderView.setVisibility(View.VISIBLE);
@@ -261,6 +264,7 @@ public class RecordFragment extends ListFragment {
 	}
 
 	private void showData(boolean isLoader) {
+		sortList();
 		if (!isLandscape || !isSmallScreen) {
 			showStudentInfo();
 			showCourseInfo();
@@ -308,6 +312,28 @@ public class RecordFragment extends ListFragment {
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(),
 				prepareSubjectsList(), R.layout.record_list_item, from, to);
 		setListAdapter(adapter);
+	}
+
+	private void sortList() {
+		String sortOrder = PreferencesActivity.getSortOrder(getActivity());
+		Log.d("SORT ORDER", sortOrder);
+		if (sortOrder
+				.equalsIgnoreCase(getString(R.string.sort_order_alpha_asc_value))) {
+			mStudent.sortByName(true);
+		} else if (sortOrder
+				.equalsIgnoreCase(getString(R.string.sort_order_alpha_desc_value))) {
+			mStudent.sortByName(false);
+		} else if (sortOrder
+				.equalsIgnoreCase(getString(R.string.sort_order_time_asc_value))) {
+			mStudent.sortByTime(true);
+		} else if (sortOrder
+				.equalsIgnoreCase(getString(R.string.sort_order_time_desc_value))) {
+			mStudent.sortByTime(false);
+		}
+	}
+
+	private void changeLanguage() {
+
 	}
 
 	private ArrayList<HashMap<String, String>> prepareSubjectsList() {
@@ -464,11 +490,38 @@ public class RecordFragment extends ListFragment {
 		public void onLoadFinished(Loader<String> loader, String result) {
 			switch (loader.getId()) {
 			case LOADER_CONNECTION:
-				Bundle args = new Bundle();
-				args.putString(RecordActivity.EXTRA_DOWNLOADED_DATA, result);
-				getActivity().getSupportLoaderManager().initLoader(
-						LOADER_PARSER, args, this);
+				if (result == null) {
+					Toast.makeText(getActivity(), R.string.error_connection,
+							Toast.LENGTH_LONG).show();
+				} else {
+					try {
+						JSONObject object = new JSONObject(result);
+						int error = object.getInt(GradesParserLoader.nError);
+						switch (error) {
+						case 0:
+							Bundle args = new Bundle();
+							args.putString(
+									RecordActivity.EXTRA_DOWNLOADED_DATA,
+									result);
+							getActivity().getSupportLoaderManager().initLoader(
+									LOADER_PARSER, args, this);
+							break;
+						default:
+							String errorMsg = object
+									.getString(GradesParserLoader.nErrorMsg);
+							failedLogin(errorMsg, ConnectLoader.ERROR_JSON);
+							break;
+						}
+					} catch (JSONException e) {
+						Log.d(ConnectLoader.logging,
+								"Error in response from server: " + result);
+						failedLogin(result, ConnectLoader.ERROR_NO_JSON);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				showProgress(false, PROGRESS_SIGN_IN);
+
 				break;
 			case LOADER_PARSER:
 				isParsing = false;
@@ -481,6 +534,21 @@ public class RecordFragment extends ListFragment {
 		@Override
 		public void onLoaderReset(Loader<String> loader) {
 			loader.reset();
+		}
+
+		public void failedLogin(String response, int errorCode) {
+			switch (errorCode) {
+			case ConnectLoader.ERROR_JSON:
+				Toast.makeText(getActivity(), response, Toast.LENGTH_LONG)
+						.show();
+				break;
+			case ConnectLoader.ERROR_NO_JSON:
+				Toast.makeText(getActivity(), R.string.error_connecting,
+						Toast.LENGTH_LONG).show();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -498,7 +566,8 @@ public class RecordFragment extends ListFragment {
 				String[] selectionArgs = { PreferencesActivity
 						.getRecordLanguage(getActivity()) };
 				loader = new CursorLoader(getActivity(), uri, null, selection,
-						selectionArgs, PreferencesActivity.getSortOrder(getActivity()));
+						selectionArgs,
+						PreferencesActivity.getSortOrder(getActivity()));
 				break;
 			}
 			return loader;

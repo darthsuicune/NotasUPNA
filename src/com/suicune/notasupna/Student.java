@@ -1,6 +1,6 @@
 package com.suicune.notasupna;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import android.database.Cursor;
 
@@ -15,11 +15,11 @@ public class Student {
 	public String mStudentNif;
 	public String mStudentNip;
 
-	public ArrayList<Record> mRecordList;
+	public LinkedList<Record> mRecordList;
 	public int mRecordCount = 0;
 
 	public Student(Cursor c) {
-		mRecordList = new ArrayList<Record>();
+		mRecordList = new LinkedList<Record>();
 		if (c == null || c.getCount() <= 0) {
 			return;
 		}else{
@@ -28,14 +28,11 @@ public class Student {
 		}
 
 		// Auxiliary variables
-		int currentCourseId = -1;
 		String currentSubjectName = "";
-		long currentGradeTime = -1;
-		int currentGradeSubject = -1;
 		Subject currentSubject = null;
 		Grade currentGrade = null;
 		Record currentRecord = null;
-
+		
 		while (c.moveToNext()) {
 			// Add the student information
 			String studentName = c.getString(c
@@ -61,122 +58,123 @@ public class Student {
 						+ ", " + mStudentName;
 			}
 
-			// Process the course
 			int courseId = c.getInt(c
 					.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE));
-			if (currentCourseId != courseId) {
-				if (currentRecord != null) {
-					currentRecord.addSubject(currentSubject);
-					addRecord(currentRecord);
-					
-				}
-				currentSubject = null;
-				currentCourseId = courseId;
-				currentRecord = new Record(
-						currentCourseId,
-						c.getString(c
-								.getColumnIndex(GradesContract.CoursesTable.COL_CO_NAME)),
-						c.getString(c
-								.getColumnIndex(GradesContract.CoursesTable.COL_CO_CENTER)),
-						c.getString(c
-								.getColumnIndex(GradesContract.CoursesTable.COL_CO_STUDIES)),
-						c.getString(c
-								.getColumnIndex(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS)),
-						c.getString(c
-								.getColumnIndex(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS)),
-						c.getString(c
-								.getColumnIndex(GradesContract.CoursesTable.COL_CO_LANGUAGE)));
-			}
-
-			// Process the subject
-			String subjectName = c.getString(c
-					.getColumnIndex(GradesContract.SubjectsTable.COL_SU_NAME));
-			if (!currentSubjectName.equalsIgnoreCase(subjectName)) {
-				if(currentSubject != null){
-					currentRecord.addSubject(currentSubject);
-				}
-				currentSubjectName = subjectName;
-				currentSubject = new Subject(
-						c.getString(c
-								.getColumnIndex(GradesContract.SubjectsTable.COL_SU_NAME)),
-						c.getString(c
-								.getColumnIndex(GradesContract.SubjectsTable.COL_SU_TYPE)),
-						c.getString(c
-								.getColumnIndex(GradesContract.SubjectsTable.COL_SU_LANGUAGE)),
-						Integer.valueOf(
-								c.getString(c
-										.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE)))
-								.intValue(),
-						c.getString(c
-								.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS)));
-			}
-
-			// Process the grade
-			long gradeTime = c.getLong(c
-					.getColumnIndex(GradesContract.GradesTable.COL_GR_TIME));
-			int gradeSubject = c.getInt(c
-					.getColumnIndex(GradesContract.GradesTable.COL_GR_SU_CODE));
-			if (currentGradeTime != gradeTime
-					|| currentGradeSubject != gradeSubject) {
-				currentGradeSubject = gradeSubject;
-				currentGradeTime = gradeTime;
-				currentGrade = new Grade(
-						currentSubject,
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_GRADE_NAME)),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_GRADE)),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_CALL)),
-						Integer.valueOf(
-								c.getString(c
-										.getColumnIndex(GradesContract.GradesTable.COL_GR_CALL_NUMBER)))
-								.intValue(),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_CODE)),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_PASSED)),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_PROVISIONAL)),
-						Long.valueOf(
-								c.getString(c
-										.getColumnIndex(GradesContract.GradesTable.COL_GR_REVISION_TIME)))
-								.longValue(),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_ASSISTED)),
-						Long.valueOf(
-								c.getString(c
-										.getColumnIndex(GradesContract.GradesTable.COL_GR_TIME)))
-								.longValue(),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_YEAR)),
-						c.getString(c
-								.getColumnIndex(GradesContract.GradesTable.COL_GR_LANGUAGE)));
-				currentSubject.addGrade(currentGrade);
-			}
-		}
-		if(currentRecord != null){
-			currentRecord.addSubject(currentSubject);
-			addRecord(currentRecord);
 			
+			currentRecord = new Record(courseId,
+					c.getString(c
+							.getColumnIndex(GradesContract.CoursesTable.COL_CO_NAME)),
+					c.getString(c
+							.getColumnIndex(GradesContract.CoursesTable.COL_CO_CENTER)),
+					c.getString(c
+							.getColumnIndex(GradesContract.CoursesTable.COL_CO_STUDIES)),
+					c.getString(c
+							.getColumnIndex(GradesContract.CoursesTable.COL_CO_TOTAL_CREDITS)),
+					c.getString(c
+							.getColumnIndex(GradesContract.CoursesTable.COL_CO_PASSED_CREDITS)),
+					c.getString(c
+							.getColumnIndex(GradesContract.CoursesTable.COL_CO_LANGUAGE))
+					);
+			
+			addRecord(courseId, currentRecord);
+			
+			currentSubjectName =c.getString(c
+					.getColumnIndex(GradesContract.SubjectsTable.COL_SU_NAME)); 
+			currentSubject = new Subject(
+					currentSubjectName,
+					c.getString(c
+							.getColumnIndex(GradesContract.SubjectsTable.COL_SU_TYPE)),
+					c.getString(c
+							.getColumnIndex(GradesContract.SubjectsTable.COL_SU_LANGUAGE)),
+					Integer.valueOf(
+							c.getString(c
+									.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CO_CODE)))
+							.intValue(),
+					c.getString(c
+							.getColumnIndex(GradesContract.SubjectsTable.COL_SU_CREDITS)));
+			
+			addSubject(courseId, currentSubject);
+			
+			currentGrade = new Grade(
+					currentSubject,
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_GRADE_NAME)),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_GRADE)),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_CALL)),
+					Integer.valueOf(
+							c.getString(c
+									.getColumnIndex(GradesContract.GradesTable.COL_GR_CALL_NUMBER)))
+							.intValue(),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_CODE)),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_PASSED)),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_PROVISIONAL)),
+					Long.valueOf(
+							c.getString(c
+									.getColumnIndex(GradesContract.GradesTable.COL_GR_REVISION_TIME)))
+							.longValue(),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_ASSISTED)),
+					Long.valueOf(
+							c.getString(c
+									.getColumnIndex(GradesContract.GradesTable.COL_GR_TIME)))
+							.longValue(),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_YEAR)),
+					c.getString(c
+							.getColumnIndex(GradesContract.GradesTable.COL_GR_LANGUAGE)));
+			
+			addGrade(courseId, currentSubjectName, currentGrade);
 		}
 	}
-
-	public void addRecord(Record r) {
-		mRecordList.add(r);
-		mRecordCount++;
+	
+	public void addRecord(int courseId, Record r){
+		boolean exists = false;
+		for(int i = 0; i < mRecordCount; i++){
+			if(mRecordList.get(i).mCourseId == courseId){
+				exists = true;
+			}
+		}
+		if(!exists){
+			mRecordList.add(courseId - 1, r);
+			mRecordCount++;
+		}
+	}
+	
+	public void addSubject(int courseId, Subject s){
+		int i;
+		for(i = 0; i < mRecordCount; i++){
+			if(mRecordList.get(i).mCourseId == courseId){
+				break;
+			}
+		}
+		mRecordList.get(i).addSubject(s);
+	}
+	
+	public void addGrade(int courseId, String subjectName, Grade g){
+		int i;
+		for(i = 0; i < mRecordCount; i++){
+			if(mRecordList.get(i).mCourseId == courseId){
+				break;
+			}
+		}
+		mRecordList.get(i).addGrade(subjectName, g);
 	}
 	
 	public void sortByTime(boolean asc){
-		ArrayList<Record> aux = new ArrayList<Record>();
 		for(int i = 0; i<mRecordCount; i++){
-			Record r = mRecordList.get(i);
-			r.sortByTime(asc);
-			aux.add(r);
+			mRecordList.get(i).sortByTime(asc);
 		}
 	}
 	
-	public void sortByName(){
+	public void sortByName(boolean asc){
+		for(int i = 0; i<mRecordCount; i++){
+			mRecordList.get(i).sortByName(asc);
+		}
 		
 	}
 }

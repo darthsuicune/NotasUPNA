@@ -2,7 +2,6 @@ package com.suicune.notasupna;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Subject implements Serializable{
 
@@ -11,7 +10,7 @@ public class Subject implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public List<Grade> mGradesList;
+	public ArrayList<Grade> mGradesList;
 	
 	public int mGradesCount;
 	public int mCallsTakenCount;
@@ -21,6 +20,8 @@ public class Subject implements Serializable{
 	public String mSubjectLanguage;
 	public int mSubjectCourseCode;
 	public String mSubjectCredits;
+	
+	public long mLastGradeTime = 0;
 	
 	public Subject(String subjectName, String subjectType, String subjectLanguage, int subjectCourseCode, String subjectCredits){
 		mGradesList = new ArrayList<Grade>();
@@ -36,6 +37,9 @@ public class Subject implements Serializable{
 		mGradesCount++;
 		if(!g.mGradeName.contains("resentado")){
 			mCallsTakenCount++;
+		}
+		if(g.mGradeTime > mLastGradeTime){
+			mLastGradeTime = g.mGradeTime;
 		}
 	}
 	
