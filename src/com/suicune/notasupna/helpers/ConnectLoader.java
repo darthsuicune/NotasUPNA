@@ -1,8 +1,12 @@
 package com.suicune.notasupna.helpers;
 
+import java.util.Date;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
 
 import com.suicune.notasupna.PreferencesActivity;
@@ -52,16 +56,11 @@ public class ConnectLoader extends AsyncTaskLoader<String> {
 	@Override
 	public String loadInBackground() {
 		String language = PreferencesActivity.getRecordLanguage(mContext);
-		if(language.equalsIgnoreCase(mContext.getString(R.string.language_code_basque))){
-			return mContext.getString(R.string.demodata_eu);
-		} else {
-			return mContext.getString(R.string.demodata);
-		}
 //		String response = null;
 //		URL url = null;
 //
 //		try {
-//			if (PreferencesActivity.getRecordLanguage(mContext)
+//			if (language
 //					.equalsIgnoreCase(mContext.getString(R.string.language_code_basque))) {
 //				url = new URL("https", server, port, resource_eu);
 //			} else {
@@ -108,6 +107,15 @@ public class ConnectLoader extends AsyncTaskLoader<String> {
 //			response = null;
 //			e.printStackTrace();
 //		}
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+		editor.putLong(PreferencesActivity.LAST_UPDATE, new Date().getTime());
+		editor.commit();
+		if(language.equalsIgnoreCase(mContext.getString(R.string.language_code_basque))){
+			return mContext.getString(R.string.demodata_eu);
+		} else {
+			return mContext.getString(R.string.demodata);
+		}
+
 //		return response;
 	}
 }

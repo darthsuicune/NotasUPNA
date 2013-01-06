@@ -1,5 +1,6 @@
 package com.suicune.notasupna;
 
+import java.util.Date;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -12,6 +13,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 
 import com.suicune.notasupna.helpers.CryptoBlock;
 
@@ -80,6 +82,8 @@ public class PreferencesActivity extends PreferenceActivity implements
 		changeSummary(sortOrderPreference, prefs.getString(
 				getString(R.string.preference_sort_order),
 				getString(R.string.sort_order_time_desc)));
+		
+		showLastUpdate();
 	}
 
 	@Override
@@ -147,6 +151,13 @@ public class PreferencesActivity extends PreferenceActivity implements
 		languagePreference.setTitle(R.string.language);
 		sortOrderPreference.setTitle(R.string.preference_sort_order);
 		setResult(RESULT_LANGUAGE_CHANGED);
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void showLastUpdate() {
+		Preference lastUpdatePreference = findPreference(getString(R.string.last_update));
+		String lastUpdate = DateFormat.getDateFormat(this).format(new Date(prefs.getLong(PreferencesActivity.LAST_UPDATE, 0)));
+		lastUpdatePreference.setSummary(lastUpdate);
 	}
 
 	public static String getRecordLanguage(Context context) {
