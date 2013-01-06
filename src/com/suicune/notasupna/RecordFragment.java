@@ -32,8 +32,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,6 +81,7 @@ public class RecordFragment extends ListFragment {
 	private View mDetailsHintView;
 	private View mDetailsView;
 	private View mRecordHeaderView;
+	private Spinner mRecordSpinnerView;
 	private TextView mRecordStatusMessageView;
 
 	private SharedPreferences prefs;
@@ -154,7 +158,7 @@ public class RecordFragment extends ListFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case ACTIVITY_DETAILS:
-			if(mStudent != null) {
+			if (mStudent != null) {
 				showData(false);
 			}
 			if (resultCode == Activity.RESULT_OK) {
@@ -238,16 +242,23 @@ public class RecordFragment extends ListFragment {
 			if (otherCallsView != null) {
 				otherCallsView.setVisibility(View.GONE);
 			}
-			if(mRecordHeaderView != null){
+			if (mRecordHeaderView != null) {
 				mRecordHeaderView.setVisibility(View.GONE);
 			}
 		} else {
 			if (otherCallsView != null) {
 				otherCallsView.setVisibility(View.VISIBLE);
 			}
-			if(mRecordHeaderView != null){
+			if (mRecordHeaderView != null) {
 				mRecordHeaderView.setVisibility(View.VISIBLE);
 			}
+		}
+		mRecordSpinnerView = (Spinner) activity
+				.findViewById(R.id.record_course_spinner);
+		if (isHoneyComb) {
+			mRecordSpinnerView.setVisibility(View.GONE);
+		} else {
+			mRecordSpinnerView.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -259,13 +270,18 @@ public class RecordFragment extends ListFragment {
 				0);
 	}
 
-	private void setActionBar() {
+	private void setCourseData() {
 		if (isHoneyComb) {
 			ActionBar actionBar = getActivity().getActionBar();
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-			actionBar.setSelectedNavigationItem(mCurrentCourse);
 			actionBar.setListNavigationCallbacks(setSpinnerAdapter(),
 					setNavigationCallbacks());
+			actionBar.setSelectedNavigationItem(mCurrentCourse);
+		} else {
+			mRecordSpinnerView.setAdapter(setSpinnerAdapter());
+			mRecordSpinnerView.setSelection(mCurrentCourse);
+			mRecordSpinnerView
+					.setOnItemSelectedListener(getOnItemSelectedListener());
 		}
 	}
 
@@ -345,21 +361,24 @@ public class RecordFragment extends ListFragment {
 	}
 
 	private void changeLanguage() {
-		if(needsDownload()){
-			//TODO whatever
-			Toast.makeText(getActivity(), "!!!!!!!!!!!!!!!!!!", Toast.LENGTH_LONG).show();
+		if (needsDownload()) {
+			// TODO whatever
+			Toast.makeText(getActivity(), "!!!!!!!!!!!!!!!!!!",
+					Toast.LENGTH_LONG).show();
 		}
-		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null, new CursorLoaderHelper());
+		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null,
+				new CursorLoaderHelper());
 	}
-	
-	private boolean needsDownload(){
+
+	private boolean needsDownload() {
 		String language = PreferencesActivity.getRecordLanguage(getActivity());
-		if(language.equalsIgnoreCase(getString(R.string.language_code_basque))){
-			if(prefs.getInt(PreferencesActivity.DATA_EU, 0) == 0){
+		if (language.equalsIgnoreCase(getString(R.string.language_code_basque))) {
+			if (prefs.getInt(PreferencesActivity.DATA_EU, 0) == 0) {
 				return true;
 			}
-		} else if(language.equalsIgnoreCase(getString(R.string.language_code_spanish))){
-			if(prefs.getInt(PreferencesActivity.DATA_ES, 0) == 0){
+		} else if (language
+				.equalsIgnoreCase(getString(R.string.language_code_spanish))) {
+			if (prefs.getInt(PreferencesActivity.DATA_ES, 0) == 0) {
 				return true;
 			}
 		}
@@ -410,9 +429,10 @@ public class RecordFragment extends ListFragment {
 
 		int[] to = { android.R.id.text1 };
 
-		SpinnerAdapter adapter = new SimpleAdapter(getActivity(),
+		SimpleAdapter adapter = new SimpleAdapter(getActivity(),
 				prepareSpinnerData(),
-				android.R.layout.simple_spinner_dropdown_item, from, to);
+				android.R.layout.simple_spinner_item, from, to);
+		adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
 		return adapter;
 	}
 
@@ -436,6 +456,24 @@ public class RecordFragment extends ListFragment {
 				setSpinnerPosition(itemPosition);
 				showData(false);
 				return true;
+			}
+		};
+		return listener;
+	}
+
+	private OnItemSelectedListener getOnItemSelectedListener() {
+		OnItemSelectedListener listener = new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view,
+					int position, long itemId) {
+				setSpinnerPosition(position);
+				showData(false);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				return;
 			}
 		};
 		return listener;
@@ -607,7 +645,7 @@ public class RecordFragment extends ListFragment {
 			case LOADER_COURSE:
 				mStudent = new Student(cursor);
 				mCurrentRecord = mStudent.mRecordList.get(mCurrentCourse);
-				setActionBar();
+				setCourseData();
 				showData(true);
 				break;
 			}
