@@ -2,6 +2,7 @@ package com.suicune.notasupna;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -161,9 +162,6 @@ public class RecordFragment extends ListFragment {
 			if (mStudent != null) {
 				showData(false);
 			}
-			if (resultCode == Activity.RESULT_OK) {
-
-			}
 			break;
 		case ACTIVITY_PREFERENCES:
 			if (resultCode == PreferencesActivity.RESULT_LANGUAGE_CHANGED) {
@@ -182,12 +180,12 @@ public class RecordFragment extends ListFragment {
 			getActivity().getSupportLoaderManager().initLoader(
 					LOADER_CONNECTION, null, new AsyncHelper());
 			break;
-		case R.id.action_record_preferences:
+		case R.id.action_settings:
 			Intent intent = new Intent(getActivity(), PreferencesActivity.class);
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
-		case R.id.action_record_close_session:
-			getActivity().finish();
+		case R.id.action_help:
+			// TODO
 			break;
 		}
 		return true;
@@ -362,12 +360,15 @@ public class RecordFragment extends ListFragment {
 
 	private void changeLanguage() {
 		if (needsDownload()) {
-			// TODO whatever
-			Toast.makeText(getActivity(), "!!!!!!!!!!!!!!!!!!",
-					Toast.LENGTH_LONG).show();
+			Locale.setDefault(new Locale(
+					getString(R.string.language_code_basque)));
+			getActivity().getSupportLoaderManager().initLoader(
+					LOADER_CONNECTION, null, new AsyncHelper());
+		} else {
+			getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE,
+					null, new CursorLoaderHelper());
 		}
-		getActivity().getSupportLoaderManager().initLoader(LOADER_COURSE, null,
-				new CursorLoaderHelper());
+
 	}
 
 	private boolean needsDownload() {
@@ -430,8 +431,8 @@ public class RecordFragment extends ListFragment {
 		int[] to = { android.R.id.text1 };
 
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-				prepareSpinnerData(),
-				android.R.layout.simple_spinner_item, from, to);
+				prepareSpinnerData(), android.R.layout.simple_spinner_item,
+				from, to);
 		adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
 		return adapter;
 	}
@@ -533,6 +534,28 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 
+	private boolean hasNewData(int dataLength) {
+		boolean result = false;
+
+		String language = PreferencesActivity.getRecordLanguage(getActivity());
+
+		if (language.equalsIgnoreCase(getString(R.string.language_code_basque))) {
+			result = dataLength > prefs.getInt(PreferencesActivity.DATA_EU, 0);
+			if (result) {
+				prefs.edit().putInt(PreferencesActivity.DATA_EU, dataLength)
+						.commit();
+			}
+		} else {
+			result = dataLength > prefs.getInt(PreferencesActivity.DATA_ES, 0);
+			if (result) {
+				prefs.edit().putInt(PreferencesActivity.DATA_ES, dataLength)
+						.commit();
+			}
+		}
+
+		return result;
+	}
+
 	private class AsyncHelper implements LoaderCallbacks<String> {
 
 		@Override
@@ -565,12 +588,18 @@ public class RecordFragment extends ListFragment {
 						int error = object.getInt(GradesParserLoader.nError);
 						switch (error) {
 						case 0:
-							Bundle args = new Bundle();
-							args.putString(
-									RecordActivity.EXTRA_DOWNLOADED_DATA,
-									result);
-							getActivity().getSupportLoaderManager().initLoader(
-									LOADER_PARSER, args, this);
+							if (hasNewData(result.length())) {
+								Bundle args = new Bundle();
+								args.putString(
+										RecordActivity.EXTRA_DOWNLOADED_DATA,
+										result);
+								getActivity().getSupportLoaderManager()
+										.initLoader(LOADER_PARSER, args, this);
+							} else {
+								Toast.makeText(getActivity(),
+										R.string.no_new_data, Toast.LENGTH_LONG)
+										.show();
+							}
 							break;
 						default:
 							String errorMsg = object

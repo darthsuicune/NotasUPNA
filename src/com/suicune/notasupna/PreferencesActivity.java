@@ -1,5 +1,7 @@
 package com.suicune.notasupna;
 
+import java.util.Locale;
+
 import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -31,7 +33,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 	public static final String PREFERENCE_APP_LANGUAGE = "language";
 	public static final String PREFERENCE_USER_NAME = "userName";
-	public static final String PREFERENCE_PASS_WORD = "passWord";
+	public static final String PREFERENCE_PASS_WORD = "login token";
 
 	private SharedPreferences prefs;
 
@@ -79,18 +81,13 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		changeSummary(preference, newValue);
 		// Language changed
 		if (preference.getKey().equals(
 				getString(R.string.preference_app_language))) {
 			String newLanguage = (String) newValue;
 			changeLanguage(newLanguage);
-
-			// Sort order changed
-		} else if (preference.getKey().equals(
-				getString(R.string.preference_sort_order))) {
-			String newOrder = (String) newValue;
 		}
+		changeSummary(preference, newValue);
 		return true;
 	}
 
@@ -132,6 +129,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	}
 
 	public void changeLanguage(String newLanguage) {
+		Locale.setDefault(new Locale(newLanguage));
 		if (newLanguage.equals(getString(R.string.language_code_basque))) {
 			prefs.edit()
 					.putString(getString(R.string.preference_record_language),
@@ -141,9 +139,9 @@ public class PreferencesActivity extends PreferenceActivity implements
 			prefs.edit()
 					.putString(getString(R.string.preference_record_language),
 							getString(R.string.language_code_spanish)).commit();
-		} else {
-
 		}
+		
+		
 		setResult(RESULT_LANGUAGE_CHANGED);
 	}
 
@@ -158,20 +156,6 @@ public class PreferencesActivity extends PreferenceActivity implements
 		return PreferenceManager.getDefaultSharedPreferences(context)
 				.getString(context.getString(R.string.preference_sort_order),
 						context.getString(R.string.sort_order_time_desc_value));
-	}
-
-	public static void saveLoginData(Context context, String userName,
-			String passWord) {
-		SharedPreferences.Editor editor = PreferenceManager
-				.getDefaultSharedPreferences(context).edit();
-		editor.putString(PREFERENCE_USER_NAME, userName);
-		try {
-			editor.putString(PREFERENCE_PASS_WORD,
-					CryptoBlock.encrypt(passWord));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		editor.commit();
 	}
 
 	public static String getUserName(Context context) {

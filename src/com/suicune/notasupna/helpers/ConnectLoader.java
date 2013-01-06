@@ -13,25 +13,25 @@ public class ConnectLoader extends AsyncTaskLoader<String> {
 	public static final String server = "upnaexp.unavarra.es";
 	public static final int port = 19090;
 	public static final String resource_es = "/sigdroid-rest/resources/obtenerCalificaciones?idioma=es&pais=ES&av="
-			+ android.os.Build.VERSION.RELEASE + "&sv=1.1&os=ANDROID";
+			+ android.os.Build.VERSION.RELEASE + "&sv=1.7&os=ANDROID";
 	public static final String resource_eu = "/sigdroid-rest/resources/obtenerCalificaciones?idioma=eu&pais=ES&av="
-			+ android.os.Build.VERSION.RELEASE + "&sv=1.1&os=ANDROID";
-	private Context context;
-	private String userName, passWord;
+			+ android.os.Build.VERSION.RELEASE + "&sv=1.7&os=ANDROID";
+	private Context mContext;
+	private String mUserName, mPassWord;
 
 	public static final int ERROR_JSON = 1;
 	public static final int ERROR_NO_JSON = 2;
 
 	public ConnectLoader(Context context, Bundle args) {
 		super(context);
-		this.context = context;
+		mContext = context;
 		if (args == null || args.isEmpty()) {
-			this.userName = PreferencesActivity.getUserName(context);
-			this.passWord = PreferencesActivity.getPassWord(context);
+			this.mUserName = PreferencesActivity.getUserName(context);
+			this.mPassWord = PreferencesActivity.getPassWord(context);
 		} else {
-			this.userName = args
+			this.mUserName = args
 					.getString(PreferencesActivity.PREFERENCE_USER_NAME);
-			this.passWord = args
+			this.mPassWord = args
 					.getString(PreferencesActivity.PREFERENCE_PASS_WORD);
 		}
 	}
@@ -51,13 +51,13 @@ public class ConnectLoader extends AsyncTaskLoader<String> {
 
 	@Override
 	public String loadInBackground() {
-		 return context.getString(R.string.demodata);
+		 return mContext.getString(R.string.demodata);
 //		String response = null;
 //		URL url = null;
 //
 //		try {
 //			if (PreferencesActivity.getRecordLanguage(context)
-//					.equalsIgnoreCase(PreferencesActivity.LANGUAGE_BASQUE)) {
+//					.equalsIgnoreCase(mContext.getString(R.string.language_code_basque))) {
 //				url = new URL("https", server, port, resource_eu);
 //			} else {
 //				url = new URL("https", server, port, resource_es);

@@ -9,5 +9,5 @@
           android:icon="@drawable/ic_menu_agenda"
           android:title="@string/other_calls"
           android:showAsAction="ifRoom" />
-
+    
 </menu>

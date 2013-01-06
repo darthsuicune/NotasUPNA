@@ -61,7 +61,6 @@ public class DetailsFragment extends Fragment {
 			setHasOptionsMenu(false);
 			return;
 		} else {
-			setHasOptionsMenu(true);
 			if (mSubject != null) {
 				showSubjectInformation();
 				showGradeInformation();
@@ -83,6 +82,7 @@ public class DetailsFragment extends Fragment {
 			showCallsList();
 			break;
 		case R.id.action_details_share:
+			// TODOs
 			break;
 		case android.R.id.home:
 			getActivity().finish();
@@ -94,6 +94,8 @@ public class DetailsFragment extends Fragment {
 	}
 
 	public void setSubject(Subject subject) {
+		setHasOptionsMenu(true);
+
 		mSubject = subject;
 		mGrade = mSubject.mGradesList.get(mSubject.mGradesList.size() - 1);
 		mCallsFragment = new CallsDialogFragment();
@@ -177,9 +179,9 @@ public class DetailsFragment extends Fragment {
 			gradePassedView.setText(R.string.no);
 		} else {
 			gradeTakenView.setText("" + mGrade.mGradeTaken);
-			
+
 		}
-		
+
 		gradeCallsTakenView.setText("" + mSubject.mCallsTakenCount);
 	}
 

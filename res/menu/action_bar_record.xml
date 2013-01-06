@@ -5,14 +5,12 @@
           android:title="@string/refresh"
           android:icon="@drawable/ic_action_refresh"
           android:showAsAction="ifRoom" />
-
-    <item android:id="@+id/action_record_preferences"
-          android:title="@string/preferences"
-          android:icon="@drawable/ic_menu_manage"
-          android:showAsAction="ifRoom" />
     
-    <item android:id="@+id/action_record_close_session"
-          android:title="@string/close_session"
-          android:icon="@drawable/ic_lock_power_off"
-          android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_settings"
+        android:title="@string/preferences"
+        android:showAsAction="never" />
+    
+    <item android:id="@+id/action_help"
+        android:title="@string/about_title"
+        android:showAsAction="never" />
 </menu>

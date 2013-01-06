@@ -6,9 +6,12 @@
 		android:title="@string/confirm"
         android:showAsAction="ifRoom|withText" />
     
-    <item android:id="@+id/action_login_preferences" 
-        android:icon="@drawable/ic_menu_manage"
+    <item android:id="@+id/action_settings"
         android:title="@string/preferences"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="never" />
+    
+    <item android:id="@+id/action_help"
+        android:title="@string/preferences"
+        android:showAsAction="never" />
 
 </menu>

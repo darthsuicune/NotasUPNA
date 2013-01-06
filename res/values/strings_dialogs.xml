@@ -8,7 +8,7 @@
     <string name="dialog_change_language">"Has cambiado el idioma. ¿Quieres descargar los datos de las asignaturas en castellano?"</string>
     <string name="language">"Idioma"</string>
     <string name="language_not_supported">"El expediente no está disponible en el idioma seleccionado. Elija en que idioma quiere verlo."</string>
-    <string name="about">"Notas UPNA v1.0
+    <string name="about_text">"Notas UPNA v1.0
       
       Autor: Denís Lapuente
 Contacto: lapuente.denis@gmail.com

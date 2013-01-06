@@ -7,10 +7,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
+import com.suicune.notasupna.helpers.CryptoBlock;
 import com.suicune.notasupna.helpers.DNIUtils;
 import com.suicune.notasupna.helpers.GradesParserLoader;
 
@@ -72,7 +75,7 @@ public class LoginActivity extends ActionBarActivity {
 		switch (item.getItemId()) {
 		case R.id.action_login_confirm:
 			break;
-		case R.id.action_login_preferences:
+		case R.id.action_settings:
 			Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
@@ -237,12 +240,29 @@ public class LoginActivity extends ActionBarActivity {
 	public void doLogin(String response) {
 		Intent intent = new Intent(this, RecordActivity.class);
 		if (response != null) {
-			PreferencesActivity.saveLoginData(getApplicationContext(),
-					mUserName, mPassWord);
+			saveLoginData(response.length());
 			intent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
 		}
 		startActivityForResult(intent, ACTIVITY_RECORD);
 		this.finish();
+	}
+	
+	public void saveLoginData(int dataLength){
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putString(PreferencesActivity.PREFERENCE_USER_NAME, mUserName);
+		try {
+			editor.putString(PreferencesActivity.PREFERENCE_PASS_WORD,
+					CryptoBlock.encrypt(mPassWord));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if(PreferencesActivity.getRecordLanguage(this).equalsIgnoreCase(getString(R.string.language_code_basque))){
+			editor.putInt(PreferencesActivity.DATA_EU, dataLength);
+		} else {
+			editor.putInt(PreferencesActivity.DATA_ES, dataLength);
+		}
+		editor.commit();
 	}
 
 	public void failedLogin(String response, int errorCode) {
