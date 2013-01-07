@@ -132,6 +132,7 @@ public class GradesUpdater extends IntentService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		prefs.edit().putLong(PreferencesActivity.LAST_UPDATE, System.currentTimeMillis()).commit();
 		return response;
 	}
 
