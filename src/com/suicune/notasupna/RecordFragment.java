@@ -189,7 +189,7 @@ public class RecordFragment extends ListFragment {
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
 		case R.id.action_help:
-			// TODO
+			new AboutFragment().show(getActivity().getSupportFragmentManager(), AboutFragment.DIALOG_ABOUT);
 			break;
 		}
 		return true;

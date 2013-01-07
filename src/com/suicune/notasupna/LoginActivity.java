@@ -81,6 +81,9 @@ public class LoginActivity extends ActionBarActivity {
 			Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
+		case R.id.action_help:
+			new AboutFragment().show(getSupportFragmentManager(), AboutFragment.DIALOG_ABOUT);
+			break;
 		}
 		return true;
 	}
