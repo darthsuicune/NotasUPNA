@@ -2,13 +2,11 @@
 <resources>
     <string name="preferences">"Opciones"</string>
     <string name="confirm">"Confirmar"</string>
-    <string name="cancel">"Cancelar"</string>
     <string name="ok">"OK"</string>
     <string name="no_new_data">"No hay notas nuevas."</string>
     <string name="no">"No"</string>
     <string name="yes">"Sí"</string>
     <string name="spanish">"Castellano"</string>
     <string name="basque">"Euskara"</string>
-    <string name="english">"English"</string>
     <string name="share">"Compartir"</string>
 </resources>

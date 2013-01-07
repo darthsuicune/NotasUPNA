@@ -6,7 +6,5 @@
     <string name="error_invalid_password">"The password is incorrect."</string>
     <string name="error_field_required">"This field can't be empty"</string>
     <string name="error_login">"Error when trying to sign in. Please make sure that your sign in information is correct."</string>
-    <string name="error_grades">"Unknown error."</string>
     <string name="error_connecting">"Error when connecting to the server. Please try later."</string>
-    <string name="error_downloading">"There was an error while downloading the information. Please try again."</string>
 </resources>
