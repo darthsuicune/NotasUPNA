@@ -7,8 +7,10 @@
     <uses-sdk
         android:minSdkVersion="4"
         android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -40,6 +42,16 @@
             android:name=".database.GradesDBProvider" 
             android:authorities="com.suicune.notasupna.GradesDBProvider" >
         </provider>
+        <receiver 
+            android:name=".helpers.AlarmStarter"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service 
+            android:name=".helpers.GradesUpdater">
+        </service>
     </application>
 
 </manifest>
