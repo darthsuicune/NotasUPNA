@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="first_run">""first run"</string>
     <string name="language_code_spanish">es</string>
     <string name="language_code_basque">eu</string>
     <string name="last_update">"Última actualización"</string>

@@ -138,7 +138,7 @@ public class GradesUpdater extends IntentService {
 
 	private void parseResponse(String response, String language) {
 		if(response == null){
-			return;
+			Log.d(SERVICE_NAME, "Download error. No Response from server.");
 		}else if (response.contains("HTTP")) {
 			Log.d(SERVICE_NAME, "Download error. Response from server: "
 					+ response);
