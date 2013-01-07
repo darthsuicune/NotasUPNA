@@ -206,25 +206,6 @@ public class RecordFragment extends ListFragment {
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case ACTIVITY_DETAILS:
-			if (resultCode == Activity.RESULT_OK) {
-				if (landscape) {
-					showDetails(cursorPosition, (Subject) data.getExtras()
-							.getSerializable(DetailsActivity.EXTRA_SUBJECT));
-				}
-			}
-			break;
-		case ACTIVITY_PREFERENCES:
-			break;
-		default:
-			break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_record_refresh:
@@ -244,6 +225,25 @@ public class RecordFragment extends ListFragment {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case ACTIVITY_DETAILS:
+			if (resultCode == Activity.RESULT_OK) {
+				if (landscape) {
+					showDetails(cursorPosition, (Subject) data.getExtras()
+							.getSerializable(DetailsActivity.EXTRA_SUBJECT));
+				}
+			}
+			break;
+		case ACTIVITY_PREFERENCES:
+			break;
+		default:
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	/**
@@ -277,23 +277,65 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 
-	public void failedDownload(String response, int errorCode) {
-		switch (errorCode) {
-		case ConnectLoader.ERROR_JSON:
-			Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
+	/**
+	 * Shows the progress UI and hides the record
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+	private void showProgress(final boolean show, int progressType) {
+		switch (progressType) {
+		case PROGRESS_SIGN_IN:
+			mCurrentRecordStatusMessageView.setText(R.string.dialog_connect);
 			break;
-		case ConnectLoader.ERROR_NO_JSON:
-			if (response.contains("HTTP Status 403")
-					|| response.contains("HTTP Status 401")) {
-				Toast.makeText(getActivity(), R.string.error_login,
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(getActivity(), R.string.error_connecting,
-						Toast.LENGTH_LONG).show();
-			}
+		case PROGRESS_PARSE:
+			mCurrentRecordStatusMessageView.setText(R.string.dialog_parse);
 			break;
 		default:
 			break;
+
+		}
+		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+		// for very easy animations. If available, use these APIs to fade-in
+		// the progress spinner.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			int shortAnimTime = getResources().getInteger(
+					android.R.integer.config_shortAnimTime);
+
+			mCurrentRecordStatusView.setVisibility(View.VISIBLE);
+			mCurrentRecordStatusView.animate().setDuration(shortAnimTime)
+					.alpha(show ? 1 : 0)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							mCurrentRecordStatusView
+									.setVisibility(show ? View.VISIBLE
+											: View.GONE);
+						}
+					});
+
+			mCurrentRecordView.setVisibility(View.VISIBLE);
+			mCurrentRecordView.animate().setDuration(shortAnimTime)
+					.alpha(show ? 0 : 1)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							mCurrentRecordView.setVisibility(show ? View.GONE
+									: View.VISIBLE);
+							// if (mDetailsView != null) {
+							// mDetailsView.setVisibility(show ? View.GONE
+							// : View.VISIBLE);
+							// }
+						}
+					});
+		} else {
+			// The ViewPropertyAnimator APIs are not available, so simply show
+			// and hide the relevant UI components.
+			// if (mDetailsView != null) {
+			// mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
+			// }
+			mCurrentRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
+			mCurrentRecordStatusView.setVisibility(show ? View.VISIBLE
+					: View.GONE);
+
 		}
 	}
 
@@ -399,68 +441,6 @@ public class RecordFragment extends ListFragment {
 		@Override
 		public void onLoaderReset(Loader<Cursor> loader) {
 			loader.reset();
-		}
-	}
-
-	/**
-	 * Shows the progress UI and hides the record
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show, int progressType) {
-		switch (progressType) {
-		case PROGRESS_SIGN_IN:
-			mCurrentRecordStatusMessageView.setText(R.string.dialog_connect);
-			break;
-		case PROGRESS_PARSE:
-			mCurrentRecordStatusMessageView.setText(R.string.dialog_parse);
-			break;
-		default:
-			break;
-
-		}
-		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations. If available, use these APIs to fade-in
-		// the progress spinner.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			int shortAnimTime = getResources().getInteger(
-					android.R.integer.config_shortAnimTime);
-
-			mCurrentRecordStatusView.setVisibility(View.VISIBLE);
-			mCurrentRecordStatusView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mCurrentRecordStatusView
-									.setVisibility(show ? View.VISIBLE
-											: View.GONE);
-						}
-					});
-
-			mCurrentRecordView.setVisibility(View.VISIBLE);
-			mCurrentRecordView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mCurrentRecordView.setVisibility(show ? View.GONE
-									: View.VISIBLE);
-							// if (mDetailsView != null) {
-							// mDetailsView.setVisibility(show ? View.GONE
-							// : View.VISIBLE);
-							// }
-						}
-					});
-		} else {
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
-			// if (mDetailsView != null) {
-			// mDetailsView.setVisibility(show ? View.GONE : View.VISIBLE);
-			// }
-			mCurrentRecordView.setVisibility(show ? View.GONE : View.VISIBLE);
-			mCurrentRecordStatusView.setVisibility(show ? View.VISIBLE
-					: View.GONE);
-
 		}
 	}
 
@@ -591,7 +571,7 @@ public class RecordFragment extends ListFragment {
 		courseCenterView.setText(mCurrentRecord.mCourseCenter);
 		courseStudiesView.setText(mCurrentRecord.mCourseStudies);
 		SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-				setRecordList(), R.layout.record_list_item, subjectsFrom,
+				prepareRecordList(), R.layout.record_list_item, subjectsFrom,
 				subjectsTo);
 		setListAdapter(adapter);
 		if (details != null) {
@@ -599,7 +579,7 @@ public class RecordFragment extends ListFragment {
 		}
 	}
 
-	public ArrayList<HashMap<String, String>> setRecordList() {
+	public ArrayList<HashMap<String, String>> prepareRecordList() {
 		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
 		ArrayList<String> subjectsList = new ArrayList<String>();
 		for (int i = 0; i < mCurrentRecord.mSubjectsList.size(); i++) {
@@ -625,12 +605,12 @@ public class RecordFragment extends ListFragment {
 		String[] from = { GradesContract.CoursesTable.COL_CO_NAME };
 		int[] to = { android.R.id.text1 };
 		SpinnerAdapter adapter = new SimpleAdapter(getActivity(),
-				setSpinnerList(),
+				prepareSpinnerList(),
 				android.R.layout.simple_spinner_dropdown_item, from, to);
 		setSpinnerAdapter(adapter);
 	}
 
-	public ArrayList<HashMap<String, String>> setSpinnerList() {
+	public ArrayList<HashMap<String, String>> prepareSpinnerList() {
 		ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
 		for (int i = 0; i < mStudent.mRecordCount; i++) {
 			HashMap<String, String> item = new HashMap<String, String>();
@@ -654,5 +634,25 @@ public class RecordFragment extends ListFragment {
 			result = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < 3;
 		}
 		return result;
+	}
+
+	public void failedDownload(String response, int errorCode) {
+		switch (errorCode) {
+		case ConnectLoader.ERROR_JSON:
+			Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
+			break;
+		case ConnectLoader.ERROR_NO_JSON:
+			if (response.contains("HTTP Status 403")
+					|| response.contains("HTTP Status 401")) {
+				Toast.makeText(getActivity(), R.string.error_login,
+						Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(getActivity(), R.string.error_connecting,
+						Toast.LENGTH_LONG).show();
+			}
+			break;
+		default:
+			break;
+		}
 	}
 }

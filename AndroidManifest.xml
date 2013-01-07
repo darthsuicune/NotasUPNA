@@ -25,13 +25,16 @@
             </intent-filter>
         </activity>
         <activity 
-            android:name=".RecordActivity">
+            android:name=".RecordActivity"
+            android:label="@string/record_title">
         </activity>
         <activity 
-            android:name=".DetailsActivity">
+            android:name=".DetailsActivity"
+            android:label="@string/subject">
         </activity>
         <activity 
-            android:name=".PreferencesActivity">
+            android:name=".PreferencesActivity"
+            android:label="@string/preferences">
         </activity>
         <provider 
             android:name=".database.GradesDBProvider" 
