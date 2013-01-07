@@ -116,7 +116,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 		} else if (preference.getKey().equals(
 				getString(R.string.preference_update_time))) {
 			
-			setAlarm((String) newValue);
+			setAlarm(Long.parseLong((String) newValue));
 		}
 		return true;
 	}
@@ -189,17 +189,15 @@ public class PreferencesActivity extends PreferenceActivity implements
 		}
 	}
 	
-	private void setAlarm(String when) {
-		long updateTime = Long.parseLong(when);
+	private void setAlarm(long interval) {
 		
 		Intent alarm = new Intent(this, GradesUpdater.class);
 		PendingIntent operation = PendingIntent.getService(this, GradesUpdater.SERVICE_ID,
 				alarm, PendingIntent.FLAG_CANCEL_CURRENT);
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		
-		if (updateTime != 0) {
-			long lastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);			
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, lastUpdate + updateTime, updateTime, operation);
+		if (interval != 0) {
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, interval, operation);
 		} else {
 			alarmManager.cancel(operation);
 		}

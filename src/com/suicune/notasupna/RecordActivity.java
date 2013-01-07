@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -18,18 +19,19 @@ import com.suicune.notasupna.helpers.GradesUpdater;
 @SuppressLint("NewApi")
 public class RecordActivity extends ActionBarActivity {
 	public static final String EXTRA_DOWNLOADED_DATA = "downloaded data";
-	
+
 	private RecordFragment mRecordFragment;
 	private SharedPreferences prefs;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		if(isFirstRun()){
-			prefs.edit().putBoolean(getString(R.string.first_run), true).commit();
+
+		if (isFirstRun()) {
+			prefs.edit().putBoolean(getString(R.string.first_run), false)
+					.commit();
 			setAlarm();
 		}
 
@@ -45,7 +47,8 @@ public class RecordActivity extends ActionBarActivity {
 	@Override
 	protected void onResume() {
 		mRecordFragment = RecordFragment.getInstance();
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		FragmentTransaction transaction = getSupportFragmentManager()
+				.beginTransaction();
 		transaction.replace(R.id.record_record_fragment, mRecordFragment);
 		transaction.commit();
 		super.onResume();
@@ -57,18 +60,22 @@ public class RecordActivity extends ActionBarActivity {
 		inflater.inflate(R.menu.action_bar_record, menu);
 		return true;
 	}
-	
+
 	private boolean isFirstRun() {
-		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.first_run), false);
+		return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+				getString(R.string.first_run), true);
 	}
 	
-	private void setAlarm() {
-		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-		
-		long when = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);
-		long interval = prefs.getLong(getString(R.string.preference_update_time), Long.parseLong(getString(R.string.update_24_hour_value)));
-		Intent intent = new Intent(this, GradesUpdater.class);
-		PendingIntent operation = PendingIntent.getService(this, GradesUpdater.SERVICE_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, when, interval, operation);
+	public void setAlarm(){
+		long period = Long.parseLong(prefs.getString(
+				PreferencesActivity.PREFERENCE_UPDATE_TIME, "0"));
+	
+		AlarmManager alarm = (AlarmManager) this
+				.getSystemService(Context.ALARM_SERVICE);
+		Intent newIntent = new Intent(this, GradesUpdater.class);
+		PendingIntent operation = PendingIntent.getService(this, GradesUpdater.SERVICE_ID,
+				newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + period, period, operation);
+
 	}
 }
