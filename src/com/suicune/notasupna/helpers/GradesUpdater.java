@@ -140,7 +140,6 @@ public class GradesUpdater extends IntentService {
 
 	private void parseResponse(String response) {
 		if(response == null){
-			sendNotification(null);
 			Log.d(SERVICE_NAME, "Download error. No Response from server.");
 		}else {
 			try{
