@@ -11,7 +11,10 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -41,6 +44,12 @@ public class GradesUpdater extends IntentService {
 	public static final int NOTIFICATION_NEW_GRADES = 1;
 
 	private SharedPreferences prefs;
+	
+	private String mUserName;
+	private String mPassWord;
+	private String mLanguage;
+	
+	private URL mUrl;
 
 	/*
 	 * Public constructor. Mandatory to pass a String with the name in the
@@ -74,33 +83,29 @@ public class GradesUpdater extends IntentService {
 		/*
 		 * Retrieve login information and language
 		 */
-		String userName = PreferencesActivity.getUserName(this);
-		String passWord = PreferencesActivity.getPassWord(this);
-		String language = PreferencesActivity.getRecordLanguage(this);
-		URL url = getServerURL(language);
-		String response = connectToServer(url, userName, passWord);
-		parseResponse(response, language);
+		mUserName = PreferencesActivity.getUserName(this);
+		mPassWord = PreferencesActivity.getPassWord(this);
+		mLanguage = PreferencesActivity.getRecordLanguage(this);
+		setServerURL();
+		parseResponse(connectToServer());
 	}
 
-	private URL getServerURL(String language) {
-		URL url = null;
+	private void setServerURL() {
 		try {
-			if (language
+			if (mLanguage
 					.equalsIgnoreCase(getString(R.string.language_code_basque))) {
-				url = new URL("https", ConnectLoader.server,
+				mUrl = new URL("https", ConnectLoader.server,
 						ConnectLoader.port, ConnectLoader.resource_eu);
 			} else {
-				url = new URL("https", ConnectLoader.server,
+				mUrl = new URL("https", ConnectLoader.server,
 						ConnectLoader.port, ConnectLoader.resource_es);
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-
-		return url;
 	}
 
-	private String connectToServer(URL url, String userName, String password) {
+	private String connectToServer() {
 		String response = null;
 		/*
 		 * Using the Apache libraries for connections allows easy handling of
@@ -112,8 +117,8 @@ public class GradesUpdater extends IntentService {
 		 */
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-				new UsernamePasswordCredentials(userName, password));
-		HttpGet request = new HttpGet(url.toExternalForm());
+				new UsernamePasswordCredentials(mUserName, mPassWord));
+		HttpGet request = new HttpGet(mUrl.toExternalForm());
 
 		/*
 		 * To parse the response we need to look for general Exceptions, because
@@ -136,28 +141,54 @@ public class GradesUpdater extends IntentService {
 		return response;
 	}
 
-	private void parseResponse(String response, String language) {
+	private void parseResponse(String response) {
 		if(response == null){
+			sendNotification(null);
 			Log.d(SERVICE_NAME, "Download error. No Response from server.");
-		}else if (response.contains("HTTP")) {
-			Log.d(SERVICE_NAME, "Download error. Response from server: "
-					+ response);
-		} else {
-			int length;
-			if (PreferencesActivity.getRecordLanguage(this).equalsIgnoreCase(
-					getString(R.string.language_code_basque))) {
-				length = prefs.getInt(PreferencesActivity.DATA_EU, 0);
-			} else {
-				length = prefs.getInt(PreferencesActivity.DATA_ES, 0);
+		}else {
+			try{
+				int length;
+				new JSONObject(response);
+				
+				if (mLanguage.equalsIgnoreCase(
+						getString(R.string.language_code_basque))) {
+					length = prefs.getInt(PreferencesActivity.DATA_EU, 0);
+				} else {
+					length = prefs.getInt(PreferencesActivity.DATA_ES, 0);
+				}
+				if (length != response.length()) {
+					if(mLanguage.equalsIgnoreCase(getString(R.string.language_code_basque))){
+						prefs.edit().putLong(PreferencesActivity.DATA_EU, length).commit();
+					} else {
+						prefs.edit().putLong(PreferencesActivity.DATA_ES, length).commit();
+					}
+					sendNotification(response);
+				} else {
+					// Show a info message in the logcat to say that no new data has
+					// been downloading.
+					Log.i(SERVICE_NAME, "Download success, no new data");
+				}
+			}catch(JSONException e){
+				Log.d(SERVICE_NAME, "Download error. Response from server: "
+						+ response);
 			}
-			if (length == response.length()) {
-				// GradesParser.parseData(this, response, language);
-				sendNotification();
-			} else {
-				// Show a info message in the logcat to say that no new data has
-				// been downloading.
-				Log.i(SERVICE_NAME, "Download success, no new data");
-			}
+		}
+		
+		setNewAlarm();
+	}
+	
+	private void setNewAlarm(){
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		long period = Long.parseLong(prefs.getString(
+				PreferencesActivity.PREFERENCE_UPDATE_TIME, "0"));
+		if (period != 0) {
+			AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent newIntent = new Intent(this, GradesUpdater.class);
+			PendingIntent operation = PendingIntent.getService(this, GradesUpdater.SERVICE_ID,
+					newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+			alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + period, operation);
 		}
 	}
 
@@ -168,7 +199,7 @@ public class GradesUpdater extends IntentService {
 	 * 
 	 * TODO add configuration for the notifications.
 	 */
-	private void sendNotification() {
+	private void sendNotification(String response) {
 		// Get the notification manager service from the system
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -176,6 +207,9 @@ public class GradesUpdater extends IntentService {
 		Intent notificationIntent = new Intent(this, RecordActivity.class);
 		notificationIntent.addFlags(Intent.FLAG_FROM_BACKGROUND);
 		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		if(response != null){
+			notificationIntent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
+		}
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
 				notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 

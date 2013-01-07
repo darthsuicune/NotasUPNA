@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.suicune.notasupna.PreferencesActivity;
 
@@ -32,15 +31,13 @@ public class AlarmStarter extends BroadcastReceiver {
 		 * once a day, so a single wake up should not consume too much battery.
 		 */
 		if (period != 0) {
-			long lastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);
 			AlarmManager alarm = (AlarmManager) context
 					.getSystemService(Context.ALARM_SERVICE);
 			Intent newIntent = new Intent(context, GradesUpdater.class);
 			PendingIntent operation = PendingIntent.getService(context, GradesUpdater.SERVICE_ID,
 					newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-			alarm.setRepeating(AlarmManager.RTC_WAKEUP, lastUpdate + period,
-					period, operation);
+			alarm.set(AlarmManager.RTC_WAKEUP, 0, operation);
 		}
 	}
 }

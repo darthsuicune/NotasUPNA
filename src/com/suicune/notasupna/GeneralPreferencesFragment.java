@@ -94,7 +94,7 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements
 		} else if (preference.getKey().equals(
 				getString(R.string.preference_update_time))) {
 
-			setAlarm((String) newValue);
+			setAlarm(Long.parseLong((String) newValue));
 
 		}
 		// Sort order changed
@@ -159,17 +159,18 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements
 		}
 	}
 
-	private void setAlarm(String when) {
-		long updateTime = Long.parseLong(when);
-		if (updateTime != 0) {
-			AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-			long lastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);
-			Intent alarm = new Intent(getActivity(), GradesUpdater.class);
-			PendingIntent operation = PendingIntent.getService(getActivity(),
-					GradesUpdater.SERVICE_ID, alarm,
-					PendingIntent.FLAG_CANCEL_CURRENT);
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, lastUpdate
-					+ updateTime, updateTime, operation);
+	private void setAlarm(long interval) {
+		AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+		Intent alarm = new Intent(getActivity(), GradesUpdater.class);
+		PendingIntent operation = PendingIntent.getService(getActivity(),
+				GradesUpdater.SERVICE_ID, alarm,
+				PendingIntent.FLAG_CANCEL_CURRENT);
+		if (interval != 0) {
+			
+			
+			alarmManager.set(AlarmManager.RTC_WAKEUP, 0, operation);
+		} else {
+			
 		}
 	}
 }
