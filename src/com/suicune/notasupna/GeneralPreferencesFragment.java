@@ -53,23 +53,28 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements
 
 	private void showLastUpdate() {
 		Preference lastUpdatePreference = findPreference(getString(R.string.last_update));
-		Date lastUpdate = new Date(prefs.getLong(PreferencesActivity.LAST_UPDATE, 0));
-		String time = DateFormat.getTimeFormat(getActivity()).format(lastUpdate);
-		String date = DateFormat.getDateFormat(getActivity())
-				.format(lastUpdate);
-		lastUpdatePreference.setSummary(date + " - " + time);
+		long longLastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);
+		if(longLastUpdate == 0){
+			lastUpdatePreference.setSummary(R.string.no_data_yet);
+		} else {
+			Date lastUpdate = new Date(longLastUpdate);
+			String time = DateFormat.getTimeFormat(getActivity()).format(lastUpdate);
+			String date = DateFormat.getDateFormat(getActivity())
+					.format(lastUpdate);
+			lastUpdatePreference.setSummary(date + " - " + time);
+		}
 	}
 
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		changeSummary(preference, newValue);
-		//Stub in case i want to add anything in the future
 		// Language changed
-//		if (preference.getKey().equals(
-//				getString(R.string.preference_record_language))) {
+		if (preference.getKey().equals(
+				getString(R.string.preference_record_language))) {
 //			String newLanguage = (String) newValue;
-//
-//		}
+			getActivity().setResult(PreferencesActivity.RESULT_LANGUAGE_CHANGED);
+
+		}
 		// Sort order changed
 //		else if (preference.getKey().equals(
 //				getString(R.string.preference_sort_order))) {

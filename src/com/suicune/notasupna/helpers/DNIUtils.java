@@ -74,7 +74,7 @@ public class DNIUtils {
 
 	public static boolean checkLetter(String dni) {
 		boolean result = false;
-		char letter = dni.charAt(dni.length() - 1);
+		char letter = Character.toUpperCase(dni.charAt(dni.length() - 1));
 		if (dni.length() == 9) {
 			if (TextUtils.isDigitsOnly(dni.substring(0, 8))
 					&& letter == getLetter(dni.substring(0, 8))) {

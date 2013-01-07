@@ -254,7 +254,7 @@ public class LoginActivity extends ActionBarActivity {
 	
 	public void saveLoginData(int dataLength){
 		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		editor.putString(PreferencesActivity.PREFERENCE_USER_NAME, mUserName);
+		editor.putString(PreferencesActivity.PREFERENCE_USER_NAME, mUserName.toUpperCase());
 		try {
 			editor.putString(PreferencesActivity.PREFERENCE_PASS_WORD,
 					CryptoBlock.encrypt(mPassWord));
