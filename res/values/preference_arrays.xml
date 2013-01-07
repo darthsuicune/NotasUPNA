@@ -2,15 +2,11 @@
 <resources>
     <string-array name="preference_language_list">
         <item>@string/spanish</item>
-        <item>@string/english</item>
         <item>@string/basque</item>
-        <item>@string/default_language</item>
     </string-array>
     <string-array name="preference_language_list_values">
         <item>@string/language_code_spanish</item>
-        <item>@string/language_code_english</item>
         <item>@string/language_code_basque</item>
-        <item>@string/language_code_default</item>
     </string-array>
     <string-array name="preference_sort_order">
         <item>@string/sort_order_time_asc</item>
@@ -26,28 +22,20 @@
     </string-array>
     <string-array name="preference_update_time">
         <item>@string/update_5_minutes</item>
-        <item>@string/update_10_minutes</item>
         <item>@string/update_15_minutes</item>
 	    <item>@string/update_half_hour</item>
 	    <item>@string/update_1_hour</item>
 	    <item>@string/update_2_hour</item>
-	    <item>@string/update_6_hour</item>
-	    <item>@string/update_12_hour</item>
 	    <item>@string/update_24_hour</item>
-	    <item>@string/update_1_week</item>
 	    <item>@string/update_no</item>
     </string-array>
     <string-array name="preference_update_time_values">
         <item>@string/update_5_minutes_value</item>
-        <item>@string/update_10_minutes_value</item>
         <item>@string/update_15_minutes_value</item>
 	    <item>@string/update_half_hour_value</item>
 	    <item>@string/update_1_hour_value</item>
 	    <item>@string/update_2_hour_value</item>
-	    <item>@string/update_6_hour_value</item>
-	    <item>@string/update_12_hour_value</item>
 	    <item>@string/update_24_hour_value</item>
-	    <item>@string/update_1_week_value</item>
 	    <item>@string/update_no_value</item>
     </string-array>
 </resources>

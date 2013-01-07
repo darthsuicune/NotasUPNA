@@ -2,7 +2,6 @@ package com.suicune.notasupna;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,6 +100,8 @@ public class RecordFragment extends ListFragment {
 
 	@Override
 	public void onAttach(Activity activity) {
+		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			isHoneyComb = true;
 		} else {
@@ -189,7 +190,8 @@ public class RecordFragment extends ListFragment {
 			startActivityForResult(intent, ACTIVITY_PREFERENCES);
 			break;
 		case R.id.action_help:
-			new AboutFragment().show(getActivity().getSupportFragmentManager(), AboutFragment.DIALOG_ABOUT);
+			new AboutFragment().show(getActivity().getSupportFragmentManager(),
+					AboutFragment.DIALOG_ABOUT);
 			break;
 		}
 		return true;
@@ -202,12 +204,12 @@ public class RecordFragment extends ListFragment {
 			if (mCurrentSubject != null) {
 				mDetailsFragment.setSubject(mCurrentSubject);
 			}
-			
+
 			FragmentTransaction transaction = getActivity()
 					.getSupportFragmentManager().beginTransaction();
 			transaction.replace(R.id.record_details, mDetailsFragment);
 			transaction.commit();
-			
+
 			mDetailsHintView.setVisibility(View.GONE);
 			mDetailsView.setVisibility(View.VISIBLE);
 		} else {
@@ -266,7 +268,6 @@ public class RecordFragment extends ListFragment {
 	}
 
 	private void restoreParameters() {
-		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		mCurrentCourse = prefs
 				.getInt(PreferencesActivity.LAST_COURSE_VIEWED, 0);
 		mCursorPosition = prefs.getInt(PreferencesActivity.LAST_SUBJECT_VIEWED,
@@ -289,8 +290,8 @@ public class RecordFragment extends ListFragment {
 	}
 
 	private void loadData() {
-		getActivity().getSupportLoaderManager().restartLoader(LOADER_COURSE, null,
-				new CursorLoaderHelper());
+		getActivity().getSupportLoaderManager().restartLoader(LOADER_COURSE,
+				null, new CursorLoaderHelper());
 	}
 
 	private void showData(boolean isLoader) {
@@ -365,13 +366,11 @@ public class RecordFragment extends ListFragment {
 
 	private void changeLanguage() {
 		if (needsDownload()) {
-			Locale.setDefault(new Locale(
-					prefs.getString(PreferencesActivity.PREFERENCE_APP_LANGUAGE, getString(R.string.language_code_spanish))));
 			getActivity().getSupportLoaderManager().restartLoader(
 					LOADER_CONNECTION, null, new AsyncHelper());
 		} else {
-			getActivity().getSupportLoaderManager().restartLoader(LOADER_COURSE,
-					null, new CursorLoaderHelper());
+			getActivity().getSupportLoaderManager().restartLoader(
+					LOADER_COURSE, null, new CursorLoaderHelper());
 		}
 
 	}
@@ -600,7 +599,8 @@ public class RecordFragment extends ListFragment {
 										RecordActivity.EXTRA_DOWNLOADED_DATA,
 										result);
 								getActivity().getSupportLoaderManager()
-										.restartLoader(LOADER_PARSER, args, this);
+										.restartLoader(LOADER_PARSER, args,
+												this);
 							} else {
 								Toast.makeText(getActivity(),
 										R.string.no_new_data, Toast.LENGTH_LONG)
@@ -622,7 +622,7 @@ public class RecordFragment extends ListFragment {
 					}
 				}
 				isConnecting = false;
-				if(!isParsing && !isLoading){
+				if (!isParsing && !isLoading) {
 					showProgress(false, PROGRESS_SIGN_IN);
 				}
 
@@ -630,7 +630,7 @@ public class RecordFragment extends ListFragment {
 			case LOADER_PARSER:
 				isParsing = false;
 				loadData();
-				if(!isConnecting && !isLoading){
+				if (!isConnecting && !isLoading) {
 					showProgress(false, PROGRESS_PARSE);
 				}
 				break;

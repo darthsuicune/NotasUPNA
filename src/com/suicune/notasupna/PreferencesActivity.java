@@ -31,9 +31,8 @@ public class PreferencesActivity extends PreferenceActivity implements
 	public static final String LAST_COURSE_VIEWED = "last course viewed";
 	public static final String LAST_SUBJECT_VIEWED = "last subject viewed";
 
-	public static final String PREFERENCE_UPDATE_TIME = "update time";
+	public static final String PREFERENCE_UPDATE_TIME = "update_time";
 
-	public static final String PREFERENCE_APP_LANGUAGE = "language";
 	public static final String PREFERENCE_USER_NAME = "userName";
 	public static final String PREFERENCE_PASS_WORD = "login token";
 
@@ -72,10 +71,10 @@ public class PreferencesActivity extends PreferenceActivity implements
 	private void loadPreferences() {
 		this.addPreferencesFromResource(R.xml.preferences_activity);
 
-		languagePreference = findPreference(getString(R.string.preference_app_language));
+		languagePreference = findPreference(getString(R.string.preference_record_language));
 		languagePreference.setOnPreferenceChangeListener(this);
 		changeSummary(languagePreference, prefs.getString(
-				getString(R.string.preference_app_language),
+				getString(R.string.preference_record_language),
 				getString(R.string.default_language)));
 		sortOrderPreference = findPreference(getString(R.string.preference_sort_order));
 		sortOrderPreference.setOnPreferenceChangeListener(this);
@@ -90,7 +89,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		// Language changed
 		if (preference.getKey().equals(
-				getString(R.string.preference_app_language))) {
+				getString(R.string.preference_record_language))) {
 			String newLanguage = (String) newValue;
 			changeLanguage(newLanguage);
 		}
@@ -101,16 +100,10 @@ public class PreferencesActivity extends PreferenceActivity implements
 	private void changeSummary(Preference preference, Object newValue) {
 		// Language changed
 		if (preference.getKey().equals(
-				getString(R.string.preference_app_language))) {
+				getString(R.string.preference_record_language))) {
 			String newLanguage = (String) newValue;
 			if (newLanguage.equals(getString(R.string.language_code_basque))) {
 				preference.setSummary(R.string.basque);
-			} else if (newLanguage
-					.equals(getString(R.string.language_code_default))) {
-				preference.setSummary(R.string.default_language);
-			} else if (newLanguage
-					.equals(getString(R.string.language_code_english))) {
-				preference.setSummary(R.string.english);
 			} else if (newLanguage
 					.equals(getString(R.string.language_code_spanish))) {
 				preference.setSummary(R.string.spanish);

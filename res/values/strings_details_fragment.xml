@@ -10,7 +10,6 @@
     <string name="record_details_select_item">"Elige un elemento de la lista."</string>
     <string name="subject_year">"Curso: "</string>
     <string name="subject_credits">"Créditos: "</string>
-    <string name="subject_type">"Tipo: "</string>
     <string name="subject_grade_name">"Calificación: "</string>
     <string name="subject_grade">"Nota: "</string>
     <string name="subject_taken">"Realizado: "</string>

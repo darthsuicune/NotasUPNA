@@ -2,13 +2,9 @@
 <resources>
     <string name="preferences">"Settings"</string>
     <string name="confirm">"Confirm"</string>
-    <string name="cancel">"Cancel"</string>
     <string name="ok">"OK"</string>
     <string name="no_new_data">"There is no new grades."</string>
     <string name="no">"No"</string>
     <string name="yes">"Sí"</string>
-    <string name="spanish">"Castellano"</string>
-    <string name="basque">"Euskara"</string>
-    <string name="english">"English"</string>
     <string name="share">"Share"</string>
 </resources>

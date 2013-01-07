@@ -7,7 +7,6 @@
     <string name="record_details_select_item">"Choose a subject to display."</string>
     <string name="subject_year">"Year: "</string>
     <string name="subject_credits">"Credits: "</string>
-    <string name="subject_type">"Type: "</string>
     <string name="subject_grade_name">"Grade name: "</string>
     <string name="subject_grade">"Grade: "</string>
     <string name="subject_taken">"Taken: "</string>

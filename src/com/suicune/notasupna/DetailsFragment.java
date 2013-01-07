@@ -34,7 +34,7 @@ public class DetailsFragment extends Fragment {
 	private Grade mGrade = null;
 
 	private boolean showCallsAsDialog;
-	
+
 	ShareActionProvider mShareActionProvider;
 
 	public static DetailsFragment newInstance(int position) {
@@ -66,7 +66,7 @@ public class DetailsFragment extends Fragment {
 				prepareCallsList();
 			}
 		}
-		if(mShareActionProvider != null){
+		if (mShareActionProvider != null) {
 			mShareActionProvider.setShareIntent(getShareIntent());
 		}
 	}
@@ -74,9 +74,10 @@ public class DetailsFragment extends Fragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.action_bar_details, menu);
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
-			mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.action_details_share).getActionProvider();
-			if(mSubject != null){
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			mShareActionProvider = (ShareActionProvider) menu.findItem(
+					R.id.action_details_share).getActionProvider();
+			if (mSubject != null) {
 				mShareActionProvider.setShareIntent(getShareIntent());
 			}
 		}
@@ -101,11 +102,16 @@ public class DetailsFragment extends Fragment {
 		}
 		return true;
 	}
-	
+
 	private Intent getShareIntent() {
 		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_grade_title));
-		intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_grade, mSubject.mSubjectName, mSubject.getLastGrade().mGradeNumber,mSubject.getLastGrade().mGradeName));
+		intent.putExtra(Intent.EXTRA_SUBJECT,
+				getString(R.string.share_grade_title));
+		intent.putExtra(
+				Intent.EXTRA_TEXT,
+				getString(R.string.share_grade, mSubject.mSubjectName,
+						mSubject.getLastGrade().mGradeNumber,
+						mSubject.getLastGrade().mGradeName));
 		intent.setType("text/plain");
 		return intent;
 	}
@@ -117,7 +123,7 @@ public class DetailsFragment extends Fragment {
 		mGrade = mSubject.mGradesList.get(mSubject.mGradesList.size() - 1);
 		mCallsFragment = new CallsDialogFragment();
 		mCallsFragment.setSubject(mSubject);
-		
+
 	}
 
 	public long getShownIndex() {

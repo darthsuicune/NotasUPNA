@@ -7,9 +7,9 @@
         <ListPreference
             android:entries="@array/preference_language_list"
             android:entryValues="@array/preference_language_list_values"
-            android:key="@string/preference_app_language"
+            android:key="@string/preference_record_language"
             android:title="@string/language"
-            android:defaultValue="@string/language_code_default" />
+            android:defaultValue="@string/language_code_spanish" />
     </PreferenceCategory>
     <PreferenceCategory 
         android:title="@string/record_title" >
