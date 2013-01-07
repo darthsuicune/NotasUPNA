@@ -3,6 +3,7 @@
     <string name="language_code_spanish">es</string>
     <string name="language_code_basque">eu</string>
     <string name="last_update">"Última actualización"</string>
+    <string name="no_data_yet">"Aun no hay datos."</string>
     <string name="default_language">"Lenguaje del sistema"</string>
     <string name="sort_order_alpha_asc">"Alfabéticamente (A-Z)"</string>
     <string name="sort_order_alpha_desc">"Alfabéticamente (Z-A)"</string>
@@ -32,4 +33,7 @@
     <string name="preference_update_time">"update_time"</string>
     <string name="preference_sort_order">"sort_order"</string>
     <string name="preference_record_language">"record_language"</string>
+    <string name="language">"Idioma del expediente"</string>
+    <string name="spanish">"Castellano"</string>
+    <string name="basque">"Euskera"</string>
 </resources>

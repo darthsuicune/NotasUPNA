@@ -1,7 +1,6 @@
 package com.suicune.notasupna;
 
 import java.util.Date;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
@@ -18,6 +17,7 @@ import android.text.format.DateFormat;
 import com.suicune.notasupna.helpers.CryptoBlock;
 
 @SuppressLint("NewApi")
+@SuppressWarnings("deprecation")
 public class PreferencesActivity extends PreferenceActivity implements
 		OnPreferenceChangeListener {
 	public static final int RESULT_LANGUAGE_CHANGED = 123;
@@ -67,22 +67,28 @@ public class PreferencesActivity extends PreferenceActivity implements
 		transaction.commit();
 	}
 
-	@SuppressWarnings("deprecation")
 	private void loadPreferences() {
 		this.addPreferencesFromResource(R.xml.preferences_activity);
-
+		
+		prepareLanguagePreference();
+		prepareSortOrderPreference();
+		showLastUpdate();
+	} 
+	
+	private void prepareLanguagePreference(){
 		languagePreference = findPreference(getString(R.string.preference_record_language));
 		languagePreference.setOnPreferenceChangeListener(this);
 		changeSummary(languagePreference, prefs.getString(
 				getString(R.string.preference_record_language),
 				getString(R.string.default_language)));
+	}
+	
+	private void prepareSortOrderPreference(){
 		sortOrderPreference = findPreference(getString(R.string.preference_sort_order));
 		sortOrderPreference.setOnPreferenceChangeListener(this);
 		changeSummary(sortOrderPreference, prefs.getString(
 				getString(R.string.preference_sort_order),
 				getString(R.string.sort_order_time_desc)));
-		
-		showLastUpdate();
 	}
 
 	@Override
@@ -90,8 +96,8 @@ public class PreferencesActivity extends PreferenceActivity implements
 		// Language changed
 		if (preference.getKey().equals(
 				getString(R.string.preference_record_language))) {
-			String newLanguage = (String) newValue;
-			changeLanguage(newLanguage);
+//			String newLanguage = (String) newValue;
+			setResult(RESULT_LANGUAGE_CHANGED);
 		}
 		changeSummary(preference, newValue);
 		return true;
@@ -127,30 +133,19 @@ public class PreferencesActivity extends PreferenceActivity implements
 			}
 		}
 	}
-
-	public void changeLanguage(String newLanguage) {
-		Locale.setDefault(new Locale(newLanguage));
-		if (newLanguage.equals(getString(R.string.language_code_basque))) {
-			prefs.edit()
-					.putString(getString(R.string.preference_record_language),
-							getString(R.string.language_code_basque)).commit();
-		} else if (newLanguage
-				.equals(getString(R.string.language_code_spanish))) {
-			prefs.edit()
-					.putString(getString(R.string.preference_record_language),
-							getString(R.string.language_code_spanish)).commit();
-		}
-		
-		languagePreference.setTitle(R.string.language);
-		sortOrderPreference.setTitle(R.string.preference_sort_order);
-		setResult(RESULT_LANGUAGE_CHANGED);
-	}
 	
-	@SuppressWarnings("deprecation")
 	private void showLastUpdate() {
 		Preference lastUpdatePreference = findPreference(getString(R.string.last_update));
-		String lastUpdate = DateFormat.getDateFormat(this).format(new Date(prefs.getLong(PreferencesActivity.LAST_UPDATE, 0)));
-		lastUpdatePreference.setSummary(lastUpdate);
+		long longLastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);
+		if(longLastUpdate == 0){
+			lastUpdatePreference.setSummary(R.string.no_data_yet);
+		} else {
+			Date lastUpdate = new Date(longLastUpdate);
+			String time = DateFormat.getTimeFormat(this).format(lastUpdate);
+			String date = DateFormat.getDateFormat(this)
+					.format(lastUpdate);
+			lastUpdatePreference.setSummary(date + " - " + time);
+		}
 	}
 
 	public static String getRecordLanguage(Context context) {

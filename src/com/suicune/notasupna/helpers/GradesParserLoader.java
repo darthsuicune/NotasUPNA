@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.suicune.notasupna.PreferencesActivity;
@@ -20,13 +21,11 @@ import com.suicune.notasupna.database.GradesContract;
 
 public class GradesParserLoader extends AsyncTaskLoader<String> {
 	public static final String PARSE_FAILED = "FAIL";
-	private String mJsonString;
-	private Context mContext;
+	private String mJsonString, language;
 
 	public GradesParserLoader(Context context, Bundle args) {
 		super(context);
 		mJsonString = args.getString(RecordActivity.EXTRA_DOWNLOADED_DATA);
-		mContext = context;
 	}
 
 	// Constants defined for the results list
@@ -73,19 +72,21 @@ public class GradesParserLoader extends AsyncTaskLoader<String> {
 
 	@Override
 	protected void onStartLoading() {
-		forceLoad();
+		if(language == null){
+			forceLoad();
+		}
 		super.onStartLoading();
 	}
 
 	@Override
 	public String loadInBackground() {
 		String nia, coCode, planName, subjectName;
-		String language = PreferencesActivity.getRecordLanguage(mContext);
+		language = PreferencesActivity.getRecordLanguage(getContext());
 
 		try {
 			JSONObject full = new JSONObject(mJsonString);
 
-			ContentResolver cr = mContext.getContentResolver();
+			ContentResolver cr = getContext().getContentResolver();
 			// Parse the student info, as it's just one item with multiple
 			// subitems
 			JSONObject student = full.getJSONObject(nObjectStudentInformation);
@@ -242,7 +243,7 @@ public class GradesParserLoader extends AsyncTaskLoader<String> {
 						} else {
 							gradeValues.put(
 									GradesContract.GradesTable.COL_GR_CALL,
-									mContext.getString(R.string.call_unknown));
+									getContext().getString(R.string.call_unknown));
 						}
 						gradeValues.put(
 								GradesContract.GradesTable.COL_GR_CALL_NUMBER,
@@ -263,7 +264,7 @@ public class GradesParserLoader extends AsyncTaskLoader<String> {
 			return "";
 		} catch (JSONException e) {
 			e.printStackTrace();
-			Toast.makeText(mContext, R.string.error_parsing, Toast.LENGTH_LONG)
+			Toast.makeText(getContext(), R.string.error_parsing, Toast.LENGTH_LONG)
 					.show();
 			return PARSE_FAILED;
 		}

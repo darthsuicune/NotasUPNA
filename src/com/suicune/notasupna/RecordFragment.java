@@ -169,7 +169,13 @@ public class RecordFragment extends ListFragment {
 			break;
 		case ACTIVITY_PREFERENCES:
 			if (resultCode == PreferencesActivity.RESULT_LANGUAGE_CHANGED) {
-				changeLanguage();
+				if (needsDownload()) {
+					getActivity().getSupportLoaderManager().restartLoader(
+							LOADER_CONNECTION, null, new AsyncHelper());
+				} else {
+					getActivity().getSupportLoaderManager().restartLoader(
+							LOADER_COURSE, null, new CursorLoaderHelper());
+				}
 			} else {
 				showData(false);
 			}
@@ -362,17 +368,6 @@ public class RecordFragment extends ListFragment {
 				.equalsIgnoreCase(getString(R.string.sort_order_time_desc_value))) {
 			mStudent.sortByTime(false);
 		}
-	}
-
-	private void changeLanguage() {
-		if (needsDownload()) {
-			getActivity().getSupportLoaderManager().restartLoader(
-					LOADER_CONNECTION, null, new AsyncHelper());
-		} else {
-			getActivity().getSupportLoaderManager().restartLoader(
-					LOADER_COURSE, null, new CursorLoaderHelper());
-		}
-
 	}
 
 	private boolean needsDownload() {
@@ -594,6 +589,7 @@ public class RecordFragment extends ListFragment {
 						switch (error) {
 						case 0:
 							if (hasNewData(result.length())) {
+								
 								Bundle args = new Bundle();
 								args.putString(
 										RecordActivity.EXTRA_DOWNLOADED_DATA,
