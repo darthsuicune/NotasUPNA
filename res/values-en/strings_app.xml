@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">"UPNA Grades"</string>
+    <string name="record_title">"Record"</string>
+    <string name="login_title">"Sign in"</string>
+    <string name="subject">"Subject"</string>
+    <string name="language">"Language"</string>
+    <string name="service_title">"Grade update service"</string>
+    <string name="upna_logo_description">"UPNA logo"</string>
+    <string name="about_title">"About…"</string>
+    <string name="about_summary">"Author's details"</string>
+</resources>

@@ -2,12 +2,8 @@
 <resources>
     <string name="notification_ticker">"Hay nuevas notas"</string>
     <string name="notification_title">"Nuevas notas"</string>
-    <string name="dialog_close_session">"Va a borrar los datos de la aplicación en el teléfono. Esto supondrá tener que volver a descargarlos cuando quiera consultar de nuevo. Para salir sin borrar los datos pulse el botón \"Atrás\"."</string>
     <string name="login_progress_signing_in">"Conectando…"</string>
     <string name="loading_data">"Cargando datos…"</string>
-    <string name="dialog_change_language">"Has cambiado el idioma. ¿Quieres descargar los datos de las asignaturas en castellano?"</string>
-    <string name="language">"Idioma"</string>
-    <string name="language_not_supported">"El expediente no está disponible en el idioma seleccionado. Elija en que idioma quiere verlo."</string>
     <string name="about_text">"Notas UPNA v1.0
       
       Autor: Denís Lapuente

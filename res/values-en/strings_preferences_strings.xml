@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="last_update">"Last update"</string>
+    <string name="default_language">"System language"</string>
+    <string name="sort_order_alpha_asc">"Alphabetically (A-Z)"</string>
+    <string name="sort_order_alpha_desc">"Alphabetically (Z-A)"</string>
+    <string name="sort_order_time_asc">"Date (Old - New)"</string>
+    <string name="sort_order_time_desc">"Date (New - Old)"</string>
+    <string name="update_15_minutes">"15 minutes"</string>
+    <string name="update_1_hour">"One hour"</string>
+    <string name="update_24_hour">"24 hours"</string>
+    <string name="update_5_minutes">"5 minutes"</string>
+    <string name="update_no">"Only manual update"</string>
+    <string name="update_half_hour">"Half hour"</string>
+    <string name="update_2_hour">"2 hours"</string>
+    <string name="update_time">"Time between updates"</string>
+    <string name="sort_order">"Subject sort order"</string>
+</resources>
