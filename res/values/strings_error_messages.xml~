@@ -3,7 +3,8 @@
     <string name="error_parsing">"Error en las notas. Descargue de nuevo los datos."</string>
     <string name="error_connection">"Hay un problema con su conexión a internet. Asegurese de estar conectado a internet para descargar los datos."</string>
     <string name="error_invalid_id">"El NIF es inválido"</string>
-    <string name="error_invalid_password">"La contraseña es incorrecta"</string>
+    <string name="error_invalid_password">"La contraseña es demasiado corta"</string>
+    <string name="error_incorrect_password">"La contraseña es incorrecta"</string>
     <string name="error_field_required">"Este campo no puede estar vacio"</string>
     <string name="error_login">"Error al iniciar sesión, asegurese de introducir correctamente usuario y contraseña"</string>
     <string name="error_grades">"Hay un error desconocido en los datos."</string>

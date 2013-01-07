@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string formatted="false" name="share_grade">"Ha salido la nota de %s. He tenido un %s, %s."</string>
+    <string name="share_grade_title">"New grades"</string>
+    <string name="other_calls">"See all calls"</string>
+    <string name="subject_total_calls">"Total calls: "</string>
+    <string name="record_details_select_item">"Choose a subject to display."</string>
+    <string name="subject_year">"Year: "</string>
+    <string name="subject_credits">"Credits: "</string>
+    <string name="subject_type">"Type: "</string>
+    <string name="subject_grade_name">"Grade name: "</string>
+    <string name="subject_grade">"Grade: "</string>
+    <string name="subject_taken">"Taken: "</string>
+    <string name="subject_calls_taken">"Calls taken: "</string>
+    <string name="subject_passed">"Passed: "</string>
+    <string name="subject_call">"Call: "</string>
+    <string name="subject_call_number">"Call number: "</string>
+    <string name="call_unknown">"Unknown"</string>
+    <string name="subject_time">"Date: "</string>
+    <string name="subject_provisional">"Provisional: "</string>
+    <string name="subject_revision_time">"Revision: "</string>
+    <string name="no_revision_time">"No revision time."</string>
+</resources>

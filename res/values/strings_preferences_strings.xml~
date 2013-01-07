@@ -30,8 +30,7 @@
     <string name="update_2_hour_value">"7200000"</string>
     <string name="update_time">"Intervalo de actualización"</string>
     <string name="preferences_category_general">"General"</string>
-    <string name="sort_order">"Orden de las asignaturas"</string>
-    <string name="preference_sort_order">"sort_order"</string>
+    <string name="preference_sort_order">"Orden de las asignaturas"</string>
     <string name="preference_record_language">"record_language"</string>
     <string name="preference_app_language">"app_language"</string>
 </resources>

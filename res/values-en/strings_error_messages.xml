@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="error_parsing">"Error in the downloaded data. Please download it again."</string>
+    <string name="error_connection">"There is a problem with your internet connection. Please make sure that you are connected to download the data."</string>
+    <string name="error_invalid_id">"The NIF is invalid"</string>
+    <string name="error_invalid_password">"The password is incorrect."</string>
+    <string name="error_field_required">"This field can't be empty"</string>
+    <string name="error_login">"Error when trying to sign in. Please make sure that your sign in information is correct."</string>
+    <string name="error_grades">"Unknown error."</string>
+    <string name="error_connecting">"Error when connecting to the server. Please try later."</string>
+    <string name="error_downloading">"There was an error while downloading the information. Please try again."</string>
+</resources>

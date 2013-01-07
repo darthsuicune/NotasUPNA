@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="close_session">"Close session"</string>
+    <string name="record_header_credits">"Total credits: "</string>
+    <string name="refresh">"Refresh"</string>
+    <string name="record_header_passed_total_credits">"Passed credits / total credits"</string>
+    <string name="record_header_nif">"NIF: "</string>
+    <string name="record_header_nia">"NIA: "</string>
+</resources>

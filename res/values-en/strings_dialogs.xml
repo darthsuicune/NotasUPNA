@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="notification_ticker">"There is new grades"</string>
+    <string name="notification_title">"New grades"</string>
+    <string name="login_progress_signing_in">"Signing in…"</string>
+    <string name="loading_data">"Loading data…"</string>
+    <string name="about_text">"Notas UPNA v1.0
+      
+Author: Denís Lapuente
+Contact: lapuente.denis@gmail.com
+
+Universidad Pública de Navarra (UPNA)"</string>
+</resources>
