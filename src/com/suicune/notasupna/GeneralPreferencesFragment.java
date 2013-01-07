@@ -166,11 +166,9 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements
 				GradesUpdater.SERVICE_ID, alarm,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		if (interval != 0) {
-			
-			
-			alarmManager.set(AlarmManager.RTC_WAKEUP, 0, operation);
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, interval, operation);
 		} else {
-			
+			alarmManager.cancel(operation);
 		}
 	}
 }

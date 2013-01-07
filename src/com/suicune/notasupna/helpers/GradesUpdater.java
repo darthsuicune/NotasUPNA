@@ -14,7 +14,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,7 +24,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.suicune.notasupna.PreferencesActivity;
 import com.suicune.notasupna.R;
@@ -67,7 +65,6 @@ public class GradesUpdater extends IntentService {
 	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		Toast.makeText(this, SERVICE_NAME, Toast.LENGTH_LONG).show();
 		if (ConnectLoader.isConnected(this)) {
 			downloadGrades();
 		}
@@ -172,23 +169,6 @@ public class GradesUpdater extends IntentService {
 				Log.d(SERVICE_NAME, "Download error. Response from server: "
 						+ response);
 			}
-		}
-		
-		setNewAlarm();
-	}
-	
-	private void setNewAlarm(){
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		long period = Long.parseLong(prefs.getString(
-				PreferencesActivity.PREFERENCE_UPDATE_TIME, "0"));
-		if (period != 0) {
-			AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			Intent newIntent = new Intent(this, GradesUpdater.class);
-			PendingIntent operation = PendingIntent.getService(this, GradesUpdater.SERVICE_ID,
-					newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-			alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + period, operation);
 		}
 	}
 

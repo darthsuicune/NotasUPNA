@@ -23,8 +23,8 @@
     <string name="update_2_hour">"2 horas"</string>
     <string name="update_15_minutes_value">"900000"</string>
     <string name="update_1_hour_value">"3600000"</string>
-    <string name="update_24_hour_value">"86400000"</string>
-    <string name="update_5_minutes_value">"300000"</string>
+    <string name="update_24_hour_value">"3000"</string>
+    <string name="update_5_minutes_value">"6000"</string>
     <string name="update_no_value">"0"</string>
     <string name="update_half_hour_value">"1800000"</string>
     <string name="update_2_hour_value">"7200000"</string>

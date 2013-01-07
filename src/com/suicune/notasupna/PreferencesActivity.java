@@ -197,7 +197,7 @@ public class PreferencesActivity extends PreferenceActivity implements
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		
 		if (interval != 0) {
-			alarmManager.set(AlarmManager.RTC_WAKEUP, 0, operation);
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, interval, operation);
 		} else {
 			alarmManager.cancel(operation);
 		}

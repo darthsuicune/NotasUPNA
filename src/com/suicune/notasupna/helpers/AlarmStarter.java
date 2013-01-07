@@ -37,7 +37,7 @@ public class AlarmStarter extends BroadcastReceiver {
 			PendingIntent operation = PendingIntent.getService(context, GradesUpdater.SERVICE_ID,
 					newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-			alarm.set(AlarmManager.RTC_WAKEUP, 0, operation);
+			alarm.setRepeating(AlarmManager.RTC_WAKEUP, 0, period, operation);
 		}
 	}
 }
