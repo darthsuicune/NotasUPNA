@@ -54,6 +54,7 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_activity, false);
 
 		int data = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.DATA_ES, 0);
 		data += PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.DATA_EU, 0);

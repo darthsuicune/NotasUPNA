@@ -7,17 +7,26 @@
         <ListPreference
             android:entries="@array/preference_language_list"
             android:entryValues="@array/preference_language_list_values"
+            android:defaultValue="@string/language_code_spanish"
             android:key="@string/preference_record_language"
-            android:title="@string/language"
-            android:defaultValue="@string/language_code_spanish" />
+            android:title="@string/language" />
+        
+        <ListPreference 
+            android:entries="@array/preference_update_time"
+            android:entryValues="@array/preference_update_time_values"
+            android:defaultValue="@string/update_24_hour_value"
+            android:key="@string/preference_update_time"
+            android:title="@string/update_time" />
+        
     </PreferenceCategory>
+    
     <PreferenceCategory 
         android:title="@string/record_title" >
         
         <ListPreference
-            android:defaultValue="@string/sort_order_time_desc_value"
             android:entries="@array/preference_sort_order"
             android:entryValues="@array/preference_sort_order_values"
+            android:defaultValue="@string/sort_order_time_desc_value"
             android:key="@string/preference_sort_order"
             android:title="@string/sort_order" />
         

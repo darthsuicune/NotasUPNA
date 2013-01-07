@@ -3,8 +3,11 @@ package com.suicune.notasupna;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 
 import com.suicune.notasupna.helpers.CryptoBlock;
+import com.suicune.notasupna.helpers.GradesUpdater;
 
 @SuppressLint("NewApi")
 @SuppressWarnings("deprecation")
@@ -37,9 +41,10 @@ public class PreferencesActivity extends PreferenceActivity implements
 	public static final String PREFERENCE_PASS_WORD = "login token";
 
 	private SharedPreferences prefs;
-	
+
 	Preference languagePreference;
 	Preference sortOrderPreference;
+	Preference updateTimePreference;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,21 +74,22 @@ public class PreferencesActivity extends PreferenceActivity implements
 
 	private void loadPreferences() {
 		this.addPreferencesFromResource(R.xml.preferences_activity);
-		
+
 		prepareLanguagePreference();
 		prepareSortOrderPreference();
+		prepareUpdateTimePreference();
 		showLastUpdate();
-	} 
-	
-	private void prepareLanguagePreference(){
+	}
+
+	private void prepareLanguagePreference() {
 		languagePreference = findPreference(getString(R.string.preference_record_language));
 		languagePreference.setOnPreferenceChangeListener(this);
 		changeSummary(languagePreference, prefs.getString(
 				getString(R.string.preference_record_language),
 				getString(R.string.default_language)));
 	}
-	
-	private void prepareSortOrderPreference(){
+
+	private void prepareSortOrderPreference() {
 		sortOrderPreference = findPreference(getString(R.string.preference_sort_order));
 		sortOrderPreference.setOnPreferenceChangeListener(this);
 		changeSummary(sortOrderPreference, prefs.getString(
@@ -91,15 +97,27 @@ public class PreferencesActivity extends PreferenceActivity implements
 				getString(R.string.sort_order_time_desc)));
 	}
 
+	private void prepareUpdateTimePreference() {
+		updateTimePreference = findPreference(getString(R.string.preference_update_time));
+		updateTimePreference.setOnPreferenceChangeListener(this);
+		changeSummary(updateTimePreference, prefs.getString(
+				getString(R.string.preference_update_time),
+				getString(R.string.update_24_hour_value)));
+	}
+
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
+		changeSummary(preference, newValue);
 		// Language changed
 		if (preference.getKey().equals(
 				getString(R.string.preference_record_language))) {
-//			String newLanguage = (String) newValue;
+			// String newLanguage = (String) newValue;
 			setResult(RESULT_LANGUAGE_CHANGED);
+		} else if (preference.getKey().equals(
+				getString(R.string.preference_update_time))) {
+			
+			setAlarm((String) newValue);
 		}
-		changeSummary(preference, newValue);
 		return true;
 	}
 
@@ -131,20 +149,59 @@ public class PreferencesActivity extends PreferenceActivity implements
 					.equals(getString(R.string.sort_order_time_desc_value))) {
 				preference.setSummary(R.string.sort_order_time_desc);
 			}
+		} else if (preference.getKey().equals(
+				getString(R.string.preference_update_time))) {
+			String newUpdateTime = (String) newValue;
+			if (newUpdateTime
+					.equals(getString(R.string.update_15_minutes_value))) {
+				preference.setSummary(R.string.update_15_minutes);
+			} else if (newUpdateTime.equals(getString(R.string.update_1_hour))) {
+				preference.setSummary(R.string.update_1_hour);
+			} else if (newUpdateTime
+					.equals(getString(R.string.update_24_hour_value))) {
+				preference.setSummary(R.string.update_24_hour);
+			} else if (newUpdateTime
+					.equals(getString(R.string.update_2_hour_value))) {
+				preference.setSummary(R.string.update_2_hour);
+			} else if (newUpdateTime
+					.equals(getString(R.string.update_5_minutes_value))) {
+				preference.setSummary(R.string.update_5_minutes);
+			} else if (newUpdateTime
+					.equals(getString(R.string.update_half_hour_value))) {
+				preference.setSummary(R.string.update_half_hour);
+			} else if (newUpdateTime
+					.equals(getString(R.string.update_no_value))) {
+				preference.setSummary(R.string.update_no);
+			}
 		}
 	}
-	
+
 	private void showLastUpdate() {
 		Preference lastUpdatePreference = findPreference(getString(R.string.last_update));
 		long longLastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);
-		if(longLastUpdate == 0){
+		if (longLastUpdate == 0) {
 			lastUpdatePreference.setSummary(R.string.no_data_yet);
 		} else {
 			Date lastUpdate = new Date(longLastUpdate);
 			String time = DateFormat.getTimeFormat(this).format(lastUpdate);
-			String date = DateFormat.getDateFormat(this)
-					.format(lastUpdate);
+			String date = DateFormat.getDateFormat(this).format(lastUpdate);
 			lastUpdatePreference.setSummary(date + " - " + time);
+		}
+	}
+	
+	private void setAlarm(String when) {
+		long updateTime = Long.parseLong(when);
+		
+		Intent alarm = new Intent(this, GradesUpdater.class);
+		PendingIntent operation = PendingIntent.getService(this, GradesUpdater.SERVICE_ID,
+				alarm, PendingIntent.FLAG_CANCEL_CURRENT);
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		
+		if (updateTime != 0) {
+			long lastUpdate = prefs.getLong(PreferencesActivity.LAST_UPDATE, 0);			
+			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, lastUpdate + updateTime, updateTime, operation);
+		} else {
+			alarmManager.cancel(operation);
 		}
 	}
 
