@@ -12,20 +12,21 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <permission 
-        android:name="com.suicune.notasupna.GradesDBProvider.READ_PERMISSION"
+        android:name="com.suicune.notasupna.GradesDBProvider.READ_GRADES"
         android:label="@string/provider_read_permission_label"
         android:description="@string/provider_read_permission_description"
         android:protectionLevel="signature">
         
     </permission>
     <permission 
-        android:name="com.suicune.notasupna.GradesDBProvider.WRITE_PERMISSION"
+        android:name="com.suicune.notasupna.GradesDBProvider.WRITE_GRADES"
         android:label="@string/provider_write_permission_label"
         android:description="@string/provider_write_permission_description"
         android:protectionLevel="signature">
         
     </permission>
-
+    <uses-permission android:name="com.suicune.notasupna.GradesDBProvider.READ_GRADES" />
+    <uses-permission android:name="com.suicune.notasupna.GradesDBProvider.WRITE_GRADES" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/upna_logo"
