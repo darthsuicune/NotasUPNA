@@ -7,4 +7,11 @@
     <string name="no">"No"</string>
     <string name="yes">"Sí"</string>
     <string name="share">"Compartir"</string>
+    <string name="provider_authority">"com.suicune.notasupna.GradesDBProvider"</string>
+    <string name="provider_read_permission">"com.suicune.notasupna.GradesDBProvider.READ_PERMISSION"</string>
+    <string name="provider_write_permission">"com.suicune.notasupna.GradesDBProvider.WRITE_PERMISSION"</string>
+    <string name="provider_read_permission_label">"LECTURA DE NOTAS"</string>
+    <string name="provider_write_permission_label">"ESCRITURA DE NOTAS"</string>
+    <string name="provider_read_permission_description">"Permiso para acceder a las notas almacenadas en el dispositivo"</string>
+    <string name="provider_write_permission_description">"Permiso para modificar las notas almacenadas en el dispositivo"</string>
 </resources>

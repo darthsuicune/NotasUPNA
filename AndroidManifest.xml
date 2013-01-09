@@ -11,6 +11,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <permission 
+        android:name="com.suicune.notasupna.GradesDBProvider.READ_PERMISSION"
+        android:label="@string/provider_read_permission_label"
+        android:description="@string/provider_read_permission_description"
+        android:protectionLevel="signature">
+        
+    </permission>
+    <permission 
+        android:name="com.suicune.notasupna.GradesDBProvider.WRITE_PERMISSION"
+        android:label="@string/provider_write_permission_label"
+        android:description="@string/provider_write_permission_description"
+        android:protectionLevel="signature">
+        
+    </permission>
 
     <application
         android:allowBackup="true"
@@ -40,7 +54,10 @@
         </activity>
         <provider 
             android:name=".database.GradesDBProvider" 
-            android:authorities="com.suicune.notasupna.GradesDBProvider" >
+            android:authorities="@string/provider_authority"
+            android:readPermission="@string/provider_read_permission"
+            android:writePermission="@string/provider_write_permission" >
+            
         </provider>
         <receiver 
             android:name=".helpers.AlarmStarter"
