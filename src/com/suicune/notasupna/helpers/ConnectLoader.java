@@ -59,7 +59,7 @@ public class ConnectLoader extends AsyncTaskLoader<String> {
 		ConnectivityManager connection = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		return (connection.getActiveNetworkInfo().isAvailable() && connection
-				.getActiveNetworkInfo().isConnectedOrConnecting());
+				.getActiveNetworkInfo().isConnected());
 	}
 
 	@Override
