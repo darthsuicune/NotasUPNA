@@ -1,16 +1,8 @@
 package com.suicune.notasupna.helpers;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,19 +27,16 @@ public class GradesUpdater extends IntentService {
 	 */
 	// Used for logging
 	public static final String SERVICE_NAME = "NotasUPNA_service";
-	
 	public static final int SERVICE_ID = 1;
 
 	// Constant for the notification we're launching
 	public static final int NOTIFICATION_NEW_GRADES = 1;
 
-	private SharedPreferences prefs;
-	
-	private String mUserName;
-	private String mPassWord;
+	// private GradesClient mClient;
 	private String mLanguage;
-	
-	private URL mUrl;
+	private SharedPreferences prefs;
+
+	// private URL mUrl;
 
 	/*
 	 * Public constructor. Mandatory to pass a String with the name in the
@@ -55,6 +44,7 @@ public class GradesUpdater extends IntentService {
 	 */
 	public GradesUpdater() {
 		super(SERVICE_NAME);
+
 	}
 
 	/*
@@ -65,107 +55,77 @@ public class GradesUpdater extends IntentService {
 	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		if (ConnectLoader.isConnected(this)) {
-			downloadGrades();
-		}
-	}
-
-	/*
-	 * Convenience method for cleaner lecture of the code. We will retrieve the
-	 * login information from the preferences, connect to the server and
-	 * download the data
-	 */
-	private void downloadGrades() {
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		/*
-		 * Retrieve login information and language
-		 */
-		mUserName = PreferencesActivity.getUserName(this);
-		mPassWord = PreferencesActivity.getPassWord(this);
 		mLanguage = PreferencesActivity.getRecordLanguage(this);
-		setServerURL();
-		parseResponse(connectToServer());
-	}
 
-	private void setServerURL() {
-		try {
-			if (mLanguage
-					.equalsIgnoreCase(getString(R.string.language_code_basque))) {
-				mUrl = new URL("https", ConnectLoader.server,
-						ConnectLoader.port, ConnectLoader.resource_eu);
-			} else {
-				mUrl = new URL("https", ConnectLoader.server,
-						ConnectLoader.port, ConnectLoader.resource_es);
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		String response;
+		if (mLanguage.equalsIgnoreCase(this
+				.getString(R.string.language_code_basque))) {
+			response = this.getString(R.string.demodata_eu);
+		} else {
+			response = this.getString(R.string.demodata);
 		}
-	}
+		parseResponse(response);
+		prefs.edit()
+				.putLong(PreferencesActivity.LAST_UPDATE,
+						System.currentTimeMillis()).commit();
 
-	private String connectToServer() {
-		String response = null;
-		/*
-		 * Using the Apache libraries for connections allows easy handling of
-		 * HTTP requests as this one. UsernamePasswordCredentials allows use of
-		 * username and password for HTTP authentication both in HTTP and HTTPS.
-		 * HttpGet allows us to make a Http GET petition to the server to
-		 * retrieve the data using just the url we set on the PreExecute stage
-		 * of the task.
-		 */
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-				new UsernamePasswordCredentials(mUserName, mPassWord));
-		HttpGet request = new HttpGet(mUrl.toExternalForm());
+		// String passWord = PreferencesActivity.getPassWord(this);
+		// String userName = PreferencesActivity.getUserName(this);
+		// try{
+		// if(mLanguage.equals(getString(R.string.language_code_basque))){
+		// mUrl = new URL("https", GradesClient.server, GradesClient.port,
+		// GradesClient.resource_eu);
+		// } else {
+		// mUrl = new URL("https", GradesClient.server, GradesClient.port,
+		// GradesClient.resource_es);
+		// }
+		// } catch (MalformedURLException e){
+		// e.printStackTrace();
+		// }
+		// mClient = new GradesClient(mUrl, userName, passWord);
 
-		/*
-		 * To parse the response we need to look for general Exceptions, because
-		 * we get a lot of different ones, all meaning the same: The connection
-		 * didn't went through. Providing we've already checked connection and
-		 * tunnel, it must be a filtering proxy or a server error, so we will
-		 * just cancel the task and exit with a message. The HttpResponse class
-		 * allows us to get a full response for any well-formed request.
-		 */
-		try {
-			HttpResponse httpResponse = httpClient.execute(request);
-			InputStream input = httpResponse.getEntity().getContent();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					input));
-			response = reader.readLine();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		prefs.edit().putLong(PreferencesActivity.LAST_UPDATE, System.currentTimeMillis()).commit();
-		return response;
+		// if (ConnectLoader.isConnected(this)) {
+		// parseResponse(mClient.connectToServer());
+		// prefs.edit().putLong(PreferencesActivity.LAST_UPDATE,
+		// System.currentTimeMillis()).commit();
+		// }
 	}
 
 	private void parseResponse(String response) {
-		if(response == null){
+		if (response == null) {
 			sendNotification(null);
 			Log.d(SERVICE_NAME, "Download error. No Response from server.");
-		}else {
-			try{
+		} else {
+			try {
 				int length;
 				new JSONObject(response);
-				
-				if (mLanguage.equalsIgnoreCase(
-						getString(R.string.language_code_basque))) {
+
+				if (mLanguage
+						.equalsIgnoreCase(getString(R.string.language_code_basque))) {
 					length = prefs.getInt(PreferencesActivity.DATA_EU, 0);
 				} else {
 					length = prefs.getInt(PreferencesActivity.DATA_ES, 0);
 				}
 				if (length != response.length()) {
-					if(mLanguage.equalsIgnoreCase(getString(R.string.language_code_basque))){
-						prefs.edit().putLong(PreferencesActivity.DATA_EU, length).commit();
+					if (mLanguage
+							.equalsIgnoreCase(getString(R.string.language_code_basque))) {
+						prefs.edit()
+								.putLong(PreferencesActivity.DATA_EU, length)
+								.commit();
 					} else {
-						prefs.edit().putLong(PreferencesActivity.DATA_ES, length).commit();
+						prefs.edit()
+								.putLong(PreferencesActivity.DATA_ES, length)
+								.commit();
 					}
 					sendNotification(response);
 				} else {
-					// Show a info message in the logcat to say that no new data has
+					// Show a info message in the logcat to say that no new data
+					// has
 					// been downloading.
 					Log.i(SERVICE_NAME, "Download success, no new data");
 				}
-			}catch(JSONException e){
+			} catch (JSONException e) {
 				Log.d(SERVICE_NAME, "Download error. Response from server: "
 						+ response);
 			}
@@ -187,8 +147,9 @@ public class GradesUpdater extends IntentService {
 		Intent notificationIntent = new Intent(this, RecordActivity.class);
 		notificationIntent.addFlags(Intent.FLAG_FROM_BACKGROUND);
 		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		if(response != null){
-			notificationIntent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA, response);
+		if (response != null) {
+			notificationIntent.putExtra(RecordActivity.EXTRA_DOWNLOADED_DATA,
+					response);
 		}
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
 				notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
