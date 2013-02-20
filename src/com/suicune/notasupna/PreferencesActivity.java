@@ -17,6 +17,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 
+import com.suicune.notasupna.fragments.GeneralPreferencesFragment;
 import com.suicune.notasupna.helpers.CryptoBlock;
 import com.suicune.notasupna.helpers.GradesUpdater;
 

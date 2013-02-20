@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 
+import com.suicune.notasupna.compat.ActionBarActivity;
+import com.suicune.notasupna.fragments.RecordFragment;
 import com.suicune.notasupna.helpers.GradesUpdater;
 
 @SuppressLint("NewApi")

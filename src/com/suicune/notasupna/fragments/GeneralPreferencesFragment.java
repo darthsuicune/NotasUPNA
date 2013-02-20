@@ -1,4 +1,4 @@
-package com.suicune.notasupna;
+package com.suicune.notasupna.fragments;
 
 import java.util.Date;
 
@@ -16,6 +16,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 
+import com.suicune.notasupna.PreferencesActivity;
+import com.suicune.notasupna.R;
 import com.suicune.notasupna.helpers.GradesUpdater;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)

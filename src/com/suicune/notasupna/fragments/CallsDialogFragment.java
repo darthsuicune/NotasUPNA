@@ -1,4 +1,4 @@
-package com.suicune.notasupna;
+package com.suicune.notasupna.fragments;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +15,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.suicune.notasupna.Grade;
+import com.suicune.notasupna.R;
+import com.suicune.notasupna.Subject;
 import com.suicune.notasupna.database.GradesContract;
 
 public class CallsDialogFragment extends DialogFragment {

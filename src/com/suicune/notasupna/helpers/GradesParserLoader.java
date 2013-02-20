@@ -74,7 +74,6 @@ public class GradesParserLoader extends AsyncTaskLoader<String> {
 		if(language == null){
 			forceLoad();
 		}
-		super.onStartLoading();
 	}
 
 	@Override

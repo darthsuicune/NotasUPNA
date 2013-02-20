@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.suicune.notasupna.compat.ActionBarActivity;
+import com.suicune.notasupna.fragments.AboutFragment;
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.CryptoBlock;
 import com.suicune.notasupna.helpers.DNIUtils;

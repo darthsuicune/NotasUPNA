@@ -1,4 +1,4 @@
-package com.suicune.notasupna;
+package com.suicune.notasupna.fragments;
 
 import java.sql.Date;
 
@@ -21,6 +21,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+
+import com.suicune.notasupna.Grade;
+import com.suicune.notasupna.R;
+import com.suicune.notasupna.Subject;
 
 @SuppressLint("NewApi")
 public class DetailsFragment extends Fragment {
