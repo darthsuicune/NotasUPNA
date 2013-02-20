@@ -1,5 +1,8 @@
 package com.suicune.notasupna;
 
+import com.suicune.notasupna.compat.ActionBarActivity;
+import com.suicune.notasupna.fragments.DetailsFragment;
+
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;

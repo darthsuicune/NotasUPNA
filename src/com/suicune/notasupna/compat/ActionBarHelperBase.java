@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.suicune.notasupna;
+package com.suicune.notasupna.compat;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -39,6 +39,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.suicune.notasupna.R;
 
 /**
  * A class that implements the action bar pattern for pre-Honeycomb devices.
@@ -163,7 +165,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
      * Adds an action button to the compatibility action bar, using menu information from a {@link
      * android.view.MenuItem}. If the menu item ID is <code>menu_refresh</code>, the menu item's
      * state can be changed to show a loading spinner using
-     * {@link com.example.android.actionbarcompat.ActionBarHelperBase#setRefreshActionItemState(boolean)}.
+     * {@link com.suicune.notasupna.compat.example.android.actionbarcompat.ActionBarHelperBase#setRefreshActionItemState(boolean)}.
      */
     private View addActionItemCompatFromMenuItem(final MenuItem item) {
         final int itemId = item.getItemId();

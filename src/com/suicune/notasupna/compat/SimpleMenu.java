@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.suicune.notasupna;
+package com.suicune.notasupna.compat;
 
 import android.content.ComponentName;
 import android.content.Context;

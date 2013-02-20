@@ -1,4 +1,4 @@
-package com.suicune.notasupna;
+package com.suicune.notasupna.fragments;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +41,13 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.suicune.notasupna.DetailsActivity;
+import com.suicune.notasupna.PreferencesActivity;
+import com.suicune.notasupna.R;
+import com.suicune.notasupna.Record;
+import com.suicune.notasupna.RecordActivity;
+import com.suicune.notasupna.Student;
+import com.suicune.notasupna.Subject;
 import com.suicune.notasupna.database.GradesContract;
 import com.suicune.notasupna.helpers.ConnectLoader;
 import com.suicune.notasupna.helpers.GradesParserLoader;
@@ -101,7 +108,7 @@ public class RecordFragment extends ListFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			isHoneyComb = true;
 		} else {
@@ -589,7 +596,7 @@ public class RecordFragment extends ListFragment {
 						switch (error) {
 						case 0:
 							if (hasNewData(result.length())) {
-								
+
 								Bundle args = new Bundle();
 								args.putString(
 										RecordActivity.EXTRA_DOWNLOADED_DATA,

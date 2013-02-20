@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.suicune.notasupna;
+package com.suicune.notasupna.compat;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.suicune.notasupna.R;
 
 /**
  * An extension of {@link ActionBarHelper} that provides Android 3.0-specific functionality for
